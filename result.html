@@ -51,18 +51,34 @@ margin:auto;
 padding:80px 20px;
 }
 
-.home-btn{
+.top-buttons{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:24px;
+}
+
+.top-btn{
 display:inline-flex;
 align-items:center;
 justify-content:center;
-height:54px;
-padding:0 24px;
+height:50px;
+padding:0 20px;
 border-radius:14px;
-background:#ff4fa0;
+background:rgba(255,255,255,.12);
 color:#fff;
 text-decoration:none;
-font-weight:800;
-margin-bottom:24px;
+font-weight:700;
+border:none;
+cursor:pointer;
+}
+
+.home-btn{
+background:#ff4fa0;
+}
+
+.active{
+background:#ff4fa0;
 }
 
 .list-item{
@@ -153,7 +169,7 @@ cursor:pointer;
 }
 
 .modal-title{
-font-size:28px;
+font-size:26px;
 font-weight:900;
 line-height:1.5;
 margin-bottom:20px;
@@ -252,9 +268,29 @@ WORKBOARD
 
 <div class="container">
 
-<a href="index.html" class="home-btn">
+<div class="top-buttons">
+
+<a href="index.html" class="top-btn home-btn">
 홈으로 가기
 </a>
+
+<button class="top-btn active" onclick="setFilter('all',this)">
+전체
+</button>
+
+<button class="top-btn" onclick="setFilter('done',this)">
+완료
+</button>
+
+<button class="top-btn" onclick="setFilter('progress',this)">
+진행중
+</button>
+
+<button class="top-btn" onclick="setFilter('pending',this)">
+미완료
+</button>
+
+</div>
 
 <div id="result"></div>
 
@@ -282,6 +318,10 @@ WORKBOARD
 
 const DB_NAME='WORKBOARD_DB';
 const STORE_NAME='tasks';
+
+let allMatchedTasks=[];
+
+let currentFilter='all';
 
 function openDB(){
 
@@ -341,10 +381,6 @@ const value=params.get('value');
 
 const tasks=await getAllTasks();
 
-const result=document.getElementById('result');
-
-let html='';
-
 tasks.reverse().forEach(task=>{
 
 let match=false;
@@ -356,6 +392,34 @@ if(mode==='month'&&task.date.startsWith(value))match=true;
 if(mode==='year'&&task.date.startsWith(value))match=true;
 
 if(match){
+
+allMatchedTasks.push(task);
+
+}
+
+});
+
+renderList();
+
+})();
+
+function renderList(){
+
+const result=document.getElementById('result');
+
+let html='';
+
+let filtered=allMatchedTasks;
+
+if(currentFilter!=='all'){
+
+filtered=allMatchedTasks.filter(
+task=>task.status===currentFilter
+);
+
+}
+
+filtered.forEach(task=>{
 
 html+=`
 
@@ -380,8 +444,6 @@ ${task.title}
 
 `;
 
-}
-
 });
 
 if(!html){
@@ -396,7 +458,21 @@ html=`
 
 result.innerHTML=html;
 
-})();
+}
+
+function setFilter(type,btn){
+
+currentFilter=type;
+
+document.querySelectorAll('.top-btn').forEach(el=>{
+el.classList.remove('active');
+});
+
+btn.classList.add('active');
+
+renderList();
+
+}
 
 function openModal(task){
 
