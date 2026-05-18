@@ -54,7 +54,7 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 }
 .modal-box .status { display: inline-block; }
 
-/* ✅ 패치: 원본 이미지 확대 보기를 위한 서브 모달 전용 레이아웃 추가 */
+/* 원본 이미지 확대 보기 서브 모달 */
 .sub-modal { position:fixed; inset:0; background:rgba(0,0,0,.95); display:none; align-items:center; justify-content:center; z-index:10000; cursor:zoom-out; }
 .sub-modal img { max-width:95%; max-height:95vh; border-radius:12px; object-fit:contain; }
 </style>
@@ -114,7 +114,6 @@ async function getAllTasks(){
     const params = new URLSearchParams(location.search);
     const mode = params.get('mode');
     const value = params.get('value');
-    // ✅ 패치: URL 주소창에 연동되어 넘어오는 카테고리 파라미터 획득 명시
     const categoryParam = params.get('category');
 
     const tasks = await getAllTasks();
@@ -127,7 +126,6 @@ async function getAllTasks(){
       if(mode === 'year' && task.date && task.date.startsWith(value)) match = true;
       if(!mode) match = true;
 
-      // ✅ 패치: 날짜 조건이 맞더라도 사용자가 요청한 카테고리와 일치하지 않으면 제외 처리
       if(match && categoryParam) {
         if(task.category !== categoryParam) {
           match = false;
@@ -137,6 +135,15 @@ async function getAllTasks(){
       if(match){
         allMatchedTasks.push(task);
       }
+    });
+
+    // ✅ 패치: 같은 날짜 안에서도 최근 등록된 데이터가 위로 오도록 보장하고, 
+    // 혹시 전체 조회 모드일 경우에도 날짜(date)가 최신인 순서대로 완벽히 정렬합니다.
+    allMatchedTasks.sort((a, b) => {
+      if (b.date !== a.date) {
+        return new Date(b.date) - new Date(a.date);
+      }
+      return b.id - a.id; 
     });
 
     renderList();
@@ -197,7 +204,6 @@ function openModalById(id){
     try { savedImages = JSON.parse(savedImages); } catch(e) { savedImages = []; }
   }
 
-  // ✅ 패치: 이미지 출력 반복문 및 개별 원본보기 클릭 리스너 유기적 바인딩 보정
   if(Array.isArray(savedImages) && savedImages.length){
     imgs += '<div class="modal-images">';
     savedImages.forEach(img => {
@@ -228,7 +234,6 @@ function closeModal(){
   document.getElementById('modal').style.display = 'none';
 }
 
-// ✅ 패치: 이벤트 버블링 현상을 제어한 단독 확대 기능 함수 배치
 function showImageInModal(imgUrl, event) {
   event.stopPropagation(); 
   document.getElementById('subModalImg').src = imgUrl;
