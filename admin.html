@@ -3,273 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>업무 등록</title>
+<title>업무등록</title>
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Pretendard','Noto Sans KR',sans-serif;
-}
-
-body{
-  background:linear-gradient(135deg,#6d1bb8, #4310a5);
-  color:#fff;
-}
-
-header{
-  width:100%;
-  height:90px;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  padding:0 50px;
-}
-
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:18px;
-}
-
-.company-logo{
-  height:54px;
-}
-
-.logo-text{
-  font-size:34px;
-  font-weight:900;
-  color:#6d1bb8;
-  text-decoration:none;
-  letter-spacing:-1px;
-}
-
-.logo-text span{
-  color:#ff4fa0;
-}
-
-.card{
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.08);
-  backdrop-filter:blur(12px);
-  border-radius:24px;
-}
-
-button,.home-btn{
-  background:#6d1bb8;
-  color:#fff;
-  border:none;
-  font-weight:800;
-}
-
-@media(max-width:768px){
-  header{
-    padding:0 20px;
-  }
-
-  .company-logo{
-    height:44px;
-  }
-
-  .logo-text{
-    font-size:26px;
-  }
-}
-
-
-.container{
-max-width:1000px;
-margin:auto;
-padding:80px 20px;
-}
-
-.home-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-height:54px;
-padding:0 26px;
-border-radius:14px;
-text-decoration:none;
-margin-bottom:40px;
-}
-
-.card{
-padding:40px;
-}
-
-h1{
-font-size:48px;
-margin-bottom:40px;
-letter-spacing:-2px;
-}
-
-h1 span{color:#ff4fa0;}
-
-.input-group{margin-bottom:24px;}
-
-label{
-display:block;
-margin-bottom:12px;
-font-weight:700;
-}
-
-input,select,textarea{
-width:100%;
-background:rgba(255,255,255,0.08);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:16px;
-padding:18px;
-color:#fff;
-font-size:15px;
-outline:none;
-}
-
-textarea{min-height:140px;}
-
-.preview-list{
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-margin-top:18px;
-}
-
-.preview-image{
-width:90px;
-height:90px;
-object-fit:cover;
-border-radius:14px;
-}
-
-button{
-width:100%;
-height:64px;
-border-radius:16px;
-font-size:17px;
-cursor:pointer;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;}
+header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
+.logo-text{font-size:34px;font-weight:900;color:#6d1bb8;text-decoration:none;}
+.logo-text span{color:#ff4fa0;}
+.container{max-width:1000px;margin:auto;padding:80px 20px;}
+.card{background:rgba(255,255,255,.1);padding:40px;border-radius:24px;}
+.home-btn{display:inline-flex;background:#6d1bb8;color:#fff;padding:14px 24px;border-radius:14px;text-decoration:none;margin-bottom:24px;}
+.group{margin-bottom:22px;}
+label{display:block;margin-bottom:10px;font-weight:700;}
+input,select,textarea{width:100%;background:rgba(255,255,255,.12);border:none;border-radius:14px;padding:18px;color:#fff;}
+textarea{min-height:120px;}
+.row{display:flex;gap:12px;margin-bottom:14px;}
+.task-item{background:rgba(255,255,255,.08);padding:18px;border-radius:16px;margin-bottom:16px;}
+.preview-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.preview-image{width:90px;height:90px;object-fit:cover;border-radius:12px;}
+button{height:58px;border:none;border-radius:14px;background:#6d1bb8;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="header-left">
-    <img src="tiretech-logo.png" class="company-logo">
-    <a href="index.html" class="logo-text">
-      WORK<span>BOARD</span>
-    </a>
-  </div>
-</header>
-
-
+<header><a href="index.html" class="logo-text">WORK<span>BOARD</span></a></header>
 <div class="container">
-
 <a href="index.html" class="home-btn">홈으로 가기</a>
-
 <div class="card">
-
-<h1><span>업무 등록</span></h1>
-
-<div class="input-group">
+<div class="group">
 <label>업무 날짜</label>
 <input type="date" id="date">
 </div>
 
-<div class="input-group">
-<label>업무 구분</label>
-<select id="category">
-<option>마케팅</option>
-<option>블로그</option>
-<option>플레이스</option>
-<option>광고</option>
-<option>디자인</option>
-</select>
-</div>
+<div id="taskWrap"></div>
 
-<div class="input-group">
-<label>업체명</label>
-<input type="text" id="company">
-</div>
-
-<div class="input-group">
-<label>업무 내용</label>
-<input type="text" id="title">
-</div>
-
-<div class="input-group">
-<label>상태</label>
-<select id="status">
-<option value="progress">진행중</option>
-<option value="done">완료</option>
-</select>
-</div>
-
-<div class="input-group">
-<label>메모</label>
-<textarea id="memo"></textarea>
-</div>
-
-<div class="input-group">
-<label>업무 이미지 업로드</label>
-<input type="file" id="imageInput" accept="image/*" multiple>
-<div id="previewList" class="preview-list"></div>
-</div>
-
-<button onclick="saveWork()">업무 저장</button>
-
+<button type="button" onclick="addTask()">+ 업무 추가</button>
+<button type="button" onclick="saveAll()" style="margin-top:14px;width:100%;">업무 저장</button>
 </div>
 </div>
 
 <script>
-let imageList=[];
+let taskCount=0;
 
-document.getElementById('imageInput').addEventListener('change',function(e){
-const files=Array.from(e.target.files);
-const previewList=document.getElementById('previewList');
-previewList.innerHTML='';
-imageList=[];
+function addTask(){
+taskCount++;
+const wrap=document.getElementById('taskWrap');
+const div=document.createElement('div');
+div.className='task-item';
+div.innerHTML=`
+<div class="group">
+<label>업무내용</label>
+<input type="text" class="title">
+</div>
 
-files.forEach(file=>{
+<div class="row">
+<select class="status">
+<option value="done">완료</option>
+<option value="progress">진행중</option>
+<option value="pending">미완료</option>
+</select>
+
+<select class="category">
+<option>마케팅</option>
+<option>블로그</option>
+<option>플레이스</option>
+<option>광고</option>
+</select>
+</div>
+
+<div class="group">
+<label>메모</label>
+<textarea class="memo"></textarea>
+</div>
+
+<div class="group">
+<label>이미지 업로드</label>
+<input type="file" class="images" multiple accept="image/*">
+<div class="preview-list"></div>
+</div>
+`;
+
+wrap.appendChild(div);
+
+const input=div.querySelector('.images');
+const preview=div.querySelector('.preview-list');
+
+input.addEventListener('change',function(e){
+preview.innerHTML='';
+Array.from(e.target.files).forEach(file=>{
 const reader=new FileReader();
-
-reader.onload=function(event){
-imageList.push(event.target.result);
-
+reader.onload=function(ev){
 const img=document.createElement('img');
-img.src=event.target.result;
+img.src=ev.target.result;
 img.className='preview-image';
-
-previewList.appendChild(img);
+preview.appendChild(img);
 }
-
 reader.readAsDataURL(file);
 });
 });
+}
 
-function saveWork(){
+addTask();
+
+async function saveAll(){
 const date=document.getElementById('date').value;
-const category=document.getElementById('category').value;
-const company=document.getElementById('company').value;
-const title=document.getElementById('title').value;
-const status=document.getElementById('status').value;
-const memo=document.getElementById('memo').value;
+if(!date)return alert('날짜 선택');
 
-if(!date||!title){alert('날짜와 업무내용을 입력해주세요.');return;}
+const tasks=document.querySelectorAll('.task-item');
 
 let data=JSON.parse(localStorage.getItem('tiretechWorkData'))||{};
+if(!data[date])data[date]=[];
 
-if(!data[date]){data[date]=[];}
+for(const task of tasks){
+
+const files=Array.from(task.querySelector('.images').files);
+const images=[];
+
+for(const file of files){
+const base64=await toBase64(file);
+images.push(base64);
+}
 
 data[date].push({
-category,company,title,status,memo,images:imageList
+title:task.querySelector('.title').value,
+status:task.querySelector('.status').value,
+category:task.querySelector('.category').value,
+memo:task.querySelector('.memo').value,
+images:images
 });
 
-localStorage.setItem('tiretechWorkData',JSON.stringify(data));
+}
 
-alert('업무가 저장되었습니다.');
+localStorage.setItem('tiretechWorkData',JSON.stringify(data));
+alert('저장완료');
+}
+
+function toBase64(file){
+return new Promise((resolve,reject)=>{
+const reader=new FileReader();
+reader.onload=()=>resolve(reader.result);
+reader.onerror=reject;
+reader.readAsDataURL(file);
+});
 }
 </script>
-
 </body>
 </html>
