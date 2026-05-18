@@ -1,1 +1,241 @@
+```html id="index-only-page"
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>타이어테크 업무 관리 시스템</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Pretendard', sans-serif;
+}
+
+body{
+  background:#f4f6f8;
+  color:#222;
+}
+
+header{
+  width:100%;
+  background:#111;
+  border-bottom:4px solid #e60012;
+  padding:24px 30px;
+}
+
+header h1{
+  color:#fff;
+  font-size:30px;
+  font-weight:700;
+}
+
+header span{
+  color:#e60012;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:80px 20px;
+}
+
+.search-box{
+  background:#fff;
+  border-radius:24px;
+  padding:50px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+
+.search-box h2{
+  font-size:36px;
+  margin-bottom:18px;
+  line-height:1.3;
+}
+
+.search-box p{
+  color:#666;
+  line-height:1.8;
+  margin-bottom:35px;
+  font-size:15px;
+}
+
+.search-area{
+  display:flex;
+  gap:12px;
+}
+
+.search-area input{
+  flex:1;
+  height:60px;
+  border:none;
+  background:#f2f2f2;
+  border-radius:16px;
+  padding:0 20px;
+  font-size:16px;
+  outline:none;
+  transition:.2s;
+}
+
+.search-area input:focus{
+  background:#ececec;
+}
+
+.search-area button{
+  width:140px;
+  border:none;
+  background:#e60012;
+  color:#fff;
+  border-radius:16px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.search-area button:hover{
+  background:#c70010;
+}
+
+.example{
+  margin-top:20px;
+  color:#999;
+  font-size:13px;
+}
+
+.info-box{
+  margin-top:35px;
+  background:#f8f8f8;
+  border-radius:18px;
+  padding:22px;
+  line-height:1.8;
+  color:#555;
+  font-size:14px;
+}
+
+footer{
+  text-align:center;
+  padding:40px;
+  color:#888;
+  font-size:13px;
+}
+
+@media(max-width:768px){
+
+  header h1{
+    font-size:24px;
+  }
+
+  .search-box{
+    padding:35px 25px;
+  }
+
+  .search-box h2{
+    font-size:28px;
+  }
+
+  .search-area{
+    flex-direction:column;
+  }
+
+  .search-area button{
+    width:100%;
+    height:60px;
+  }
+
+}
+
+</style>
+</head>
+<body>
+
+<header>
+
+  <h1>
+    TIRE<span>TECH</span> 업무 관리 시스템
+  </h1>
+
+</header>
+
+<div class="container">
+
+  <div class="search-box">
+
+    <h2>
+      날짜별 업무 조회
+    </h2>
+
+    <p>
+      날짜를 검색하면 해당 날짜의
+      블로그, 플레이스, 디자인 및
+      마케팅 업무 진행 내역을
+      한눈에 확인할 수 있습니다.
+    </p>
+
+    <div class="search-area">
+
+      <input
+        type="text"
+        id="dateInput"
+        placeholder="날짜 입력 예시 : 2026-05-18"
+      >
+
+      <button onclick="searchDate()">
+        조회하기
+      </button>
+
+    </div>
+
+    <div class="example">
+      예시 날짜 : 2026-05-18
+    </div>
+
+    <div class="info-box">
+
+      ✔ 날짜별 업무 히스토리 조회 가능<br>
+      ✔ 블로그 및 플레이스 작업 관리<br>
+      ✔ 디자인 및 마케팅 업무 진행 체크<br>
+      ✔ 업무 상태 기록 및 확인 가능
+
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  © 2026 TIRETECH MARKETING SYSTEM
+</footer>
+
+<script>
+
+function searchDate(){
+
+  const date = document
+    .getElementById('dateInput')
+    .value
+    .trim();
+
+  if(!date){
+
+    alert('날짜를 입력해주세요.');
+
+    return;
+
+  }
+
+  window.location.href =
+    "result.html?date=" + encodeURIComponent(date);
+
+}
+
+</script>
+
+</body>
+</html>
+```
 
