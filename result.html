@@ -5,6 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RESULT</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
 body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;min-height:100vh;}
@@ -16,6 +19,32 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 .logo-text{font-size:18px;font-weight:900;color:#ff4fa0;text-decoration:none;} 
 
 .container{max-width:1200px;margin:auto;padding:80px 20px;}
+
+/* 📊 기간 선택 바 및 엑셀 버튼 스타일 */
+.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(0,0,0,.35); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.12); margin-bottom:24px; flex-wrap:wrap; }
+.report-range-bar label { font-size:15px; font-weight:700; color:#fff; }
+.report-range-bar span { color: rgba(255,255,255,0.6); }
+
+/* 📅 달력 아이콘 및 글자색 흰색 고정 */
+.report-range-bar input[type="date"] { 
+  background: rgba(255, 255, 255, 0.12); 
+  border: 1px solid rgba(255, 255, 255, 0.25); 
+  border-radius: 10px; 
+  padding: 10px 16px; 
+  color: #ffffff !important; 
+  font-size: 14px; 
+  outline: none; 
+  font-weight: 600;
+}
+.report-range-bar input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%) sepia(100%) srcset(100%);
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.excel-btn { background:#217346 !important; color:#fff; font-weight:800; transition: opacity 0.2s; }
+.excel-btn:hover { opacity: 0.9; }
+
 .top-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
 .top-btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 20px;border-radius:14px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;border:none;cursor:pointer;}
 .home-btn{background:#ff4fa0;}
@@ -24,12 +53,13 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 
 /* 결과 없음 전용 스타일 */
 .list-item.no-data { cursor: default; justify-content: center; color: #cfcfcf; }
-.date{font-size:15px;color:#cfcfcf;min-width:90px;}
+.date{font-size:15px;color:#cfcfcf;min-width:140px;} /* 요일 표시 영역 확보 */
 .status{font-size:14px;font-weight:800;padding:8px 14px;border-radius:999px;min-width:88px;text-align:center;}
 .done{background:#17381f;color:#74ff9f;}
 .progress{background:#4b3c13;color:#ffd95b;}
 .pending{background:#4b1f1f;color:#ff7b7b;}
 .title{font-size:18px;font-weight:700;line-height:1.5;flex:1;}
+
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;}
 .modal-box{width:100%;max-width:1000px;max-height:90vh;overflow:auto;background:#181818;border-radius:28px;padding:34px;}
 .close-btn{height:50px;padding:0 20px;border:none;border-radius:14px;background:#ff4fa0;color:#fff;font-weight:800;margin-bottom:24px;cursor:pointer;}
@@ -51,10 +81,10 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
   .modal-title{font-size:18px;}
   .modal-memo{font-size:14px;line-height:1.7;}
   .modal-images img{width:100%;}
+  .report-range-bar { gap:8px; padding:10px; }
+  .report-range-bar input[type="date"] { width:100%; }
 }
 .modal-box .status { display: inline-block; }
-
-/* 원본 이미지 확대 보기 서브 모달 */
 .sub-modal { position:fixed; inset:0; background:rgba(0,0,0,.95); display:none; align-items:center; justify-content:center; z-index:10000; cursor:zoom-out; }
 .sub-modal img { max-width:95%; max-height:95vh; border-radius:12px; object-fit:contain; }
 </style>
@@ -69,15 +99,23 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 </header>
 
 <div class="container">
-<div class="top-buttons">
-<a href="index.html" class="top-btn home-btn">홈으로 가기</a>
-<button class="top-btn active" onclick="setFilter('all',this)">전체</button>
-<button class="top-btn" onclick="setFilter('done',this)">완료</button>
-<button class="top-btn" onclick="setFilter('progress',this)">진행중</button>
-<button class="top-btn" onclick="setFilter('pending',this)">미완료</button>
-</div>
+  <div class="report-range-bar">
+    <label>리포트 기간 :</label>
+    <input type="date" id="start-date">
+    <span>~</span>
+    <input type="date" id="end-date">
+    <button class="top-btn excel-btn" onclick="downloadExcel()">📊 엑셀 다운로드</button>
+  </div>
 
-<div id="result">데이터를 불러오는 중입니다...</div>
+  <div class="top-buttons">
+    <a href="index.html" class="top-btn home-btn">홈으로 가기</a>
+    <button class="top-btn active" onclick="setFilter('all',this)">전체</button>
+    <button class="top-btn" onclick="setFilter('done',this)">완료</button>
+    <button class="top-btn" onclick="setFilter('progress',this)">진행중</button>
+    <button class="top-btn" onclick="setFilter('pending',this)">미완료</button>
+  </div>
+
+  <div id="result">데이터를 불러오는 중입니다...</div>
 </div>
 
 <div class="modal" id="modal">
@@ -100,6 +138,14 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 let allMatchedTasks=[];
 let currentFilter='all';
 
+// 📅 날짜 문자열을 받아서 요일을 자동으로 붙여주는 안전한 함수
+function getDayOfWeek(dateStr) {
+  if (!dateStr) return '';
+  const week = ['일', '월', '화', '수', '목', '금', '토'];
+  const dayNum = new Date(dateStr).getDay();
+  return isNaN(dayNum) ? '' : ` (${week[dayNum]})`;
+}
+
 async function getAllTasks(){
   const { data, error } = await supabaseClient
     .from('tasks')
@@ -109,6 +155,7 @@ async function getAllTasks(){
   return data || [];
 }
 
+// 홈페이지 연동 및 데이터 수집
 (async()=>{
   try {
     const params = new URLSearchParams(location.search);
@@ -126,10 +173,11 @@ async function getAllTasks(){
       if(mode === 'year' && task.date && task.date.startsWith(value)) match = true;
       if(!mode) match = true;
 
+      // 카테고리 필터 매칭 안정화 유도
       if(match && categoryParam) {
-        if(task.category !== categoryParam) {
-          match = false;
-        }
+        task.isUrlCategoryFiltered = (task.category === categoryParam);
+      } else {
+        task.isUrlCategoryFiltered = true;
       }
 
       if(match){
@@ -137,14 +185,17 @@ async function getAllTasks(){
       }
     });
 
-    // ✅ 패치: 같은 날짜 안에서도 최근 등록된 데이터가 위로 오도록 보장하고, 
-    // 혹시 전체 조회 모드일 경우에도 날짜(date)가 최신인 순서대로 완벽히 정렬합니다.
     allMatchedTasks.sort((a, b) => {
       if (b.date !== a.date) {
         return new Date(b.date) - new Date(a.date);
       }
       return b.id - a.id; 
     });
+
+    // 달력 시작일과 종료일을 오늘 날짜로 통일 세팅
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').value = todayStr;
+    document.getElementById('end-date').value = todayStr;
 
     renderList();
   } catch (error) {
@@ -155,19 +206,23 @@ async function getAllTasks(){
 
 function renderList(){
   const result = document.getElementById('result');
-  let filtered = allMatchedTasks;
+  // 연동이 깨지지 않게 필터를 안전하게 점검합니다
+  let filtered = allMatchedTasks.filter(task => task.isUrlCategoryFiltered !== false);
 
   if(currentFilter !== 'all'){
-    filtered = allMatchedTasks.filter(task => task.status === currentFilter);
+    filtered = filtered.filter(task => task.status === currentFilter);
   }
 
   let html = '';
 
   filtered.forEach((task)=>{
     const categoryTag = task.category ? `[${task.category}] ` : '';
+    // ✅ 화면에 나오는 리스트 날짜 옆에 요일 자동 추가
+    const dateWithDay = (task.date || '') + getDayOfWeek(task.date);
+
     html += `
     <div class="list-item" onclick="openModalById(${task.id})">
-      <div class="date">${task.date || ''}</div>
+      <div class="date">${dateWithDay}</div>
       <div class="status ${task.status}">
         ${task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료'}
       </div>
@@ -215,9 +270,11 @@ function openModalById(id){
   }
 
   const categoryTag = task.category ? `[${task.category}] ` : '';
+  // ✅ 팝업창(모달) 내부 날짜 옆에도 요일 자동 표시
+  const dateWithDay = (task.date || '') + getDayOfWeek(task.date);
 
   document.getElementById('modalContent').innerHTML = `
-    <div class="date" style="margin-bottom:8px;">${task.date || ''}</div>
+    <div class="date" style="margin-bottom:8px;">${dateWithDay}</div>
     <div class="modal-title"></div>
     <div class="status ${task.status}">
       ${task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료'}
@@ -242,6 +299,49 @@ function showImageInModal(imgUrl, event) {
 
 function closeSubModal() {
   document.getElementById('subModal').style.display = 'none';
+}
+
+// 📊 엑셀 다운로드 비즈니스 엔진 함수 (요일 및 연동 수리 완료)
+function downloadExcel() {
+  const start = document.getElementById('start-date').value;
+  const end = document.getElementById('end-date').value;
+
+  if(!start || !end) { alert('시작 날짜와 종료 날짜를 모두 선택해주세요.'); return; }
+  const startTime = new Date(start).getTime();
+  const endTime = new Date(end).getTime();
+  if(startTime > endTime) { alert('시작 날짜가 종료 날짜보다 클 수 없습니다.'); return; }
+
+  const excelTasks = allMatchedTasks.filter(task => {
+    if(!task.date) return false;
+    const taskTime = new Date(task.date).getTime();
+    return taskTime >= startTime && taskTime <= endTime;
+  });
+
+  if(excelTasks.length === 0) { alert('해당 기간에는 데이터가 존재하지 않습니다.'); return; }
+
+  const excelData = [
+    ['업무 날짜(요일)', '분류', '진행 상태', '업무 제목/내용', '상세 메모 사항']
+  ];
+
+  excelTasks.forEach(task => {
+    const statusText = task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료';
+    // ✅ 다운로드받는 엑셀 파일 내부 날짜 칸에도 요일이 선명하게 들어가도록 가공
+    const dateWithDay = (task.date || '') + getDayOfWeek(task.date);
+    excelData.push([
+      dateWithDay,
+      task.category || '일반',
+      statusText,
+      task.title || '',
+      task.memo || ''
+    ]);
+  });
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+  worksheet['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 40 }, { wch: 55 }];
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, '업무 기록');
+  XLSX.writeFile(workbook, `업무보고서_${start}_~_${end}.xlsx`);
 }
 </script>
 </body>
