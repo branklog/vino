@@ -4,133 +4,257 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RESULT</title>
+<title>타이어테크 관리자</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;}
-header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
-.header-left{display:flex;align-items:center;gap:18px;}
-.company-logo{height:32px;}
-.logo-text{font-size:22px;font-weight:900;color:#ff4fa0;text-decoration:none;}
-.container{max-width:1200px;margin:auto;padding:80px 20px;}
-.top-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
-.top-btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 20px;border-radius:14px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;border:none;cursor:pointer;}
-.home-btn{background:#ff4fa0;}
-.active{background:#ff4fa0;}
-.list-item{display:flex;align-items:center;gap:18px;padding:20px 24px;background:rgba(255,255,255,.08);border-radius:18px;margin-bottom:14px;cursor:pointer;}
-.date{font-size:15px;color:#cfcfcf;min-width:90px;}
-.status{font-size:14px;font-weight:800;padding:8px 14px;border-radius:999px;min-width:88px;text-align:center;}
-.done{background:#17381f;color:#74ff9f;}
-.progress{background:#4b3c13;color:#ffd95b;}
-.pending{background:#4b1f1f;color:#ff7b7b;}
-.title{font-size:18px;font-weight:700;line-height:1.5;flex:1;}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;}
-.modal-box{width:100%;max-width:1000px;max-height:90vh;overflow:auto;background:#181818;border-radius:28px;padding:34px;}
-.close-btn{height:50px;padding:0 20px;border:none;border-radius:14px;background:#ff4fa0;color:#fff;font-weight:800;margin-bottom:24px;cursor:pointer;}
-.modal-title{font-size:26px;font-weight:900;line-height:1.5;margin-bottom:20px;}
-.modal-memo{font-size:17px;line-height:2;margin-top:20px;white-space:pre-wrap;}
-.modal-images{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;}
-.modal-images img{
-width:220px;
-border-radius:18px;
-cursor:pointer;
-transition:.2s;
-}
 
-.modal-images img:active{
-transform:scale(.97);
-}
-  @media(max-width:768px){
+body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;}
 
 header{
-height:64px;
-padding:0 14px;
+height:90px;
+background:#fff;
+display:flex;
+align-items:center;
+padding:0 40px;
 }
 
-.company-logo{
-height:18px !important;
+.header-left{display:flex;align-items:center;gap:18px;}
+
+.company-logo{height:24px;}
+
+.logo-text{
+font-size:18px;
+font-weight:900;
+color:#ff4fa0;
+text-decoration:none;
 }
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:80px 20px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+padding:40px;
+border-radius:24px;
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(10px);
+}
+
+.home-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+height:54px;
+padding:0 24px;
+border-radius:14px;
+background:#ff4fa0;
+color:#fff;
+text-decoration:none;
+font-weight:800;
+margin-bottom:24px;
+}
+
+.group{margin-bottom:22px;}
+
+label{
+display:block;
+margin-bottom:10px;
+font-weight:700;
+}
+
+input,
+textarea,
+select{
+width:100%;
+background:rgba(0,0,0,.35);
+border:1px solid rgba(255,255,255,.08);
+border-radius:14px;
+padding:18px;
+color:#fff;
+font-size:15px;
+outline:none;
+}
+
+select option{
+background:#1b1b1b;
+color:#fff;
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+.task{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:18px;
+margin-bottom:18px;
+}
+
+.preview-list{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.preview-wrap{
+position:relative;
+width:90px;
+height:90px;
+}
+
+.preview-image{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:12px;
+border:1px solid rgba(255,255,255,.08);
+}
+
+.delete-image{
+position:absolute;
+top:-8px;
+right:-8px;
+width:24px;
+height:24px;
+border:none;
+border-radius:50%;
+background:#ff3b3b;
+color:#fff;
+font-size:13px;
+font-weight:900;
+cursor:pointer;
+}
+
+.row{
+display:flex;
+gap:12px;
+margin-bottom:14px;
+}
+
+.main-btn{
+height:58px;
+border:none;
+border-radius:14px;
+background:#ff4fa0;
+color:#fff;
+font-weight:800;
+padding:0 24px;
+cursor:pointer;
+}
+
+.save-btn{
+width:100%;
+margin-top:14px;
+}
+
+.edit-list{
+margin-top:40px;
+}
+
+.edit-item{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:18px;
+margin-bottom:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+}
+
+.edit-buttons{
+display:flex;
+gap:10px;
+}
+
+.small-btn{
+height:42px;
+padding:0 18px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+}
+
+.edit-btn{background:#2d7dff;color:#fff;}
+.delete-btn{background:#ff3b3b;color:#fff;}
+
+@media(max-width:768px){
+.row{flex-direction:column;}
+
+.edit-item{
+flex-direction:column;
+align-items:flex-start;
+}
+
+header{padding:0 20px;}
 
 .logo-text{
 font-size:14px !important;
 }
 
-.container{
-padding:50px 14px;
+.company-logo{
+height:14px !important;
 }
 
-.top-btn{
-height:42px;
-font-size:12px;
-padding:0 12px;
+.logo-text{
+font-size:12px !important;
 }
-
-.list-item{
-padding:14px;
-gap:10px;
-flex-direction:column;
-align-items:flex-start;
-}
-
-.title{
-font-size:14px;
-line-height:1.4;
-}
-
-.modal-title{
-font-size:18px;
-}
-
-.modal-memo{
-font-size:14px;
-line-height:1.7;
-}
-
-.modal-images img{
-width:100%;
-}
-
-}
+}  
 </style>
 </head>
 <body>
 
 <header>
+
 <div class="header-left">
+
 <img src="tiretech-logo.png" class="company-logo">
-<a href="index.html" class="logo-text">WORKBOARD</a>
+
+<a href="index.html" class="logo-text">
+WORKBOARD
+</a>
+
 </div>
+
 </header>
 
 <div class="container">
 
-<div class="top-buttons">
-<a href="index.html" class="top-btn home-btn">홈으로 가기</a>
-<button class="top-btn active" onclick="setFilter('all',this)">전체</button>
-<button class="top-btn" onclick="setFilter('done',this)">완료</button>
-<button class="top-btn" onclick="setFilter('progress',this)">진행중</button>
-<button class="top-btn" onclick="setFilter('pending',this)">미완료</button>
+<a href="index.html" class="home-btn">
+홈으로 가기
+</a>
+
+<div class="card">
+
+<div class="group">
+<label>업무 날짜</label>
+<input type="date" id="date">
 </div>
 
-<div id="result"></div>
+<div id="tasks"></div>
+
+<button class="main-btn" onclick="addTask()">
++ 업무 추가
+</button>
+
+<button class="main-btn save-btn" onclick="saveAll()">
+업무 저장
+</button>
 
 </div>
 
-<!-- 기존 기본 모달 (유지) -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <button class="close-btn" onclick="closeModal()">닫기</button>
-    <div id="modalContent"></div>
-  </div>
+<div class="edit-list" id="editList"></div>
+
 </div>
 
-<!-- 🆕 이미지 크게 보기 전용 모달 (추가) -->
-<div class="modal" id="imageModal" onclick="closeImageModal()" style="display:none; background:rgba(0,0,0,.93); z-index:10000;">
-  <div style="max-width:90%; max-height:90vh; display:flex; flex-direction:column; align-items:center; gap:16px;" onclick="event.stopPropagation();">
-    <img id="expandedImage" src="" style="max-width:100%; max-height:75vh; border-radius:18px; object-fit:contain; box-shadow:0 10px 30px rgba(0,0,0,.5);">
-    <button class="close-btn" style="margin-bottom:0;" onclick="closeImageModal()">확대 닫기</button>
-  </div>
-</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -146,10 +270,15 @@ supabaseUrl,
 supabaseKey
 );
 
-let allMatchedTasks=[];
-let currentFilter='all';
+async function saveTask(task){
 
-async function getAllTasks(){
+await supabaseClient
+.from('tasks')
+.insert([task]);
+
+}
+
+async function getTasks(){
 
 const { data,error } = await supabaseClient
 .from('tasks')
@@ -160,139 +289,307 @@ return data || [];
 
 }
 
+async function deleteTask(id){
+
+await supabaseClient
+.from('tasks')
+.delete()
+.eq('id',id);
+
+loadTaskList();
+
+}
+
+async function updateTask(id,data){
+
+await supabaseClient
+.from('tasks')
+.update(data)
+.eq('id',id);
+
+loadTaskList();
+
+}
 
 
-(async()=>{
+function addTask(editData=null){
 
-const params=new URLSearchParams(location.search);
+const div=document.createElement('div');
 
-const mode=params.get('mode');
+div.className='task';
 
-const value=params.get('value');
+div.innerHTML=`
 
-const tasks=await getAllTasks();
+<div class="group">
+<label>업무내용</label>
+<input type="text" class="title" value="${editData?.title||''}">
+</div>
+
+<div class="row">
+
+<select class="status">
+
+<option value="done">완료</option>
+<option value="progress">진행중</option>
+<option value="pending">미완료</option>
+
+</select>
+
+
+<select class="category">
+<option>마케팅</option>
+<option>블로그</option>
+<option>플레이스</option>
+<option>광고</option>
+<option>디자인</option>
+</select>
+
+
+</div>
+
+<div class="group">
+<label>메모</label>
+<textarea class="memo">${editData?.memo||''}</textarea>
+</div>
+
+<div class="group">
+
+<label>이미지 업로드</label>
+
+<input
+type="file"
+class="images"
+multiple
+accept="image/*"
+>
+
+<div class="preview-list"></div>
+
+</div>
+
+`;
+
+document.getElementById('tasks').appendChild(div);
+
+if(editData){
+div.dataset.editId=editData.id;
+}
+
+setupImageUpload(div);
+
+if(editData){
+div.querySelector('.status').value=editData.status;
+}
+
+}
+
+function setupImageUpload(taskElement){
+
+const input=taskElement.querySelector('.images');
+
+const preview=taskElement.querySelector('.preview-list');
+
+taskElement.imageFiles=[];
+
+input.addEventListener('change',function(e){
+
+const files=Array.from(e.target.files);
+
+files.forEach(file=>{
+
+taskElement.imageFiles.push(file);
+
+const reader=new FileReader();
+
+reader.onload=function(ev){
+
+const wrap=document.createElement('div');
+
+wrap.className='preview-wrap';
+
+const img=document.createElement('img');
+
+img.src=ev.target.result;
+
+img.className='preview-image';
+
+const del=document.createElement('button');
+
+del.className='delete-image';
+
+del.innerText='✕';
+
+del.onclick=function(){
+
+const index=Array.from(preview.children).indexOf(wrap);
+
+taskElement.imageFiles.splice(index,1);
+
+wrap.remove();
+
+}
+
+wrap.appendChild(img);
+wrap.appendChild(del);
+
+preview.appendChild(wrap);
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+input.value='';
+
+});
+
+}
+
+addTask();
+
+async function saveAll(){
+
+const date=document.getElementById('date').value;
+
+if(!date){
+alert('날짜를 선택해주세요.');
+return;
+}
+
+const tasks=document.querySelectorAll('.task');
+
+for(const task of tasks){
+
+const images=[];
+
+for(const file of task.imageFiles){
+
+images.push(await toBase64(file));
+
+}
+
+const data={
+
+date,
+title:task.querySelector('.title').value,
+status:task.querySelector('.status').value,
+category:task.querySelector('.category')?.value || '디자인',
+memo:task.querySelector('.memo').value,
+images
+
+};
+
+const editId=task.dataset.editId;
+
+if(editId){
+data.id=parseInt(editId);
+await updateTask(parseInt(editId),data);
+}
+else{
+await saveTask(data);
+}
+
+}
+
+alert('업무 저장 완료');
+
+document.getElementById('tasks').innerHTML='';
+
+addTask();
+
+loadTaskList();
+
+}
+
+async function loadTaskList(){
+
+const list=document.getElementById('editList');
+
+const tasks=await getTasks();
+
+list.innerHTML='';
 
 tasks.reverse().forEach(task=>{
 
-let match=true;
+const div=document.createElement('div');
 
-if(mode==='day'&&task.date===value)match=true;
-if(mode==='month'&&task.date.startsWith(value))match=true;
-if(mode==='year'&&task.date.startsWith(value))match=true;
+div.className='edit-item';
 
-if(match){
-allMatchedTasks.push(task);
-}
+div.innerHTML=`
 
-});
+<div>
 
-renderList();
-
-})();
-
-function renderList(){
-
-const result=document.getElementById('result');
-
-let filtered=allMatchedTasks;
-
-if(currentFilter!=='all'){
-filtered=allMatchedTasks.filter(task=>task.status===currentFilter);
-}
-
-let html='';
-
-filtered.forEach(task=>{
-
-html+=`
-<div class="list-item" onclick='openModal(${JSON.stringify(task)})'>
-
-<div class="date">${task.date}</div>
-
-<div class="status ${task.status}">
-${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
+<div style="font-size:14px;color:#aaa;margin-bottom:8px;">
+${task.date}
 </div>
 
-<div class="title">${task.title}</div>
+<div style="font-size:18px;font-weight:800;">
+${task.title}
+</div>
 
 </div>
+
+<div class="edit-buttons">
+
+<button
+class="small-btn edit-btn"
+onclick='startEdit(${JSON.stringify(task)})'
+>
+수정
+</button>
+
+<button
+class="small-btn delete-btn"
+onclick="deleteTask(${task.id})"
+>
+삭제
+</button>
+
+</div>
+
 `;
 
+list.appendChild(div);
+
 });
 
-if(!html){
-html='<div class="list-item">조회 결과가 없습니다.</div>';
 }
 
-result.innerHTML=html;
+function startEdit(task){
 
-}
+document.getElementById('tasks').innerHTML='';
 
-function setFilter(type,btn){
+document.getElementById('date').value=task.date;
 
-currentFilter=type;
+addTask(task);
 
-document.querySelectorAll('.top-btn').forEach(el=>{
-el.classList.remove('active');
+window.scrollTo({
+top:0,
+behavior:'smooth'
 });
 
-btn.classList.add('active');
+}
 
-renderList();
+function toBase64(file){
+
+return new Promise((resolve,reject)=>{
+
+const reader=new FileReader();
+
+reader.onload=()=>resolve(reader.result);
+
+reader.onerror=reject;
+
+reader.readAsDataURL(file);
+
+});
 
 }
 
-function openModal(task){
-  document.getElementById('modal').style.display = 'flex';
-  let imgs = '';
-
-  // 💡 데이터가 가끔 문자열 상태의 배열('["url1", "url2"]')로 들어오는 현상 방어
-  let imageList = task.images;
-  if (typeof imageList === 'string') {
-    try { imageList = JSON.parse(imageList); } catch(e) { imageList = []; }
-  }
-
-  // 이미지 배열이 존재할 때 렌더링
-  if (imageList && imageList.length) {
-    imgs += '<div class="modal-images">';
-    imageList.forEach(img => {
-      if(img) { // 유효한 주소인 경우만 생성
-        imgs += `<img src="${img}" onclick="showImageInModal('${img}')" alt="첨부이미지">`;
-      }
-    });
-    imgs += '</div>';
-  }
-
-  document.getElementById('modalContent').innerHTML = `
-    <div class="date">${task.date}</div>
-    <div class="modal-title">${task.title}</div>
-    <div class="status ${task.status}">
-      ${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
-    </div>
-    <div class="modal-memo">${task.memo||''}</div>
-    ${imgs}
-  `;
-}
-
-// 기본 모달 닫기
-function closeModal(){
-  document.getElementById('modal').style.display = 'none';
-}
-
-// 🆕 함수 추가: 이미지를 크게 띄우는 기능
-function showImageInModal(imgUrl) {
-  document.getElementById('expandedImage').src = imgUrl;
-  document.getElementById('imageModal').style.display = 'flex';
-}
-
-// 🆕 함수 추가: 큰 이미지 모달을 닫는 기능
-function closeImageModal() {
-  document.getElementById('imageModal').style.display = 'none';
-  document.getElementById('expandedImage').src = '';
-}
-document.getElementById('modal').style.display='none';
-}
+loadTaskList();
 
 </script>
+
 </body>
 </html>
