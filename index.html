@@ -1,14 +1,13 @@
-# index.html
-
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>타이어테크 효자점 마케팅 관리 시스템</title>
 
 <style>
+
+
 *{
   margin:0;
   padding:0;
@@ -17,86 +16,106 @@
 }
 
 body{
-  background:#f5f5f7;
+  background:#111;
   color:#fff;
-  overflow-x:hidden;
 }
 
 header{
   width:100%;
-  background:#ffffff;
-  padding:20px 40px;
+  height:90px;
+  background:#fff;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  border-bottom:1px solid #ececec;
+  padding:0 50px;
 }
 
-.logo{
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.company-logo{
+  height:54px;
+}
+
+.logo-text{
   font-size:34px;
   font-weight:900;
-  color:#7d1aa8;
+  color:#111;
+  text-decoration:none;
 }
 
-.logo span{
-  color:#ff4fa0;
+.logo-text span{
+  color:#d60000;
 }
 
-.tire-logo{
-  height:42px;
+@media(max-width:768px){
+
+  header{
+    padding:0 20px;
+  }
+
+  .company-logo{
+    height:44px;
+  }
+
+  .logo-text{
+    font-size:26px;
+  }
+
+}
+
+
+body{
+  overflow-x:hidden;
 }
 
 .hero{
+
   width:100%;
   min-height:calc(100vh - 90px);
-  background:linear-gradient(135deg,#7b179e 0%,#5d1390 45%,#3712c5 100%);
-  position:relative;
-  overflow:hidden;
-}
 
-.hero::before{
-  content:'';
-  position:absolute;
-  width:1200px;
-  height:1200px;
-  right:-350px;
-  top:-250px;
-  background:repeating-linear-gradient(45deg,rgba(255,255,255,0.08),rgba(255,255,255,0.08) 12px,transparent 12px,transparent 24px);
-  transform:rotate(15deg);
+  background:
+  linear-gradient(
+    rgba(0,0,0,0.62),
+    rgba(0,0,0,0.62)
+  ),
+  url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=1920&auto=format&fit=crop');
+
+  background-size:cover;
+  background-position:center;
+
 }
 
 .content{
   max-width:1200px;
   margin:auto;
-  padding:130px 20px;
-  position:relative;
-  z-index:2;
+  padding:140px 20px;
 }
 
 .sub-text{
   font-size:22px;
-  font-weight:600;
-  margin-bottom:10px;
-  color:#f1dfff;
+  margin-bottom:18px;
 }
 
 .main-title{
-  font-size:58px;
-  line-height:1.3;
+  font-size:68px;
+  line-height:1.25;
   font-weight:900;
-  margin-bottom:26px;
+  margin-bottom:28px;
 }
 
 .main-title span{
-  color:#ff71b6;
+  color:#ff2a2a;
 }
 
 .desc{
-  font-size:19px;
+  font-size:20px;
   line-height:1.9;
-  color:#f1dfff;
-  margin-bottom:45px;
+  color:#f1f1f1;
   max-width:850px;
+  margin-bottom:48px;
 }
 
 .search-wrap{
@@ -107,69 +126,38 @@ header{
 
 .search-wrap input{
   flex:1;
-  height:70px;
+  height:72px;
   border:none;
-  border-radius:18px;
+  border-radius:16px;
   padding:0 24px;
   font-size:17px;
-  outline:none;
-  background:rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.14);
   color:#fff;
+  outline:none;
 }
 
-.search-wrap input::placeholder{
-  color:rgba(255,255,255,0.7);
+.search-wrap input::-webkit-calendar-picker-indicator{
+  filter:invert(1);
 }
 
 .search-wrap button{
-  width:190px;
+  width:220px;
   border:none;
-  border-radius:18px;
-  background:#ff4fa0;
+  border-radius:16px;
+  background:#d60000;
   color:#fff;
   font-size:17px;
   font-weight:800;
   cursor:pointer;
 }
 
-.info-box{
-  margin-top:42px;
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-.info-card{
-  background:rgba(255,255,255,0.12);
-  padding:18px 22px;
-  border-radius:18px;
-  font-size:14px;
-}
-
-footer{
-  position:absolute;
-  bottom:20px;
-  width:100%;
-  text-align:center;
-  color:rgba(255,255,255,0.6);
-  font-size:13px;
-}
-
 @media(max-width:768px){
-
-  header{
-    padding:20px;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:18px;
-  }
-
   .content{
     padding:90px 20px;
   }
 
   .main-title{
-    font-size:40px;
+    font-size:42px;
   }
 
   .desc{
@@ -185,42 +173,48 @@ footer{
     height:68px;
   }
 }
+
 </style>
 </head>
 <body>
 
+
 <header>
 
-  <div class="logo">
-    WORK<span>BOARD</span>
+  <div class="header-left">
+
+    <img
+      src="tiretech-logo.png"
+      alt="타이어테크 로고"
+      class="company-logo"
+    >
+
+    <a href="index.html" class="logo-text">
+      WORK<span>BOARD</span>
+    </a>
+
   </div>
 
-  <img
-    src="tiretech-logo.png"
-    alt="타이어테크 로고"
-    class="tire-logo"
-  >
-
 </header>
+
 
 <section class="hero">
 
   <div class="content">
 
     <div class="sub-text">
-      타이어테크 효자점
+      타이어테크 효자점 마케팅 관리 시스템
     </div>
 
     <div class="main-title">
-      <span>마케팅 관리 시스템</span>
+      <span>날짜별 업무 조회 시스템</span><br>
+      실시간 업무 진행 현황 관리
     </div>
 
     <div class="desc">
-      날짜를 검색하면 해당 날짜의
-      블로그 관리, 플레이스 운영,
-      광고 셋팅, 스토어 운영 및
-      디자인 업무 진행 내역을
-      한눈에 확인할 수 있습니다.
+      날짜를 선택하면 해당 날짜의
+      블로그 · 플레이스 · 광고 · 마케팅
+      업무 진행 현황을 확인할 수 있습니다.
     </div>
 
     <div class="search-wrap">
@@ -236,35 +230,12 @@ footer{
 
     </div>
 
-    <div class="info-box">
-
-      <div class="info-card">
-        ✔ 업무 진행 및 일정 관리
-      </div>
-
-      <div class="info-card">
-        ✔ 블로그 · 플레이스 운영 관리
-      </div>
-
-      <div class="info-card">
-        ✔ 광고 셋팅 및 스토어 운영
-      </div>
-
-      <div class="info-card">
-        ✔ 디자인 작업 및 요청 기록
-      </div>
-
-    </div>
-
   </div>
-
-  <footer>
-    © 2026 TIRETECH MARKETING SYSTEM
-  </footer>
 
 </section>
 
 <script>
+
 function searchDate(){
 
   const date = document
@@ -273,399 +244,16 @@ function searchDate(){
     .trim();
 
   if(!date){
-    alert('날짜를 입력해주세요.');
+    alert('날짜를 선택해주세요.');
     return;
   }
 
   window.location.href =
-    'result.html?date=' + encodeURIComponent(date);
+  'result.html?date=' + encodeURIComponent(date);
+
 }
+
 </script>
 
 </body>
 </html>
-```
-
----
-
-# admin.html
-
-```html
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>업무 등록</title>
-
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Pretendard', sans-serif;
-}
-
-body{
-  background:#f5f5f7;
-  padding:40px 20px;
-}
-
-.container{
-  max-width:900px;
-  margin:auto;
-}
-
-.card{
-  background:#fff;
-  border-radius:24px;
-  padding:35px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
-}
-
-h1{
-  margin-bottom:30px;
-  color:#7d1aa8;
-}
-
-.input-group{
-  margin-bottom:20px;
-}
-
-label{
-  display:block;
-  margin-bottom:10px;
-  font-weight:700;
-}
-
-input,
-select,
-textarea{
-  width:100%;
-  padding:16px;
-  border:1px solid #ddd;
-  border-radius:14px;
-  font-size:15px;
-}
-
-textarea{
-  min-height:120px;
-  resize:vertical;
-}
-
-button{
-  width:100%;
-  height:60px;
-  border:none;
-  border-radius:16px;
-  background:#7d1aa8;
-  color:#fff;
-  font-size:17px;
-  font-weight:800;
-  cursor:pointer;
-}
-</style>
-</head>
-<body>
-
-<div class="container">
-
-  <div class="card">
-
-    <h1>업무 등록</h1>
-
-    <div class="input-group">
-      <label>날짜</label>
-      <input type="date" id="date">
-    </div>
-
-    <div class="input-group">
-      <label>카테고리</label>
-      <select id="category">
-        <option>블로그 관리</option>
-        <option>플레이스 운영</option>
-        <option>광고 셋팅</option>
-        <option>스토어 운영</option>
-        <option>디자인 업무</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label>업무명</label>
-      <input type="text" id="title">
-    </div>
-
-    <div class="input-group">
-      <label>상태</label>
-      <select id="status">
-        <option value="done">완료</option>
-        <option value="working">진행중</option>
-        <option value="waiting">대기</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label>메모</label>
-      <textarea id="memo"></textarea>
-    </div>
-
-    <button onclick="saveWork()">
-      업무 저장
-    </button>
-
-  </div>
-
-</div>
-
-<script>
-function saveWork(){
-
-  const date = document.getElementById('date').value;
-  const category = document.getElementById('category').value;
-  const title = document.getElementById('title').value;
-  const status = document.getElementById('status').value;
-  const memo = document.getElementById('memo').value;
-
-  if(!date || !title){
-    alert('날짜와 업무명을 입력해주세요.');
-    return;
-  }
-
-  let data = JSON.parse(localStorage.getItem('workData')) || {};
-
-  if(!data[date]){
-    data[date] = [];
-  }
-
-  data[date].push({
-    category,
-    title,
-    status,
-    memo
-  });
-
-  localStorage.setItem('workData', JSON.stringify(data));
-
-  alert('업무가 저장되었습니다.');
-
-  document.getElementById('title').value = '';
-  document.getElementById('memo').value = '';
-}
-</script>
-
-</body>
-</html>
-```
-
----
-
-# result.html
-
-```html
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>업무 조회 결과</title>
-
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Pretendard', sans-serif;
-}
-
-body{
-  background:#f5f5f7;
-}
-
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:70px 20px;
-}
-
-.title{
-  margin-bottom:40px;
-}
-
-.title h1{
-  font-size:42px;
-  margin-bottom:12px;
-}
-
-.card{
-  background:#fff;
-  border-radius:24px;
-  padding:30px;
-  margin-bottom:24px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
-}
-
-.card h2{
-  margin-bottom:20px;
-}
-
-.task{
-  padding:18px 0;
-  border-bottom:1px solid #eee;
-}
-
-.task:last-child{
-  border-bottom:none;
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.badge{
-  padding:8px 14px;
-  border-radius:30px;
-  font-size:13px;
-  font-weight:700;
-}
-
-.done{
-  background:#d4edda;
-  color:#155724;
-}
-
-.working{
-  background:#d1ecf1;
-  color:#0c5460;
-}
-
-.waiting{
-  background:#fff3cd;
-  color:#856404;
-}
-
-.memo{
-  margin-top:14px;
-  background:#faf7ff;
-  padding:16px;
-  border-radius:16px;
-  line-height:1.8;
-}
-
-.empty{
-  background:#fff;
-  padding:60px;
-  border-radius:24px;
-  text-align:center;
-}
-</style>
-</head>
-<body>
-
-<div class="container">
-
-  <div class="title">
-    <h1 id="dateTitle"></h1>
-  </div>
-
-  <div id="result"></div>
-
-</div>
-
-<script>
-const params = new URLSearchParams(window.location.search);
-const date = params.get('date');
-
-document.getElementById('dateTitle').innerText =
-date + ' 업무 조회 결과';
-
-const data = JSON.parse(localStorage.getItem('workData')) || {};
-
-const result = document.getElementById('result');
-
-if(!data[date]){
-
-  result.innerHTML = `
-    <div class="empty">
-      해당 날짜의 업무가 없습니다.
-    </div>
-  `;
-
-}else{
-
-  const grouped = {};
-
-  data[date].forEach(item => {
-
-    if(!grouped[item.category]){
-      grouped[item.category] = [];
-    }
-
-    grouped[item.category].push(item);
-
-  });
-
-  let html = '';
-
-  for(const category in grouped){
-
-    html += `
-      <div class="card">
-        <h2>${category}</h2>
-    `;
-
-    grouped[category].forEach(item => {
-
-      html += `
-        <div class="task">
-
-          <div class="top">
-            <div>${item.title}</div>
-            <div class="badge ${item.status}">
-              ${
-                item.status === 'done'
-                ? '완료'
-                : item.status === 'working'
-                ? '진행중'
-                : '대기'
-              }
-            </div>
-          </div>
-
-          ${
-            item.memo
-            ? `<div class="memo">${item.memo}</div>`
-            : ''
-          }
-
-        </div>
-      `;
-
-    });
-
-    html += `</div>`;
-
-  }
-
-  result.innerHTML = html;
-}
-</script>
-
-</body>
-</html>
-```
-
-# 사용 방법
-
-1. `index.html`
-   → 메인 검색 페이지
-
-2. `admin.html`
-   → 업무 입력 페이지
-
-3. `result.html`
-   → 업무 결과 출력 페이지
-
-4. `tiretech-logo.png`
-   → 깃허브에 같이 업로드

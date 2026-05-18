@@ -6,6 +6,8 @@
 <title>업무 조회 결과</title>
 
 <style>
+
+
 *{
   margin:0;
   padding:0;
@@ -14,178 +16,315 @@
 }
 
 body{
-  background:#f5f5f7;
+  background:#111;
+  color:#fff;
 }
+
+header{
+  width:100%;
+  height:90px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  padding:0 50px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.company-logo{
+  height:54px;
+}
+
+.logo-text{
+  font-size:34px;
+  font-weight:900;
+  color:#111;
+  text-decoration:none;
+}
+
+.logo-text span{
+  color:#d60000;
+}
+
+@media(max-width:768px){
+
+  header{
+    padding:0 20px;
+  }
+
+  .company-logo{
+    height:44px;
+  }
+
+  .logo-text{
+    font-size:26px;
+  }
+
+}
+
 
 .container{
-  max-width:1100px;
+  max-width:1200px;
   margin:auto;
-  padding:70px 20px;
+  padding:80px 20px;
 }
 
-.title{
+.page-title{
+  font-size:54px;
+  font-weight:900;
+  margin-bottom:30px;
+}
+
+.page-title span{
+  color:#ff2a2a;
+}
+
+.home-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:54px;
+  padding:0 26px;
+  border-radius:14px;
+  background:#d60000;
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
   margin-bottom:40px;
 }
 
-.title h1{
-  font-size:42px;
-  margin-bottom:12px;
-}
-
 .card{
-  background:#fff;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
   border-radius:24px;
   padding:30px;
   margin-bottom:24px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
-}
-
-.card h2{
-  margin-bottom:20px;
-}
-
-.task{
-  padding:18px 0;
-  border-bottom:1px solid #eee;
-}
-
-.task:last-child{
-  border-bottom:none;
 }
 
 .top{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:20px;
+}
+
+.left{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.company{
+  font-size:24px;
+  font-weight:900;
+}
+
+.category{
+  color:#bbb;
+  font-size:14px;
+}
+
+.work-title{
+  color:#fff;
+  font-size:18px;
 }
 
 .badge{
-  padding:8px 14px;
+  padding:9px 16px;
   border-radius:30px;
   font-size:13px;
-  font-weight:700;
+  font-weight:800;
+}
+
+.progress{
+  background:#4b3c13;
+  color:#ffd95b;
 }
 
 .done{
-  background:#d4edda;
-  color:#155724;
-}
-
-.working{
-  background:#d1ecf1;
-  color:#0c5460;
-}
-
-.waiting{
-  background:#fff3cd;
-  color:#856404;
+  background:#17381f;
+  color:#74ff9f;
 }
 
 .memo{
-  margin-top:14px;
-  background:#faf7ff;
-  padding:16px;
+  margin-top:18px;
+  background:rgba(255,255,255,0.06);
   border-radius:16px;
+  padding:18px;
   line-height:1.8;
+  color:#ddd;
+}
+
+.image-list{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.work-image{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
 }
 
 .empty{
-  background:#fff;
-  padding:60px;
+  background:rgba(255,255,255,0.08);
   border-radius:24px;
+  padding:70px;
   text-align:center;
 }
+
 </style>
 </head>
 <body>
 
+
+<header>
+
+  <div class="header-left">
+
+    <img
+      src="tiretech-logo.png"
+      alt="타이어테크 로고"
+      class="company-logo"
+    >
+
+    <a href="index.html" class="logo-text">
+      WORK<span>BOARD</span>
+    </a>
+
+  </div>
+
+</header>
+
+
 <div class="container">
 
-  <div class="title">
-    <h1 id="dateTitle"></h1>
+  <div class="page-title">
+    <span id="dateTitle"></span>
   </div>
+
+  <a href="index.html" class="home-btn">
+    홈으로 가기
+  </a>
 
   <div id="result"></div>
 
 </div>
 
 <script>
+
 const params = new URLSearchParams(window.location.search);
+
 const date = params.get('date');
 
 document.getElementById('dateTitle').innerText =
-date + ' 업무 조회 결과';
+date + ' 업무내역';
 
-const data = JSON.parse(localStorage.getItem('workData')) || {};
+const data =
+JSON.parse(localStorage.getItem('tiretechWorkData')) || {};
 
-const result = document.getElementById('result');
+const result =
+document.getElementById('result');
 
 if(!data[date]){
 
   result.innerHTML = `
     <div class="empty">
-      해당 날짜의 업무가 없습니다.
+      해당 날짜의 업무내역이 없습니다.
     </div>
   `;
 
 }else{
 
-  const grouped = {};
+  let html = '';
 
   data[date].forEach(item => {
 
-    if(!grouped[item.category]){
-      grouped[item.category] = [];
+    let imagesHtml = '';
+
+    if(item.images && item.images.length){
+
+      imagesHtml += '<div class="image-list">';
+
+      item.images.forEach(img => {
+
+        imagesHtml += `
+          <img
+            src="${img}"
+            class="work-image"
+          >
+        `;
+
+      });
+
+      imagesHtml += '</div>';
+
     }
 
-    grouped[item.category].push(item);
+    html += `
+
+      <div class="card">
+
+        <div class="top">
+
+          <div class="left">
+
+            <div class="company">
+              ${item.company}
+            </div>
+
+            <div class="category">
+              ${item.category}
+            </div>
+
+            <div class="work-title">
+              ${item.title}
+            </div>
+
+          </div>
+
+          <div class="badge ${item.status}">
+
+            ${
+
+              item.status === 'progress'
+              ? '진행중'
+              : '완료'
+
+            }
+
+          </div>
+
+        </div>
+
+        ${
+
+          item.memo
+          ? `<div class="memo">${item.memo}</div>`
+          : ''
+
+        }
+
+        ${imagesHtml}
+
+      </div>
+
+    `;
 
   });
 
-  let html = '';
-
-  for(const category in grouped){
-
-    html += `
-      <div class="card">
-        <h2>${category}</h2>
-    `;
-
-    grouped[category].forEach(item => {
-
-      html += `
-        <div class="task">
-
-          <div class="top">
-            <div>${item.title}</div>
-            <div class="badge ${item.status}">
-              ${
-                item.status === 'done'
-                ? '완료'
-                : item.status === 'working'
-                ? '진행중'
-                : '대기'
-              }
-            </div>
-          </div>
-
-          ${
-            item.memo
-            ? `<div class="memo">${item.memo}</div>`
-            : ''
-          }
-
-        </div>
-      `;
-
-    });
-
-    html += `</div>`;
-
-  }
-
   result.innerHTML = html;
+
 }
+
 </script>
 
 </body>
