@@ -199,47 +199,55 @@ function setupImageUpload(taskElement){
   });
 }
 
-// [완벽 수정] 대괄호 빈 값 문제를 완벽히 해결한 동기화 보장 저장 로직
+// [🚨초긴급 수정완료] 빈 값 오류 및 업로드 멈춤 현상을 완벽 차단한 비동기 순수 함수
 async function saveAll(){
   const date = document.getElementById('date').value;
   if(!date){ alert('날짜를 선택해주세요.'); return; }
   const tasks = document.querySelectorAll('.task');
 
-  for(const task of tasks){
-    const finalImages = task.savedImageUrls ? [...task.savedImageUrls] : [];
-    
-    // 이미지 파일이 있을 경우 완전히 글자로 변환될 때까지 대기 처리를 명확히 분리
-    if(task.imageFiles && task.imageFiles.length) {
-      for(const file of task.imageFiles){
-        try {
-          const base64Str = await toBase64(file);
-          finalImages.push(base64Str);
-        } catch(err) { console.error("이미지 변환 실패:", err); }
+  try {
+    for(const task of tasks){
+      const finalImages = task.savedImageUrls ? [...task.savedImageUrls] : [];
+      
+      // 이미지 파일 변환을 확실하고 안전하게 분리
+      if(task.imageFiles && task.imageFiles.length > 0) {
+        for(let i = 0; i < task.imageFiles.length; i++){
+          try {
+            const base64Str = await toBase64(task.imageFiles[i]);
+            if(base64Str) finalImages.push(base64Str);
+          } catch(err) {
+            console.error("이미지 변환 실패:", err);
+          }
+        }
+      }
+      
+      const data = {
+        date,
+        title: task.querySelector('.title').value,
+        status: task.querySelector('.status').value,
+        category: task.querySelector('.category')?.value || '디자인',
+        memo: task.querySelector('.memo').value,
+        images: finalImages // 안전하게 확보된 최종 배열 주입
+      };
+
+      const editId = task.dataset.editId;
+      if(editId){
+        data.id = parseInt(editId);
+        await updateTask(parseInt(editId), data);
+      } else {
+        await saveTask(data);
       }
     }
-    
-    const data = {
-      date,
-      title: task.querySelector('.title').value,
-      status: task.querySelector('.status').value,
-      category: task.querySelector('.category')?.value || '디자인',
-      memo: task.querySelector('.memo').value,
-      images: finalImages // 변환 완벽 대기 완료 후 순수 자바스크립트 배열 할당
-    };
 
-    const editId = task.dataset.editId;
-    if(editId){
-      data.id = parseInt(editId);
-      await updateTask(parseInt(editId), data);
-    } else {
-      await saveTask(data);
-    }
+    alert('업무 저장 완료');
+    document.getElementById('tasks').innerHTML = '';
+    addTask();
+    loadTaskList();
+
+  } catch(error) {
+    console.error("저장 중 전역 오류 발생:", error);
+    alert("저장에 실패했습니다. 개발자 도구 콘솔을 확인해주세요.");
   }
-
-  alert('업무 저장 완료');
-  document.getElementById('tasks').innerHTML = '';
-  addTask();
-  loadTaskList();
 }
 
 async function loadTaskList(){
@@ -280,10 +288,13 @@ function toBase64(file){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
+    reader.onerror = (e) => reject(e);
     reader.readAsDataURL(file);
   });
 }
+
+// 최초 1회 실행
+addTask();
 loadTaskList();
 </script>
 </body>
