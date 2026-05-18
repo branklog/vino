@@ -120,7 +120,7 @@ const tasks=await getAllTasks();
 
 tasks.reverse().forEach(task=>{
 
-let match=false;
+let match=true;
 
 if(mode==='day'&&task.date===value)match=true;
 if(mode==='month'&&task.date.startsWith(value))match=true;
