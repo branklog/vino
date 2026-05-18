@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -171,17 +172,7 @@ function setupImageUpload(taskElement){
 
   input.addEventListener('change', function(e){
     const files = Array.from(e.target.files);
-    
-    // 500KB 제한 기준점 설정 (500 * 1024 바이트)
-    const MAX_SIZE = 500 * 1024; 
-
     files.forEach(file => {
-      // ✅ 패치: 파일 용량이 500KB를 초과하면 등록을 취소하고 경고창을 띄웁니다.
-      if (file.size > MAX_SIZE) {
-        alert(`[용량 초과] '${file.name}' 파일이 너무 큽니다.\n500KB 이하의 캡처 이미지나 압축된 사진만 올릴 수 있습니다.`);
-        return; 
-      }
-
       taskElement.imageFiles.push(file);
       const reader = new FileReader();
       reader.onload = function(ev){
@@ -205,11 +196,6 @@ function setupImageUpload(taskElement){
       reader.readAsDataURL(file);
     });
     input.value = '';
-  });
-}
-
-
-  
   });
 }
 
