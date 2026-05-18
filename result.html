@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무 조회 결과</title>
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Pretendard','Noto Sans KR',sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#6d1bb8, #4310a5);
+  color:#fff;
+}
+
+header{
+  width:100%;
+  height:90px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  padding:0 50px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.company-logo{
+  height:54px;
+}
+
+.logo-text{
+  font-size:34px;
+  font-weight:900;
+  color:#6d1bb8;
+  text-decoration:none;
+  letter-spacing:-1px;
+}
+
+.logo-text span{
+  color:#ff4fa0;
+}
+
+.card{
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  border-radius:24px;
+}
+
+button,.home-btn{
+  background:#6d1bb8;
+  color:#fff;
+  border:none;
+  font-weight:800;
+}
+
+@media(max-width:768px){
+  header{
+    padding:0 20px;
+  }
+
+  .company-logo{
+    height:44px;
+  }
+
+  .logo-text{
+    font-size:26px;
+  }
+}
+
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:80px 20px;
+}
+
+.page-title{
+font-size:54px;
+font-weight:900;
+margin-bottom:30px;
+letter-spacing:-2px;
+}
+
+.page-title span{color:#ff4fa0;}
+
+.home-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+height:54px;
+padding:0 26px;
+border-radius:14px;
+text-decoration:none;
+margin-bottom:40px;
+}
+
+.card{
+padding:30px;
+margin-bottom:24px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+}
+
+.left{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.company{
+font-size:24px;
+font-weight:900;
+}
+
+.category{
+color:#ddd;
+font-size:14px;
+}
+
+.work-title{
+font-size:18px;
+}
+
+.badge{
+padding:9px 16px;
+border-radius:30px;
+font-size:13px;
+font-weight:800;
+}
+
+.progress{
+background:#5a2b00;
+color:#ffd45a;
+}
+
+.done{
+background:#17401c;
+color:#74ff9f;
+}
+
+.memo{
+margin-top:18px;
+background:rgba(255,255,255,0.06);
+border-radius:16px;
+padding:18px;
+line-height:1.8;
+color:#eee;
+}
+
+.image-list{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-top:18px;
+}
+
+.work-image{
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:14px;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.empty{
+padding:70px;
+text-align:center;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img src="tiretech-logo.png" class="company-logo">
+    <a href="index.html" class="logo-text">
+      WORK<span>BOARD</span>
+    </a>
+  </div>
+</header>
+
+
+<div class="container">
+
+<div class="page-title">
+<span id="dateTitle"></span>
+</div>
+
+<a href="index.html" class="home-btn">
+홈으로 가기
+</a>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+const params=new URLSearchParams(window.location.search);
+const date=params.get('date');
+
+document.getElementById('dateTitle').innerText=date+' 업무내역';
+
+const data=JSON.parse(localStorage.getItem('tiretechWorkData'))||{};
+const result=document.getElementById('result');
+
+if(!data[date]){
+
+result.innerHTML=`
+<div class="card empty">
+해당 날짜의 업무내역이 없습니다.
+</div>
+`;
+
+}else{
+
+let html='';
+
+data[date].forEach(item=>{
+
+let imagesHtml='';
+
+if(item.images&&item.images.length){
+
+imagesHtml+='<div class="image-list">';
+
+item.images.forEach(img=>{
+
+imagesHtml+=`
+<img src="${img}" class="work-image">
+`;
+
+});
+
+imagesHtml+='</div>';
+
+}
+
+html+=`
+<div class="card">
+
+<div class="top">
+
+<div class="left">
+
+<div class="company">
+${item.company}
+</div>
+
+<div class="category">
+${item.category}
+</div>
+
+<div class="work-title">
+${item.title}
+</div>
+
+</div>
+
+<div class="badge ${item.status}">
+
+${
+item.status==='progress'
+?'진행중'
+:'완료'
+}
+
+</div>
+
+</div>
+
+${
+item.memo
+?`<div class="memo">${item.memo}</div>`
+:''
+}
+
+${imagesHtml}
+
+</div>
+`;
+
+});
+
+result.innerHTML=html;
+
+}
+</script>
+
+</body>
+</html>
