@@ -205,14 +205,22 @@ async function saveAll(){
 
   for(const task of tasks){
     const finalImages = task.savedImageUrls ? [...task.savedImageUrls] : [];
-    if(task.imageFiles && task.imageFiles.length) {
-      for(const file of task.imageFiles){
+    
+    // 사진 파일이 업로드 창에 실제로 존재할 때만 순서대로 변환을 시작합니다.
+    if(task.imageFiles && task.imageFiles.length > 0) {
+      for (let i = 0; i < task.imageFiles.length; i++) {
         try {
-          const base64Str = await toBase64(file);
-          finalImages.push(base64Str);
-        } catch(err) { console.error("이미지 변환 실패:", err); }
+          const base64Str = await toBase64(task.imageFiles[i]);
+          if (base64Str) finalImages.push(base64Str);
+        } catch (err) { 
+          console.error("이미지 변환 실패:", err); 
+        }
       }
     }
+    
+    // 이 아래부터 기존 원본 코드인 const data = { 가 시작되면 됩니다.
+    const data = {
+
     const data = {
       date,
       title: task.querySelector('.title').value,
