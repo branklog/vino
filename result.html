@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>조회결과</title>
+<title>WORKBOARD 결과</title>
 
 <style>
 
@@ -65,59 +65,58 @@ font-weight:800;
 margin-bottom:24px;
 }
 
-.card{
+.list-item{
+display:flex;
+align-items:center;
+gap:18px;
+padding:20px 24px;
 background:rgba(255,255,255,.08);
-padding:30px;
-border-radius:24px;
-margin-bottom:22px;
+border-radius:18px;
+margin-bottom:14px;
 cursor:pointer;
 transition:.2s;
 }
 
-.card:hover{
-transform:translateY(-3px);
+.list-item:hover{
 background:rgba(255,255,255,.12);
 }
 
 .date{
-color:#ff8bc7;
 font-size:15px;
-margin-bottom:10px;
-font-weight:700;
-}
-
-.title{
-font-size:22px;
-font-weight:900;
-line-height:1.5;
-margin-bottom:16px;
-word-break:keep-all;
+color:#cfcfcf;
+min-width:90px;
 }
 
 .status{
-font-size:15px;
+font-size:14px;
+font-weight:800;
+padding:8px 14px;
+border-radius:999px;
+min-width:88px;
+text-align:center;
+}
+
+.done{
+background:#17381f;
+color:#74ff9f;
+}
+
+.progress{
+background:#4b3c13;
+color:#ffd95b;
+}
+
+.pending{
+background:#4b1f1f;
+color:#ff7b7b;
+}
+
+.title{
+font-size:18px;
 font-weight:700;
-margin-bottom:12px;
-}
-
-.memo{
-font-size:16px;
-line-height:1.8;
-color:#f2f2f2;
-}
-
-.image-list{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:18px;
-}
-
-.thumb{
-width:90px;
-height:90px;
-object-fit:cover;
-border-radius:14px;
+line-height:1.5;
+word-break:keep-all;
+flex:1;
 }
 
 .modal{
@@ -154,7 +153,7 @@ cursor:pointer;
 }
 
 .modal-title{
-font-size:30px;
+font-size:28px;
 font-weight:900;
 line-height:1.5;
 margin-bottom:20px;
@@ -162,7 +161,7 @@ word-break:keep-all;
 }
 
 .modal-memo{
-font-size:18px;
+font-size:17px;
 line-height:2;
 margin-top:20px;
 white-space:pre-wrap;
@@ -199,12 +198,19 @@ border-radius:20px;
 
 @media(max-width:768px){
 
+.list-item{
+flex-direction:column;
+align-items:flex-start;
+gap:10px;
+padding:18px;
+}
+
 .title{
-font-size:18px;
+font-size:16px;
 }
 
 .modal-title{
-font-size:24px;
+font-size:22px;
 }
 
 .modal-images img{
@@ -351,28 +357,10 @@ if(mode==='year'&&task.date.startsWith(value))match=true;
 
 if(match){
 
-let thumbs='';
-
-if(task.images&&task.images.length){
-
-thumbs+='<div class="image-list">';
-
-task.images.forEach(img=>{
-
-thumbs+=`
-<img src="${img}" class="thumb">
-`;
-
-});
-
-thumbs+='</div>';
-
-}
-
 html+=`
 
 <div
-class="card"
+class="list-item"
 onclick='openModal(${JSON.stringify(task)})'
 >
 
@@ -380,19 +368,13 @@ onclick='openModal(${JSON.stringify(task)})'
 ${task.date}
 </div>
 
-<div class="title">
-${task.title}
-</div>
-
-<div class="status">
+<div class="status ${task.status}">
 ${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
 </div>
 
-<div class="memo">
-${task.memo?.substring(0,90)||''}
+<div class="title">
+${task.title}
 </div>
-
-${thumbs}
 
 </div>
 
@@ -405,7 +387,7 @@ ${thumbs}
 if(!html){
 
 html=`
-<div class="card">
+<div class="list-item">
 조회 결과가 없습니다.
 </div>
 `;
@@ -451,7 +433,7 @@ ${task.date}
 ${task.title}
 </div>
 
-<div class="status">
+<div class="status ${task.status}">
 ${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
 </div>
 
