@@ -20,10 +20,10 @@ padding:0 40px;
 
 .header-left{display:flex;align-items:center;gap:18px;}
 
-.company-logo{height:32px;}
+.company-logo{height:24px;}
 
 .logo-text{
-font-size:22px;
+font-size:18px;
 font-weight:900;
 color:#ff4fa0;
 text-decoration:none;
@@ -200,9 +200,13 @@ font-size:14px !important;
 }
 
 .company-logo{
-height:18px !important;
+height:14px !important;
 }
+
+.logo-text{
+font-size:12px !important;
 }
+}  
 </style>
 </head>
 <body>
@@ -250,74 +254,46 @@ WORKBOARD
 
 </div>
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
-const DB_NAME='TIRETECH_WORKBOARD_DB';
-const STORE_NAME='tasks';
+const supabaseUrl='https://ttunieohxvnhwiikxfzu.supabase.co';
 
-function openDB(){
+const supabaseKey='ttunieohxvnhwiikxfzu';
 
-return new Promise((resolve,reject)=>{
-
-const request=indexedDB.open(DB_NAME,1);
-
-request.onupgradeneeded=function(e){
-
-const db=e.target.result;
-
-if(!db.objectStoreNames.contains(STORE_NAME)){
-db.createObjectStore(STORE_NAME,{
-keyPath:'id',
-autoIncrement:true
-});
-}
-
-}
-
-request.onsuccess=()=>resolve(request.result);
-request.onerror=()=>reject(request.error);
-
-});
-
-}
+const supabaseClient = window.supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
 
 async function saveTask(task){
 
-const db=await openDB();
-
-const tx=db.transaction(STORE_NAME,'readwrite');
-
-tx.objectStore(STORE_NAME).add(task);
+await supabaseClient
+.from('tasks')
+.insert([task]);
 
 }
 
 async function getTasks(){
 
-const db=await openDB();
+const { data,error } = await supabaseClient
+.from('tasks')
+.select('*')
+.order('id',{ascending:false});
 
-return new Promise((resolve,reject)=>{
-
-const tx=db.transaction(STORE_NAME,'readonly');
-
-const store=tx.objectStore(STORE_NAME);
-
-const request=store.getAll();
-
-request.onsuccess=()=>resolve(request.result);
-
-request.onerror=()=>reject(request.error);
-
-});
+return data || [];
 
 }
 
 async function deleteTask(id){
 
-const db=await openDB();
-
-const tx=db.transaction(STORE_NAME,'readwrite');
-
-tx.objectStore(STORE_NAME).delete(id);
+await supabaseClient
+.from('tasks')
+.delete()
+.eq('id',id);
 
 loadTaskList();
 
@@ -325,17 +301,15 @@ loadTaskList();
 
 async function updateTask(id,data){
 
-const db=await openDB();
-
-const tx=db.transaction(STORE_NAME,'readwrite');
-
-const store=tx.objectStore(STORE_NAME);
-
-store.put(data);
+await supabaseClient
+.from('tasks')
+.update(data)
+.eq('id',id);
 
 loadTaskList();
 
 }
+
 
 function addTask(editData=null){
 
