@@ -203,16 +203,19 @@ async function saveAll(){
   if(!date){ alert('날짜를 선택해주세요.'); return; }
   const tasks = document.querySelectorAll('.task');
 
-  for(const task of tasks){
-    const finalImages = task.savedImageUrls ? [...task.savedImageUrls] : [];
-    if(task.imageFiles && task.imageFiles.length) {
-      for(const file of task.imageFiles){
+// ✅ 이 코드로 복사해서 쏙 교체하세요!
+    if(task.imageFiles && task.imageFiles.length > 0) {
+      for (let i = 0; i < task.imageFiles.length; i++) {
         try {
-          const base64Str = await toBase64(file);
-          finalImages.push(base64Str);
-        } catch(err) { console.error("이미지 변환 실패:", err); }
+          const base64Str = await toBase64(task.imageFiles[i]);
+          if (base64Str) finalImages.push(base64Str);
+        } catch (err) { 
+          console.error("이미지 변환 실패:", err); 
+        }
       }
     }
+
+  
     const data = {
       date,
       title: task.querySelector('.title').value,
