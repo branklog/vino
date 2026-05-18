@@ -4,292 +4,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WORKBOARD 결과</title>
-
+<title>RESULT</title>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Pretendard',sans-serif;
-}
-
-body{
-background:linear-gradient(135deg,#6d1bb8,#4310a5);
-color:#fff;
-}
-
-header{
-height:90px;
-background:#fff;
-display:flex;
-align-items:center;
-padding:0 40px;
-}
-
-.header-left{
-display:flex;
-align-items:center;
-gap:18px;
-}
-
-.company-logo{
-height:54px;
-}
-
-.logo-text{
-font-size:34px;
-font-weight:900;
-color:#ff4fa0;
-text-decoration:none;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-padding:80px 20px;
-}
-
-.top-buttons{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:24px;
-}
-
-.top-btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-height:50px;
-padding:0 20px;
-border-radius:14px;
-background:rgba(255,255,255,.12);
-color:#fff;
-text-decoration:none;
-font-weight:700;
-border:none;
-cursor:pointer;
-}
-
-.home-btn{
-background:#ff4fa0;
-}
-
-.active{
-background:#ff4fa0;
-}
-
-.list-item{
-display:flex;
-align-items:center;
-gap:18px;
-padding:20px 24px;
-background:rgba(255,255,255,.08);
-border-radius:18px;
-margin-bottom:14px;
-cursor:pointer;
-transition:.2s;
-}
-
-.list-item:hover{
-background:rgba(255,255,255,.12);
-}
-
-.date{
-font-size:15px;
-color:#cfcfcf;
-min-width:90px;
-}
-
-.status{
-font-size:14px;
-font-weight:800;
-padding:8px 14px;
-border-radius:999px;
-min-width:88px;
-text-align:center;
-}
-
-.done{
-background:#17381f;
-color:#74ff9f;
-}
-
-.progress{
-background:#4b3c13;
-color:#ffd95b;
-}
-
-.pending{
-background:#4b1f1f;
-color:#ff7b7b;
-}
-
-.title{
-font-size:18px;
-font-weight:700;
-line-height:1.5;
-word-break:keep-all;
-flex:1;
-}
-
-.modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.88);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
-padding:20px;
-}
-
-.modal-box{
-width:100%;
-max-width:1000px;
-max-height:90vh;
-overflow:auto;
-background:#181818;
-border-radius:28px;
-padding:34px;
-}
-
-.close-btn{
-height:50px;
-padding:0 20px;
-border:none;
-border-radius:14px;
-background:#ff4fa0;
-color:#fff;
-font-weight:800;
-margin-bottom:24px;
-cursor:pointer;
-}
-
-.modal-title{
-font-size:26px;
-font-weight:900;
-line-height:1.5;
-margin-bottom:20px;
-word-break:keep-all;
-}
-
-.modal-memo{
-font-size:17px;
-line-height:2;
-margin-top:20px;
-white-space:pre-wrap;
-}
-
-.modal-images{
-display:flex;
-gap:16px;
-flex-wrap:wrap;
-margin-top:24px;
-}
-
-.modal-images img{
-width:220px;
-border-radius:18px;
-cursor:pointer;
-}
-
-.viewer{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.92);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:10000;
-}
-
-.viewer img{
-max-width:92%;
-max-height:92%;
-border-radius:20px;
-}
-
-@media(max-width:768px){
-
-.list-item{
-flex-direction:column;
-align-items:flex-start;
-gap:10px;
-padding:18px;
-}
-
-.title{
-font-size:16px;
-}
-
-.modal-title{
-font-size:22px;
-}
-
-.modal-images img{
-width:100%;
-}
-
-header{
-padding:0 20px;
-}
-
-.logo-text{
-font-size:26px;
-}
-
-.company-logo{
-height:44px;
-}
-
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;}
+header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
+.header-left{display:flex;align-items:center;gap:18px;}
+.company-logo{height:54px;}
+.logo-text{font-size:34px;font-weight:900;color:#ff4fa0;text-decoration:none;}
+.container{max-width:1200px;margin:auto;padding:80px 20px;}
+.top-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+.top-btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 20px;border-radius:14px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;border:none;cursor:pointer;}
+.home-btn{background:#ff4fa0;}
+.active{background:#ff4fa0;}
+.list-item{display:flex;align-items:center;gap:18px;padding:20px 24px;background:rgba(255,255,255,.08);border-radius:18px;margin-bottom:14px;cursor:pointer;}
+.date{font-size:15px;color:#cfcfcf;min-width:90px;}
+.status{font-size:14px;font-weight:800;padding:8px 14px;border-radius:999px;min-width:88px;text-align:center;}
+.done{background:#17381f;color:#74ff9f;}
+.progress{background:#4b3c13;color:#ffd95b;}
+.pending{background:#4b1f1f;color:#ff7b7b;}
+.title{font-size:18px;font-weight:700;line-height:1.5;flex:1;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;}
+.modal-box{width:100%;max-width:1000px;max-height:90vh;overflow:auto;background:#181818;border-radius:28px;padding:34px;}
+.close-btn{height:50px;padding:0 20px;border:none;border-radius:14px;background:#ff4fa0;color:#fff;font-weight:800;margin-bottom:24px;cursor:pointer;}
+.modal-title{font-size:26px;font-weight:900;line-height:1.5;margin-bottom:20px;}
+.modal-memo{font-size:17px;line-height:2;margin-top:20px;white-space:pre-wrap;}
+.modal-images{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;}
+.modal-images img{width:220px;border-radius:18px;cursor:pointer;}
 </style>
 </head>
-
 <body>
 
 <header>
-
 <div class="header-left">
-
 <img src="tiretech-logo.png" class="company-logo">
-
-<a href="index.html" class="logo-text">
-WORKBOARD
-</a>
-
+<a href="index.html" class="logo-text">WORKBOARD</a>
 </div>
-
 </header>
 
 <div class="container">
 
 <div class="top-buttons">
-
-<a href="index.html" class="top-btn home-btn">
-홈으로 가기
-</a>
-
-<button class="top-btn active" onclick="setFilter('all',this)">
-전체
-</button>
-
-<button class="top-btn" onclick="setFilter('done',this)">
-완료
-</button>
-
-<button class="top-btn" onclick="setFilter('progress',this)">
-진행중
-</button>
-
-<button class="top-btn" onclick="setFilter('pending',this)">
-미완료
-</button>
-
+<a href="index.html" class="top-btn home-btn">홈으로 가기</a>
+<button class="top-btn active" onclick="setFilter('all',this)">전체</button>
+<button class="top-btn" onclick="setFilter('done',this)">완료</button>
+<button class="top-btn" onclick="setFilter('progress',this)">진행중</button>
+<button class="top-btn" onclick="setFilter('pending',this)">미완료</button>
 </div>
 
 <div id="result"></div>
@@ -297,58 +57,35 @@ WORKBOARD
 </div>
 
 <div class="modal" id="modal">
-
 <div class="modal-box">
-
-<button class="close-btn" onclick="closeModal()">
-닫기
-</button>
-
+<button class="close-btn" onclick="closeModal()">닫기</button>
 <div id="modalContent"></div>
-
 </div>
-
-</div>
-
-<div class="viewer" id="viewer">
-<img id="viewerImg">
 </div>
 
 <script>
 
-const DB_NAME='WORKBOARD_DB';
+const DB_NAME='TIRETECH_WORKBOARD_DB';
 const STORE_NAME='tasks';
 
 let allMatchedTasks=[];
-
 let currentFilter='all';
 
 function openDB(){
-
 return new Promise((resolve,reject)=>{
-
 const request=indexedDB.open(DB_NAME,1);
 
 request.onupgradeneeded=function(e){
-
 const db=e.target.result;
 
 if(!db.objectStoreNames.contains(STORE_NAME)){
-
-db.createObjectStore(STORE_NAME,{
-keyPath:'id',
-autoIncrement:true
-});
-
+db.createObjectStore(STORE_NAME,{keyPath:'id',autoIncrement:true});
 }
-
 }
 
 request.onsuccess=()=>resolve(request.result);
 request.onerror=()=>reject(request.error);
-
 });
-
 }
 
 async function getAllTasks(){
@@ -386,15 +123,11 @@ tasks.reverse().forEach(task=>{
 let match=false;
 
 if(mode==='day'&&task.date===value)match=true;
-
 if(mode==='month'&&task.date.startsWith(value))match=true;
-
 if(mode==='year'&&task.date.startsWith(value))match=true;
 
 if(match){
-
 allMatchedTasks.push(task);
-
 }
 
 });
@@ -407,53 +140,34 @@ function renderList(){
 
 const result=document.getElementById('result');
 
-let html='';
-
 let filtered=allMatchedTasks;
 
 if(currentFilter!=='all'){
-
-filtered=allMatchedTasks.filter(
-task=>task.status===currentFilter
-);
-
+filtered=allMatchedTasks.filter(task=>task.status===currentFilter);
 }
+
+let html='';
 
 filtered.forEach(task=>{
 
 html+=`
+<div class="list-item" onclick='openModal(${JSON.stringify(task)})'>
 
-<div
-class="list-item"
-onclick='openModal(${JSON.stringify(task)})'
->
-
-<div class="date">
-${task.date}
-</div>
+<div class="date">${task.date}</div>
 
 <div class="status ${task.status}">
 ${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
 </div>
 
-<div class="title">
-${task.title}
-</div>
+<div class="title">${task.title}</div>
 
 </div>
-
 `;
 
 });
 
 if(!html){
-
-html=`
-<div class="list-item">
-조회 결과가 없습니다.
-</div>
-`;
-
+html='<div class="list-item">조회 결과가 없습니다.</div>';
 }
 
 result.innerHTML=html;
@@ -485,14 +199,7 @@ if(task.images&&task.images.length){
 imgs+='<div class="modal-images">';
 
 task.images.forEach(img=>{
-
-imgs+=`
-<img
-src="${img}"
-onclick="openViewer('${img}')"
->
-`;
-
+imgs+=`<img src="${img}">`;
 });
 
 imgs+='</div>';
@@ -501,21 +208,15 @@ imgs+='</div>';
 
 document.getElementById('modalContent').innerHTML=`
 
-<div class="date">
-${task.date}
-</div>
+<div class="date">${task.date}</div>
 
-<div class="modal-title">
-${task.title}
-</div>
+<div class="modal-title">${task.title}</div>
 
 <div class="status ${task.status}">
 ${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
 </div>
 
-<div class="modal-memo">
-${task.memo||''}
-</div>
+<div class="modal-memo">${task.memo||''}</div>
 
 ${imgs}
 
@@ -524,26 +225,9 @@ ${imgs}
 }
 
 function closeModal(){
-
 document.getElementById('modal').style.display='none';
-
-}
-
-function openViewer(src){
-
-document.getElementById('viewer').style.display='flex';
-
-document.getElementById('viewerImg').src=src;
-
-}
-
-document.getElementById('viewer').onclick=function(){
-
-this.style.display='none';
-
 }
 
 </script>
-
 </body>
 </html>
