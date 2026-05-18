@@ -7,16 +7,20 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
 body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;min-height:100vh;}
+
+/* 헤더 디자인 관리자 페이지와 일치화 */
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
 .header-left{display:flex;align-items:center;gap:18px;}
-.company-logo{height:32px;}
-.logo-text{font-size:22px;font-weight:900;color:#ff4fa0;text-decoration:none;}
+.company-logo{height:24px;} /* 32px -> 24px로 수정하여 어드민과 통일 */
+.logo-text{font-size:18px;font-weight:900;color:#ff4fa0;text-decoration:none;} /* 22px -> 18px로 수정하여 어드민과 통일 */
+
 .container{max-width:1200px;margin:auto;padding:80px 20px;}
 .top-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
 .top-btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 20px;border-radius:14px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;border:none;cursor:pointer;}
 .home-btn{background:#ff4fa0;}
 .active{background:#ff4fa0;}
 .list-item{display:flex;align-items:center;gap:18px;padding:20px 24px;background:rgba(255,255,255,.08);border-radius:18px;margin-bottom:14px;cursor:pointer;}
+
 /* 결과 없음 전용 스타일 */
 .list-item.no-data { cursor: default; justify-content: center; color: #cfcfcf; }
 .date{font-size:15px;color:#cfcfcf;min-width:90px;}
@@ -32,58 +36,21 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 .modal-memo{font-size:17px;line-height:2;margin-top:20px;white-space:pre-wrap;}
 .modal-images{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;}
 .modal-images img{width:220px;border-radius:18px;cursor:pointer;}
-  @media(max-width:768px){
 
-header{
-height:64px;
-padding:0 14px;
+/* 모바일 반응형 디자인도 관리자 페이지 비율과 일치화 */
+@media(max-width:768px){
+  header{height:90px;padding:0 20px;} /* 헤더 높이 일치 */
+  .company-logo{height:14px !important;} /* 모바일 로고 크기 일치 */
+  .logo-text{font-size:14px !important;} /* 모바일 글자 크기 일치 */
+  
+  .container{padding:50px 14px;}
+  .top-btn{height:42px;font-size:12px;padding:0 12px;}
+  .list-item{padding:14px;gap:10px;flex-direction:column;align-items:flex-start;}
+  .title{font-size:14px;line-height:1.4;}
+  .modal-title{font-size:18px;}
+  .modal-memo{font-size:14px;line-height:1.7;}
+  .modal-images img{width:100%;}
 }
-
-.company-logo{
-height:18px !important;
-}
-
-.logo-text{
-font-size:14px !important;
-}
-
-.container{
-padding:50px 14px;
-}
-
-.top-btn{
-height:42px;
-font-size:12px;
-padding:0 12px;
-}
-
-.list-item{
-padding:14px;
-gap:10px;
-flex-direction:column;
-align-items:flex-start;
-}
-
-.title{
-font-size:14px;
-line-height:1.4;
-}
-
-.modal-title{
-font-size:18px;
-}
-
-.modal-memo{
-font-size:14px;
-line-height:1.7;
-}
-
-.modal-images img{
-width:100%;
-}
-
-}
-/* 모달 전용 상태창 정렬을 위한 스타일 추가 */
 .modal-box .status { display: inline-block; }
 </style>
 </head>
@@ -105,7 +72,7 @@ width:100%;
 <button class="top-btn" onclick="setFilter('pending',this)">미완료</button>
 </div>
 
-<div id="result"></div>
+<div id="result">데이터를 불러오는 중입니다...</div>
 </div>
 
 <div class="modal" id="modal">
@@ -115,141 +82,135 @@ width:100%;
 </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-
-const supabaseUrl='sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-
-const supabaseKey='여기에 publishable key';
-
-const supabaseClient = window.supabase.createClient(
-supabaseUrl,
-supabaseKey
-);
+// 관리자용 파일(admin0325.html)과 주소 및 인증 키 완벽 매칭
+const supabaseUrl='https://ttunieohxvnhwiikxfzu.supabase.co';
+const supabaseKey='sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 let allMatchedTasks=[];
 let currentFilter='all';
 
 async function getAllTasks(){
-
-const { data,error } = await supabaseClient
-.from('tasks')
-.select('*')
-.order('id',{ascending:false});
-
-return data || [];
-
+  const { data, error } = await supabaseClient
+    .from('tasks')
+    .select('*')
+    .order('id', {ascending:false});
+  if(error) console.error("DB 로드 에러:", error);
+  return data || [];
 }
 
-
-
-
+// 중첩 유발 괄호 오류 청소 및 연동 로직 정상화
 (async()=>{
-try {
- (async()=>{ 
-const params=new URLSearchParams(location.search);
-const mode=params.get('mode');
-const value=params.get('value');
+  try {
+    const params = new URLSearchParams(location.search);
+    const mode = params.get('mode');
+    const value = params.get('value');
 
-const tasks=await getAllTasks();
+    const tasks = await getAllTasks();
 
-// 기본 ID 역순 정렬 대신 날짜(date) 내림차순 정렬을 원할 경우 아래 주석 해제하여 정렬 가능
-// tasks.sort((a, b) => b.date.localeCompare(a.date));
+    tasks.forEach(task => {
+      let match = false;
+      
+      // 검색 조건 매칭 (index 페이지 연동용)
+      if(mode === 'day' && task.date === value) match = true;
+      if(mode === 'month' && task.date && task.date.startsWith(value)) match = true;
+      if(mode === 'year' && task.date && task.date.startsWith(value)) match = true;
+      
+      // 파라미터가 비어있을 경우 예외 처리로 전체 데이터를 표기 유도
+      if(!mode) match = true;
 
-tasks.reverse().forEach(task=>{
-let match=false;
-if(mode==='day'&&task.date===value) match=true;
-if(mode==='month'&&task.date.startsWith(value)) match=true;
-if(mode==='year'&&task.date.startsWith(value)) match=true;
+      if(match){
+        allMatchedTasks.push(task);
+      }
+    });
 
-if(match){
-allMatchedTasks.push(task);
-}
-});
-
-renderList();
-} catch (error) {
-console.error("데이터를 가져오는 중 오류가 발생했습니다:", error);
-document.getElementById('result').innerHTML = '<div class="list-item no-data">데이터를 불러오지 못했습니다.</div>';
-}
+    renderList();
+  } catch (error) {
+    console.error("데이터를 가져오는 중 오류가 발생했습니다:", error);
+    document.getElementById('result').innerHTML = '<div class="list-item no-data">데이터를 불러오지 못했습니다.</div>';
+  }
 })();
 
 function renderList(){
-const result=document.getElementById('result');
-let filtered=allMatchedTasks;
+  const result = document.getElementById('result');
+  let filtered = allMatchedTasks;
 
-if(currentFilter!=='all'){
-filtered=allMatchedTasks.filter(task=>task.status===currentFilter);
+  if(currentFilter !== 'all'){
+    filtered = allMatchedTasks.filter(task => task.status === currentFilter);
+  }
+
+  let html = '';
+
+  filtered.forEach((task)=>{
+    const categoryTag = task.category ? `[${task.category}] ` : '';
+    html += `
+    <div class="list-item" onclick="openModalById(${task.id})">
+      <div class="date">${task.date || ''}</div>
+      <div class="status ${task.status}">
+        ${task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료'}
+      </div>
+      <div class="title">${categoryTag}${task.title || ''}</div>
+    </div>
+    `;
+  });
+
+  if(!html){
+    html = '<div class="list-item no-data">조회 결과가 없습니다.</div>';
+  }
+
+  result.innerHTML = html;
 }
 
-let html='';
-
-// ★ 수정 포인트: 객체를 통째로 JSON 문자열로 바꾸지 않고, 
-// filtered 배열의 원래 인덱스나 고유 ID를 전달하도록 변경 (에러 원천 차단)
-filtered.forEach((task)=>{
-html+=`
-<div class="list-item" onclick="openModalById(${task.id})">
-<div class="date">${task.date}</div>
-<div class="status ${task.status}">
-${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
-</div>
-<div class="title">${task.title}</div>
-</div>
-`;
-});
-
-if(!html){
-html='<div class="list-item no-data">조회 결과가 없습니다.</div>';
+function setFilter(type, btn){
+  currentFilter = type;
+  document.querySelectorAll('.top-btn').forEach(el => {
+    el.classList.remove('active');
+  });
+  btn.classList.add('active');
+  renderList();
 }
 
-result.innerHTML=html;
-}
-
-function setFilter(type,btn){
-currentFilter=type;
-document.querySelectorAll('.top-btn').forEach(el=>{
-el.classList.remove('active');
-});
-btn.classList.add('active');
-renderList();
-}
-
-// ★ 수정 포인트: 고유 ID를 기반으로 매칭된 데이터를 찾아 안전하게 모달을 띄우는 함수
 function openModalById(id){
-const task = allMatchedTasks.find(t => t.id === id);
-if(!task) return;
+  const task = allMatchedTasks.find(t => t.id === id);
+  if(!task) return;
 
-document.getElementById('modal').style.display='flex';
-let imgs='';
+  document.getElementById('modal').style.display = 'flex';
+  let imgs = '';
 
-if(task.images&&task.images.length){
-imgs+='<div class="modal-images">';
-task.images.forEach(img=>{
-imgs+=`<img src="${img}">`;
-});
-imgs+='</div>';
-}
+  // 관리자단에서 문자열로 압축 저장된 이미지 포맷 복원 로직 구현
+  let savedImages = task.images || [];
+  if (typeof savedImages === 'string') {
+    try { savedImages = JSON.parse(savedImages); } catch(e) { savedImages = []; }
+  }
 
-// 텍스트 유실 방지 및 이스케이프 처리를 위해 안전하게 innerHTML 구성
-document.getElementById('modalContent').innerHTML=`
-<div class="date">${task.date}</div>
-<div class="modal-title"></div>
-<div class="status ${task.status}">
-${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
-</div>
-<div class="modal-memo"></div>
-${imgs}
-`;
+  if(Array.isArray(savedImages) && savedImages.length){
+    imgs += '<div class="modal-images">';
+    savedImages.forEach(img => {
+      if(img) imgs += `<img src="${img}">`;
+    });
+    imgs += '</div>';
+  }
 
-// innerHTML에 변수를 직접 넣지 않고, textContent를 사용해 쌍따옴표/줄바꿈 깨짐 방지
-document.querySelector('#modalContent .modal-title').textContent = task.title;
-document.querySelector('#modalContent .modal-memo').textContent = task.memo || '';
+  const categoryTag = task.category ? `[${task.category}] ` : '';
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="date" style="margin-bottom:8px;">${task.date || ''}</div>
+    <div class="modal-title"></div>
+    <div class="status ${task.status}">
+      ${task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료'}
+    </div>
+    <div class="modal-memo"></div>
+    ${imgs}
+  `;
+
+  document.querySelector('#modalContent .modal-title').textContent = categoryTag + (task.title || '');
+  document.querySelector('#modalContent .modal-memo').textContent = task.memo || '';
 }
 
 function closeModal(){
-document.getElementById('modal').style.display='none';
+  document.getElementById('modal').style.display = 'none';
 }
 </script>
 </body>
