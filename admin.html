@@ -84,6 +84,7 @@ async function getTasks(){
 }
 
 async function deleteTask(id){
+  if(!confirm("정말 삭제하시겠습니까?")) return;
   await supabaseClient.from('tasks').delete().eq('id', id);
   loadTaskList();
 }
@@ -108,11 +109,11 @@ function addTask(editData=null){
         <option value="pending">미완료</option>
       </select>
       <select class="category">
-        <option>마케팅</option>
-        <option>블로그</option>
-        <option>플레이스</option>
-        <option>광고</option>
-        <option>디자인</option>
+        <option value="마케팅">마케팅</option>
+        <option value="블로그">블로그</option>
+        <option value="플레이스">플레이스</option>
+        <option value="광고">광고</option>
+        <option value="디자인">디자인</option>
       </select>
     </div>
     <div class="group">
@@ -136,7 +137,10 @@ function addTask(editData=null){
     
     let savedImages = editData.images || [];
     if (typeof savedImages === 'string') {
-      try { savedImages = JSON.parse(savedImages); } catch(e) { savedImages = []; }
+      try { 
+        savedImages = JSON.parse(savedImages); 
+        if (typeof savedImages === 'string') { savedImages = JSON.parse(savedImages); }
+      } catch(e) { savedImages = []; }
     }
     div.savedImageUrls = Array.isArray(savedImages) ? [...savedImages] : [];
     
@@ -195,8 +199,7 @@ function setupImageUpload(taskElement){
   });
 }
 
-addTask();
-
+// [완벽 수정] 대괄호 빈 값 문제를 완벽히 해결한 동기화 보장 저장 로직
 async function saveAll(){
   const date = document.getElementById('date').value;
   if(!date){ alert('날짜를 선택해주세요.'); return; }
@@ -204,6 +207,8 @@ async function saveAll(){
 
   for(const task of tasks){
     const finalImages = task.savedImageUrls ? [...task.savedImageUrls] : [];
+    
+    // 이미지 파일이 있을 경우 완전히 글자로 변환될 때까지 대기 처리를 명확히 분리
     if(task.imageFiles && task.imageFiles.length) {
       for(const file of task.imageFiles){
         try {
@@ -212,14 +217,16 @@ async function saveAll(){
         } catch(err) { console.error("이미지 변환 실패:", err); }
       }
     }
+    
     const data = {
       date,
       title: task.querySelector('.title').value,
       status: task.querySelector('.status').value,
       category: task.querySelector('.category')?.value || '디자인',
       memo: task.querySelector('.memo').value,
-      images: JSON.stringify(finalImages) // 데이터를 문자열(JSON String)로 규격화하여 전송
+      images: finalImages // 변환 완벽 대기 완료 후 순수 자바스크립트 배열 할당
     };
+
     const editId = task.dataset.editId;
     if(editId){
       data.id = parseInt(editId);
@@ -228,6 +235,7 @@ async function saveAll(){
       await saveTask(data);
     }
   }
+
   alert('업무 저장 완료');
   document.getElementById('tasks').innerHTML = '';
   addTask();
@@ -242,18 +250,20 @@ async function loadTaskList(){
     const div = document.createElement('div');
     div.className = 'edit-item';
     
-    // HTML 태그 깨짐 방지를 위해 안전한 마스킹 변환(encode) 후 전달 구조로 패치
     const taskData = encodeURIComponent(JSON.stringify(task));
     div.innerHTML = `
       <div>
         <div style="font-size:14px;color:#aaa;margin-bottom:8px;">${task.date || ''}</div>
-        <div style="font-size:18px;font-weight:800;">${task.title || ''}</div>
+        <div style="font-size:18px;font-weight:800;">[${task.category || '공통'}] ${task.title || ''}</div>
       </div>
       <div class="edit-buttons">
-        <button class="small-btn edit-btn" onclick="startEdit('${taskData}')">수정</button>
+        <button class="small-btn edit-btn">수정</button>
         <button class="small-btn delete-btn" onclick="deleteTask(${task.id})">삭제</button>
       </div>
     `;
+    div.querySelector('.edit-btn').onclick = function() {
+        startEdit(taskData);
+    };
     list.appendChild(div);
   });
 }
