@@ -1,15 +1,616 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ADMIN</title>
+<title>타이어테크 관리자</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+
+body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;}
+
+header{
+height:90px;
+background:#fff;
+display:flex;
+align-items:center;
+padding:0 40px;
+}
+
+.header-left{display:flex;align-items:center;gap:18px;}
+
+.company-logo{height:54px;}
+
+.logo-text{
+font-size:34px;
+font-weight:900;
+color:#ff4fa0;
+text-decoration:none;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:80px 20px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+padding:40px;
+border-radius:24px;
+border:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(10px);
+}
+
+.home-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+height:54px;
+padding:0 24px;
+border-radius:14px;
+background:#ff4fa0;
+color:#fff;
+text-decoration:none;
+font-weight:800;
+margin-bottom:24px;
+}
+
+.group{margin-bottom:22px;}
+
+label{
+display:block;
+margin-bottom:10px;
+font-weight:700;
+}
+
+input,
+textarea,
+select{
+width:100%;
+background:rgba(0,0,0,.35);
+border:1px solid rgba(255,255,255,.08);
+border-radius:14px;
+padding:18px;
+color:#fff;
+font-size:15px;
+outline:none;
+}
+
+select option{
+background:#1b1b1b;
+color:#fff;
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+.task{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:18px;
+margin-bottom:18px;
+}
+
+.preview-list{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.preview-wrap{
+position:relative;
+width:90px;
+height:90px;
+}
+
+.preview-image{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:12px;
+border:1px solid rgba(255,255,255,.08);
+}
+
+.delete-image{
+position:absolute;
+top:-8px;
+right:-8px;
+width:24px;
+height:24px;
+border:none;
+border-radius:50%;
+background:#ff3b3b;
+color:#fff;
+font-size:13px;
+font-weight:900;
+cursor:pointer;
+}
+
+.row{
+display:flex;
+gap:12px;
+margin-bottom:14px;
+}
+
+.main-btn{
+height:58px;
+border:none;
+border-radius:14px;
+background:#ff4fa0;
+color:#fff;
+font-weight:800;
+padding:0 24px;
+cursor:pointer;
+}
+
+.save-btn{
+width:100%;
+margin-top:14px;
+}
+
+.edit-list{
+margin-top:40px;
+}
+
+.edit-item{
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:18px;
+margin-bottom:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+}
+
+.edit-buttons{
+display:flex;
+gap:10px;
+}
+
+.small-btn{
+height:42px;
+padding:0 18px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+}
+
+.edit-btn{background:#2d7dff;color:#fff;}
+.delete-btn{background:#ff3b3b;color:#fff;}
+
+@media(max-width:768px){
+.row{flex-direction:column;}
+
+.edit-item{
+flex-direction:column;
+align-items:flex-start;
+}
+
+header{padding:0 20px;}
+
+.logo-text{font-size:26px;}
+
+.company-logo{height:44px;}
+}
+</style>
 </head>
 <body>
+
+<header>
+
+<div class="header-left">
+
+<img src="tiretech-logo.png" class="company-logo">
+
+<a href="index.html" class="logo-text">
+WORKBOARD
+</a>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<a href="index.html" class="home-btn">
+홈으로 가기
+</a>
+
+<div class="card">
+
+<div class="group">
+<label>업무 날짜</label>
+<input type="date" id="date">
+</div>
+
+<div id="tasks"></div>
+
+<button class="main-btn" onclick="addTask()">
++ 업무 추가
+</button>
+
+<button class="main-btn save-btn" onclick="saveAll()">
+업무 저장
+</button>
+
+</div>
+
+<div class="edit-list" id="editList"></div>
+
+</div>
+
 <script>
+
 const DB_NAME='TIRETECH_WORKBOARD_DB';
+const STORE_NAME='tasks';
+
+function openDB(){
+
+return new Promise((resolve,reject)=>{
+
+const request=indexedDB.open(DB_NAME,1);
+
+request.onupgradeneeded=function(e){
+
+const db=e.target.result;
+
+if(!db.objectStoreNames.contains(STORE_NAME)){
+db.createObjectStore(STORE_NAME,{
+keyPath:'id',
+autoIncrement:true
+});
+}
+
+}
+
+request.onsuccess=()=>resolve(request.result);
+request.onerror=()=>reject(request.error);
+
+});
+
+}
+
+async function saveTask(task){
+
+const db=await openDB();
+
+const tx=db.transaction(STORE_NAME,'readwrite');
+
+tx.objectStore(STORE_NAME).add(task);
+
+}
+
+async function getTasks(){
+
+const db=await openDB();
+
+return new Promise((resolve,reject)=>{
+
+const tx=db.transaction(STORE_NAME,'readonly');
+
+const store=tx.objectStore(STORE_NAME);
+
+const request=store.getAll();
+
+request.onsuccess=()=>resolve(request.result);
+
+request.onerror=()=>reject(request.error);
+
+});
+
+}
+
+async function deleteTask(id){
+
+const db=await openDB();
+
+const tx=db.transaction(STORE_NAME,'readwrite');
+
+tx.objectStore(STORE_NAME).delete(id);
+
+loadTaskList();
+
+}
+
+async function updateTask(id,data){
+
+const db=await openDB();
+
+const tx=db.transaction(STORE_NAME,'readwrite');
+
+const store=tx.objectStore(STORE_NAME);
+
+store.put(data);
+
+loadTaskList();
+
+}
+
+function addTask(editData=null){
+
+const div=document.createElement('div');
+
+div.className='task';
+
+div.innerHTML=`
+
+<div class="group">
+<label>업무내용</label>
+<input type="text" class="title" value="${editData?.title||''}">
+</div>
+
+<div class="row">
+
+<select class="status">
+
+<option value="done">완료</option>
+<option value="progress">진행중</option>
+<option value="pending">미완료</option>
+
+</select>
+
+
+<select class="category">
+<option>마케팅</option>
+<option>블로그</option>
+<option>플레이스</option>
+<option>광고</option>
+<option>디자인</option>
+</select>
+
+
+</div>
+
+<div class="group">
+<label>메모</label>
+<textarea class="memo">${editData?.memo||''}</textarea>
+</div>
+
+<div class="group">
+
+<label>이미지 업로드</label>
+
+<input
+type="file"
+class="images"
+multiple
+accept="image/*"
+>
+
+<div class="preview-list"></div>
+
+</div>
+
+`;
+
+document.getElementById('tasks').appendChild(div);
+
+if(editData){
+div.dataset.editId=editData.id;
+}
+
+setupImageUpload(div);
+
+if(editData){
+div.querySelector('.status').value=editData.status;
+}
+
+}
+
+function setupImageUpload(taskElement){
+
+const input=taskElement.querySelector('.images');
+
+const preview=taskElement.querySelector('.preview-list');
+
+taskElement.imageFiles=[];
+
+input.addEventListener('change',function(e){
+
+const files=Array.from(e.target.files);
+
+files.forEach(file=>{
+
+taskElement.imageFiles.push(file);
+
+const reader=new FileReader();
+
+reader.onload=function(ev){
+
+const wrap=document.createElement('div');
+
+wrap.className='preview-wrap';
+
+const img=document.createElement('img');
+
+img.src=ev.target.result;
+
+img.className='preview-image';
+
+const del=document.createElement('button');
+
+del.className='delete-image';
+
+del.innerText='✕';
+
+del.onclick=function(){
+
+const index=Array.from(preview.children).indexOf(wrap);
+
+taskElement.imageFiles.splice(index,1);
+
+wrap.remove();
+
+}
+
+wrap.appendChild(img);
+wrap.appendChild(del);
+
+preview.appendChild(wrap);
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+input.value='';
+
+});
+
+}
+
+addTask();
+
+async function saveAll(){
+
+const date=document.getElementById('date').value;
+
+if(!date){
+alert('날짜를 선택해주세요.');
+return;
+}
+
+const tasks=document.querySelectorAll('.task');
+
+for(const task of tasks){
+
+const images=[];
+
+for(const file of task.imageFiles){
+
+images.push(await toBase64(file));
+
+}
+
+const data={
+
+date,
+title:task.querySelector('.title').value,
+status:task.querySelector('.status').value,
+category:task.querySelector('.category')?.value || '디자인',
+memo:task.querySelector('.memo').value,
+images
+
+};
+
+const editId=task.dataset.editId;
+
+if(editId){
+data.id=parseInt(editId);
+await updateTask(parseInt(editId),data);
+}
+else{
+await saveTask(data);
+}
+
+}
+
+alert('업무 저장 완료');
+
+document.getElementById('tasks').innerHTML='';
+
+addTask();
+
+loadTaskList();
+
+}
+
+async function loadTaskList(){
+
+const list=document.getElementById('editList');
+
+const tasks=await getTasks();
+
+list.innerHTML='';
+
+tasks.reverse().forEach(task=>{
+
+const div=document.createElement('div');
+
+div.className='edit-item';
+
+div.innerHTML=`
+
+<div>
+
+<div style="font-size:14px;color:#aaa;margin-bottom:8px;">
+${task.date}
+</div>
+
+<div style="font-size:18px;font-weight:800;">
+${task.title}
+</div>
+
+</div>
+
+<div class="edit-buttons">
+
+<button
+class="small-btn edit-btn"
+onclick='startEdit(${JSON.stringify(task)})'
+>
+수정
+</button>
+
+<button
+class="small-btn delete-btn"
+onclick="deleteTask(${task.id})"
+>
+삭제
+</button>
+
+</div>
+
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+function startEdit(task){
+
+document.getElementById('tasks').innerHTML='';
+
+document.getElementById('date').value=task.date;
+
+addTask(task);
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
+
+}
+
+function toBase64(file){
+
+return new Promise((resolve,reject)=>{
+
+const reader=new FileReader();
+
+reader.onload=()=>resolve(reader.result);
+
+reader.onerror=reject;
+
+reader.readAsDataURL(file);
+
+});
+
+}
+
+loadTaskList();
+
 </script>
-관리자 정상 분리 버전
+
 </body>
 </html>
