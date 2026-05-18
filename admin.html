@@ -1,12 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>업무 등록</title>
+<title>작업 등록</title>
 
 <style>
+
 *{
   margin:0;
   padding:0;
@@ -15,34 +15,69 @@
 }
 
 body{
-  background:#f5f5f7;
-  padding:40px 20px;
+  background:#111;
+  color:#fff;
+}
+
+header{
+  width:100%;
+  height:90px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  padding:0 50px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.company-logo{
+  height:54px;
+}
+
+.logo-text{
+  font-size:34px;
+  font-weight:900;
+  color:#111;
+  text-decoration:none;
+}
+
+.logo-text span{
+  color:#d60000;
 }
 
 .container{
-  max-width:900px;
+  max-width:1000px;
   margin:auto;
+  padding:80px 20px;
 }
 
 .card{
-  background:#fff;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
   border-radius:24px;
-  padding:35px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+  padding:40px;
 }
 
 h1{
-  margin-bottom:30px;
-  color:#7d1aa8;
+  font-size:48px;
+  margin-bottom:40px;
+}
+
+h1 span{
+  color:#ff2a2a;
 }
 
 .input-group{
-  margin-bottom:20px;
+  margin-bottom:24px;
 }
 
 label{
   display:block;
-  margin-bottom:10px;
+  margin-bottom:12px;
   font-weight:700;
 }
 
@@ -50,64 +85,127 @@ input,
 select,
 textarea{
   width:100%;
-  padding:16px;
-  border:1px solid #ddd;
-  border-radius:14px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:18px;
+  color:#fff;
   font-size:15px;
+  outline:none;
 }
 
 textarea{
-  min-height:120px;
+  min-height:140px;
 }
 
 button{
   width:100%;
-  height:60px;
+  height:64px;
   border:none;
   border-radius:16px;
-  background:#7d1aa8;
+  background:#d60000;
   color:#fff;
   font-size:17px;
   font-weight:800;
   cursor:pointer;
 }
+
+/* 썸네일 */
+
+.preview-list{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.preview-image{
+  width:90px;
+  height:90px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+@media(max-width:768px){
+
+  header{
+    padding:0 20px;
+  }
+
+  .company-logo{
+    height:44px;
+  }
+
+  .logo-text{
+    font-size:26px;
+  }
+
+}
+
 </style>
 </head>
 <body>
+
+<header>
+
+  <div class="header-left">
+
+    <img
+      src="dagil-logo.png"
+      alt="대길간판 로고"
+      class="company-logo"
+    >
+
+    <a href="index.html" class="logo-text">
+      WORK<span>BOARD</span>
+    </a>
+
+  </div>
+
+</header>
 
 <div class="container">
 
   <div class="card">
 
-    <h1>업무 등록</h1>
+    <h1>
+      <span>작업 등록</span>
+    </h1>
 
     <div class="input-group">
-      <label>날짜</label>
+      <label>의뢰일</label>
       <input type="date" id="date">
     </div>
 
     <div class="input-group">
-      <label>카테고리</label>
+      <label>구분</label>
       <select id="category">
-        <option>블로그 관리</option>
-        <option>플레이스 운영</option>
-        <option>광고 셋팅</option>
-        <option>스토어 운영</option>
-        <option>디자인 업무</option>
+        <option>디자인</option>
+        <option>간판</option>
+        <option>현수막</option>
+        <option>시트지</option>
+        <option>배너</option>
       </select>
     </div>
 
     <div class="input-group">
-      <label>업무명</label>
+      <label>업체명</label>
+      <input type="text" id="company">
+    </div>
+
+    <div class="input-group">
+      <label>작업내용</label>
       <input type="text" id="title">
     </div>
 
     <div class="input-group">
       <label>상태</label>
       <select id="status">
+        <option value="design">디자인중</option>
+        <option value="modify">수정중</option>
+        <option value="wait">대기중</option>
         <option value="done">완료</option>
-        <option value="working">진행중</option>
-        <option value="waiting">대기</option>
       </select>
     </div>
 
@@ -116,8 +214,23 @@ button{
       <textarea id="memo"></textarea>
     </div>
 
+    <div class="input-group">
+
+      <label>작업 수정 이미지 업로드</label>
+
+      <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+        multiple
+      >
+
+      <div id="previewList" class="preview-list"></div>
+
+    </div>
+
     <button onclick="saveWork()">
-      업무 저장
+      작업 저장
     </button>
 
   </div>
@@ -125,20 +238,66 @@ button{
 </div>
 
 <script>
+
+let imageList = [];
+
+document
+.getElementById('imageInput')
+.addEventListener('change', function(e){
+
+  const files = Array.from(e.target.files);
+
+  const previewList =
+  document.getElementById('previewList');
+
+  previewList.innerHTML = '';
+
+  imageList = [];
+
+  files.forEach(file => {
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+      imageList.push(event.target.result);
+
+      const img =
+      document.createElement('img');
+
+      img.src = event.target.result;
+
+      img.className = 'preview-image';
+
+      previewList.appendChild(img);
+
+    }
+
+    reader.readAsDataURL(file);
+
+  });
+
+});
+
 function saveWork(){
 
   const date = document.getElementById('date').value;
   const category = document.getElementById('category').value;
+  const company = document.getElementById('company').value;
   const title = document.getElementById('title').value;
   const status = document.getElementById('status').value;
   const memo = document.getElementById('memo').value;
 
   if(!date || !title){
-    alert('날짜와 업무명을 입력해주세요.');
+
+    alert('날짜와 작업내용을 입력해주세요.');
+
     return;
+
   }
 
-  let data = JSON.parse(localStorage.getItem('workData')) || {};
+  let data =
+  JSON.parse(localStorage.getItem('signWorkData')) || {};
 
   if(!data[date]){
     data[date] = [];
@@ -146,18 +305,22 @@ function saveWork(){
 
   data[date].push({
     category,
+    company,
     title,
     status,
-    memo
+    memo,
+    images:imageList
   });
 
-  localStorage.setItem('workData', JSON.stringify(data));
+  localStorage.setItem(
+    'signWorkData',
+    JSON.stringify(data)
+  );
 
-  alert('업무가 저장되었습니다.');
+  alert('작업이 저장되었습니다.');
 
-  document.getElementById('title').value = '';
-  document.getElementById('memo').value = '';
 }
+
 </script>
 
 </body>
