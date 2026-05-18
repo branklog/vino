@@ -1,63 +1,91 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>업무조회</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>조회결과</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-body{background:linear-gradient(135deg,#6d1bb8,#4310a5);color:#fff;}
-header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
-.logo-text{font-size:34px;font-weight:900;color:#6d1bb8;text-decoration:none;}
-.logo-text span{color:#ff4fa0;}
-.container{max-width:1200px;margin:auto;padding:80px 20px;}
-.home-btn{display:inline-flex;background:#6d1bb8;color:#fff;padding:14px 24px;border-radius:14px;text-decoration:none;margin-bottom:24px;}
-.card{background:rgba(255,255,255,.1);padding:28px;border-radius:24px;margin-bottom:20px;}
-.badge{display:inline-flex;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:800;}
-.done{background:#17401c;color:#74ff9f;}
-.progress{background:#5a2b00;color:#ffd45a;}
-.pending{background:#4b1f1f;color:#ff7b7b;}
-.image-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
-.work-image{width:100px;height:100px;object-fit:cover;border-radius:12px;cursor:pointer;}
-.viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;}
-.viewer img{max-width:92%;max-height:92%;border-radius:18px;}
-</style>
-</head>
-<body>
-<header><a href="index.html" class="logo-text">WORK<span>BOARD</span></a></header>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Pretendard,sans-serif}
+body{background:#4310a5;color:#fff}
+header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px}
+.header-left{display:flex;align-items:center;gap:18px}
+.company-logo{height:54px}
+.logo-text{font-size:34px;font-weight:900;color:#6d1bb8;text-decoration:none}
+.logo-text span{color:#ff4fa0}
+.container{max-width:1200px;margin:auto;padding:80px 20px}
+.card{background:rgba(255,255,255,.08);padding:28px;border-radius:24px;margin-bottom:20px}
+.image-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.work-image{width:100px;height:100px;object-fit:cover;border-radius:12px;cursor:pointer}
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
+.viewer img{max-width:92%;max-height:92%;border-radius:18px}
+</style></head><body>
+<header><div class="header-left"><img src="tiretech-logo.png" class="company-logo"><a href="index.html" class="logo-text">WORK<span>BOARD</span></a></div></header>
 
 <div class="container">
-<a href="index.html" class="home-btn">홈으로 가기</a>
+<a href="index.html" style="display:inline-flex;background:#ff4fa0;padding:14px 24px;border-radius:14px;color:#fff;text-decoration:none;margin-bottom:24px">홈으로 가기</a>
 <div id="result"></div>
 </div>
 
 <div class="viewer" id="viewer"><img id="viewerImg"></div>
 
 <script>
+
+const DB_NAME='WORKBOARD_DB';
+const STORE_NAME='tasks';
+
+function openDB(){
+return new Promise((resolve,reject)=>{
+const request=indexedDB.open(DB_NAME,1);
+
+request.onupgradeneeded=function(e){
+const db=e.target.result;
+if(!db.objectStoreNames.contains(STORE_NAME)){
+db.createObjectStore(STORE_NAME,{keyPath:'id',autoIncrement:true});
+}
+}
+
+request.onsuccess=()=>resolve(request.result);
+request.onerror=()=>reject(request.error);
+});
+}
+
+async function saveTask(task){
+const db=await openDB();
+const tx=db.transaction(STORE_NAME,'readwrite');
+tx.objectStore(STORE_NAME).add(task);
+}
+
+async function getAllTasks(){
+const db=await openDB();
+
+return new Promise((resolve,reject)=>{
+const tx=db.transaction(STORE_NAME,'readonly');
+const store=tx.objectStore(STORE_NAME);
+const request=store.getAll();
+
+request.onsuccess=()=>resolve(request.result);
+request.onerror=()=>reject(request.error);
+});
+}
+
+
+(async()=>{
 const params=new URLSearchParams(location.search);
 const mode=params.get('mode');
 const value=params.get('value');
 
-const data=JSON.parse(localStorage.getItem('tiretechWorkData'))||{};
-const result=document.getElementById('result');
+const tasks=await getAllTasks();
 
 let html='';
 
-for(const date in data){
+tasks.forEach(item=>{
 
 let match=false;
 
-if(mode==='day' && date===value)match=true;
-if(mode==='month' && date.startsWith(value))match=true;
-if(mode==='year' && date.startsWith(value))match=true;
+if(mode==='day'&&item.date===value)match=true;
+if(mode==='month'&&item.date.startsWith(value))match=true;
+if(mode==='year'&&item.date.startsWith(value))match=true;
 
 if(match){
-
-data[date].forEach(item=>{
-
 let imgs='';
 
-if(item.images && item.images.length){
+if(item.images&&item.images.length){
 imgs+='<div class="image-list">';
 item.images.forEach(img=>{
 imgs+=`<img src="${img}" class="work-image" onclick="openViewer('${img}')">`;
@@ -67,37 +95,24 @@ imgs+='</div>';
 
 html+=`
 <div class="card">
-<div style="color:#ff9bd0;margin-bottom:10px;">${date}</div>
-<div style="font-size:24px;font-weight:900;margin-bottom:10px;">${item.title}</div>
-<div style="margin-bottom:14px;">${item.category}</div>
-<div class="badge ${item.status}">
-${item.status==='done'?'완료':item.status==='progress'?'진행중':'미완료'}
-</div>
-<div style="margin-top:16px;line-height:1.8;">${item.memo||''}</div>
+<div style="color:#ff4fa0;margin-bottom:10px">${item.date}</div>
+<div style="font-size:26px;font-weight:900;margin-bottom:12px">${item.title}</div>
+<div style="margin-bottom:14px">${item.status==='done'?'완료':item.status==='progress'?'진행중':'미완료'}</div>
+<div>${item.memo||''}</div>
 ${imgs}
-</div>
-`;
-
+</div>`;
+}
 });
 
-}
+if(!html)html='<div class="card">조회 결과가 없습니다.</div>';
 
-}
-
-if(!html){
-html='<div class="card">조회 결과가 없습니다.</div>';
-}
-
-result.innerHTML=html;
+document.getElementById('result').innerHTML=html;
+})();
 
 function openViewer(src){
-document.getElementById('viewer').style.display='flex';
-document.getElementById('viewerImg').src=src;
+viewer.style.display='flex';
+viewerImg.src=src;
 }
 
-document.getElementById('viewer').onclick=function(){
-this.style.display='none';
-}
-</script>
-</body>
-</html>
+viewer.onclick=function(){this.style.display='none';}
+</script></body></html>

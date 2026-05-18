@@ -1,146 +1,32 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>타이어테크 WORKBOARD</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-body{
-background:linear-gradient(135deg,#6d1bb8,#4310a5);
-color:#fff;
-}
-header{
-height:90px;
-background:#fff;
-display:flex;
-align-items:center;
-padding:0 40px;
-}
-.header-left{
-display:flex;
-align-items:center;
-gap:18px;
-}
-.company-logo{
-height:54px;
-}
-.logo-text{
-font-size:34px;
-font-weight:900;
-color:#6d1bb8;
-text-decoration:none;
-}
-.logo-text span{
-color:#ff4fa0;
-}
-.hero{
-min-height:calc(100vh - 90px);
-background:
-linear-gradient(rgba(84,0,140,.78),rgba(55,0,155,.78)),
-url('https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=1920&auto=format&fit=crop');
-background-size:cover;
-background-position:center;
-}
-.container{
-max-width:1200px;
-margin:auto;
-padding:120px 20px;
-}
-.title{
-font-size:64px;
-font-weight:900;
-line-height:1.2;
-margin-bottom:24px;
-}
-.title span{
-color:#ff4fa0;
-}
-.desc{
-font-size:20px;
-line-height:1.8;
-margin-bottom:50px;
-}
-.box{
-background:rgba(255,255,255,.1);
-padding:28px;
-border-radius:24px;
-margin-bottom:24px;
-backdrop-filter:blur(10px);
-}
-.row{
-display:flex;
-gap:14px;
-margin-top:18px;
-}
-input{
-flex:1;
-height:64px;
-border:none;
-border-radius:14px;
-padding:0 20px;
-background:rgba(255,255,255,.14);
-color:#fff;
-}
-button{
-width:180px;
-border:none;
-border-radius:14px;
-background:#6d1bb8;
-color:#fff;
-font-weight:800;
-}
-</style>
-</head>
-<body>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Pretendard,sans-serif}
+body{background:#4310a5;color:#fff}
+header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px}
+.header-left{display:flex;align-items:center;gap:18px}
+.company-logo{height:54px}
+.logo-text{font-size:34px;font-weight:900;color:#6d1bb8;text-decoration:none}
+.logo-text span{color:#ff4fa0}
+.hero{min-height:calc(100vh - 90px);background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1920&auto=format&fit=crop');background-size:cover}
+.container{max-width:1200px;margin:auto;padding:120px 20px}
+.box{background:rgba(255,255,255,.08);padding:28px;border-radius:24px;margin-bottom:24px}
+.row{display:flex;gap:12px;margin-top:14px}
+input{flex:1;height:60px;border:none;border-radius:14px;padding:0 18px;background:rgba(255,255,255,.12);color:#fff}
+button{width:180px;border:none;border-radius:14px;background:#ff4fa0;color:#fff;font-weight:800}
+</style></head><body>
+<header><div class="header-left"><img src="tiretech-logo.png" class="company-logo"><a href="index.html" class="logo-text">WORK<span>BOARD</span></a></div></header>
+<section class="hero"><div class="container">
+<h1 style="font-size:64px;margin-bottom:20px">타이어테크 WORKBOARD</h1>
 
-<header>
-<div class="header-left">
-<img src="tiretech-logo.png" class="company-logo">
-<a href="index.html" class="logo-text">WORK<span>BOARD</span></a>
-</div>
-</header>
+<div class="box"><h2>일별 조회</h2><div class="row"><input type="date" id="day"><button onclick="go('day',day.value)">조회</button></div></div>
+<div class="box"><h2>월별 조회</h2><div class="row"><input type="month" id="month"><button onclick="go('month',month.value)">조회</button></div></div>
+<div class="box"><h2>년도별 조회</h2><div class="row"><input type="number" id="year" placeholder="2026"><button onclick="go('year',year.value)">조회</button></div></div>
 
-<section class="hero">
-
-<div class="container">
-
-<div class="title">
-<span>통합 업무 조회</span><br>
-타이어테크 효자점
-</div>
-
-<div class="desc">
-일별 · 월별 · 년도별 업무 조회를 지원합니다.
-</div>
-
-<div class="box">
-<h2>일별 조회</h2>
-<div class="row">
-<input type="date">
-<button>조회</button>
-</div>
-</div>
-
-<div class="box">
-<h2>월별 조회</h2>
-<div class="row">
-<input type="month">
-<button>조회</button>
-</div>
-</div>
-
-<div class="box">
-<h2>년도별 조회</h2>
-<div class="row">
-<input type="number" placeholder="2026">
-<button>조회</button>
-</div>
-</div>
-
-</div>
-
-</section>
-
-</body>
-</html>
+</div></section>
+<script>
+function go(mode,value){
+if(!value)return alert('값 입력');
+location.href='result.html?mode='+mode+'&value='+value;
+}
+</script></body></html>
