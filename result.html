@@ -1,28 +1,276 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>조회결과</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Pretendard,sans-serif}
-body{background:#4310a5;color:#fff}
-header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px}
-.header-left{display:flex;align-items:center;gap:18px}
-.company-logo{height:54px}
-.logo-text{font-size:34px;font-weight:900;color:#6d1bb8;text-decoration:none}
-.logo-text span{color:#ff4fa0}
-.container{max-width:1200px;margin:auto;padding:80px 20px}
-.card{background:rgba(255,255,255,.08);padding:28px;border-radius:24px;margin-bottom:20px}
-.image-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.work-image{width:100px;height:100px;object-fit:cover;border-radius:12px;cursor:pointer}
-.viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
-.viewer img{max-width:92%;max-height:92%;border-radius:18px}
-</style></head><body>
-<header><div class="header-left"><img src="tiretech-logo.png" class="company-logo"><a href="index.html" class="logo-text">WORK<span>BOARD</span></a></div></header>
 
-<div class="container">
-<a href="index.html" style="display:inline-flex;background:#ff4fa0;padding:14px 24px;border-radius:14px;color:#fff;text-decoration:none;margin-bottom:24px">홈으로 가기</a>
-<div id="result"></div>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조회결과</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Pretendard',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#6d1bb8,#4310a5);
+color:#fff;
+}
+
+header{
+height:90px;
+background:#fff;
+display:flex;
+align-items:center;
+padding:0 40px;
+}
+
+.header-left{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.company-logo{
+height:54px;
+}
+
+.logo-text{
+font-size:34px;
+font-weight:900;
+color:#ff4fa0;
+text-decoration:none;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:80px 20px;
+}
+
+.home-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+height:54px;
+padding:0 24px;
+border-radius:14px;
+background:#ff4fa0;
+color:#fff;
+text-decoration:none;
+font-weight:800;
+margin-bottom:24px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+padding:30px;
+border-radius:24px;
+margin-bottom:22px;
+cursor:pointer;
+transition:.2s;
+}
+
+.card:hover{
+transform:translateY(-3px);
+background:rgba(255,255,255,.12);
+}
+
+.date{
+color:#ff8bc7;
+font-size:15px;
+margin-bottom:10px;
+font-weight:700;
+}
+
+.title{
+font-size:22px;
+font-weight:900;
+line-height:1.5;
+margin-bottom:16px;
+word-break:keep-all;
+}
+
+.status{
+font-size:15px;
+font-weight:700;
+margin-bottom:12px;
+}
+
+.memo{
+font-size:16px;
+line-height:1.8;
+color:#f2f2f2;
+}
+
+.image-list{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:18px;
+}
+
+.thumb{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:14px;
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.88);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+padding:20px;
+}
+
+.modal-box{
+width:100%;
+max-width:1000px;
+max-height:90vh;
+overflow:auto;
+background:#181818;
+border-radius:28px;
+padding:34px;
+}
+
+.close-btn{
+height:50px;
+padding:0 20px;
+border:none;
+border-radius:14px;
+background:#ff4fa0;
+color:#fff;
+font-weight:800;
+margin-bottom:24px;
+cursor:pointer;
+}
+
+.modal-title{
+font-size:30px;
+font-weight:900;
+line-height:1.5;
+margin-bottom:20px;
+word-break:keep-all;
+}
+
+.modal-memo{
+font-size:18px;
+line-height:2;
+margin-top:20px;
+white-space:pre-wrap;
+}
+
+.modal-images{
+display:flex;
+gap:16px;
+flex-wrap:wrap;
+margin-top:24px;
+}
+
+.modal-images img{
+width:220px;
+border-radius:18px;
+cursor:pointer;
+}
+
+.viewer{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.92);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:10000;
+}
+
+.viewer img{
+max-width:92%;
+max-height:92%;
+border-radius:20px;
+}
+
+@media(max-width:768px){
+
+.title{
+font-size:18px;
+}
+
+.modal-title{
+font-size:24px;
+}
+
+.modal-images img{
+width:100%;
+}
+
+header{
+padding:0 20px;
+}
+
+.logo-text{
+font-size:26px;
+}
+
+.company-logo{
+height:44px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="header-left">
+
+<img src="tiretech-logo.png" class="company-logo">
+
+<a href="index.html" class="logo-text">
+WORKBOARD
+</a>
+
 </div>
 
-<div class="viewer" id="viewer"><img id="viewerImg"></div>
+</header>
+
+<div class="container">
+
+<a href="index.html" class="home-btn">
+홈으로 가기
+</a>
+
+<div id="result"></div>
+
+</div>
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+<button class="close-btn" onclick="closeModal()">
+닫기
+</button>
+
+<div id="modalContent"></div>
+
+</div>
+
+</div>
+
+<div class="viewer" id="viewer">
+<img id="viewerImg">
+</div>
 
 <script>
 
@@ -30,89 +278,214 @@ const DB_NAME='WORKBOARD_DB';
 const STORE_NAME='tasks';
 
 function openDB(){
+
 return new Promise((resolve,reject)=>{
+
 const request=indexedDB.open(DB_NAME,1);
 
 request.onupgradeneeded=function(e){
+
 const db=e.target.result;
+
 if(!db.objectStoreNames.contains(STORE_NAME)){
-db.createObjectStore(STORE_NAME,{keyPath:'id',autoIncrement:true});
+
+db.createObjectStore(STORE_NAME,{
+keyPath:'id',
+autoIncrement:true
+});
+
 }
+
 }
 
 request.onsuccess=()=>resolve(request.result);
 request.onerror=()=>reject(request.error);
-});
-}
 
-async function saveTask(task){
-const db=await openDB();
-const tx=db.transaction(STORE_NAME,'readwrite');
-tx.objectStore(STORE_NAME).add(task);
+});
+
 }
 
 async function getAllTasks(){
+
 const db=await openDB();
 
 return new Promise((resolve,reject)=>{
+
 const tx=db.transaction(STORE_NAME,'readonly');
+
 const store=tx.objectStore(STORE_NAME);
+
 const request=store.getAll();
 
 request.onsuccess=()=>resolve(request.result);
+
 request.onerror=()=>reject(request.error);
+
 });
+
 }
 
-
 (async()=>{
+
 const params=new URLSearchParams(location.search);
+
 const mode=params.get('mode');
+
 const value=params.get('value');
 
 const tasks=await getAllTasks();
 
+const result=document.getElementById('result');
+
 let html='';
 
-tasks.forEach(item=>{
+tasks.reverse().forEach(task=>{
 
 let match=false;
 
-if(mode==='day'&&item.date===value)match=true;
-if(mode==='month'&&item.date.startsWith(value))match=true;
-if(mode==='year'&&item.date.startsWith(value))match=true;
+if(mode==='day'&&task.date===value)match=true;
+
+if(mode==='month'&&task.date.startsWith(value))match=true;
+
+if(mode==='year'&&task.date.startsWith(value))match=true;
 
 if(match){
-let imgs='';
 
-if(item.images&&item.images.length){
-imgs+='<div class="image-list">';
-item.images.forEach(img=>{
-imgs+=`<img src="${img}" class="work-image" onclick="openViewer('${img}')">`;
+let thumbs='';
+
+if(task.images&&task.images.length){
+
+thumbs+='<div class="image-list">';
+
+task.images.forEach(img=>{
+
+thumbs+=`
+<img src="${img}" class="thumb">
+`;
+
 });
-imgs+='</div>';
+
+thumbs+='</div>';
+
 }
 
 html+=`
-<div class="card">
-<div style="color:#ff4fa0;margin-bottom:10px">${item.date}</div>
-<div style="font-size:26px;font-weight:900;margin-bottom:12px">${item.title}</div>
-<div style="margin-bottom:14px">${item.status==='done'?'완료':item.status==='progress'?'진행중':'미완료'}</div>
-<div>${item.memo||''}</div>
-${imgs}
-</div>`;
+
+<div
+class="card"
+onclick='openModal(${JSON.stringify(task)})'
+>
+
+<div class="date">
+${task.date}
+</div>
+
+<div class="title">
+${task.title}
+</div>
+
+<div class="status">
+${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
+</div>
+
+<div class="memo">
+${task.memo?.substring(0,90)||''}
+</div>
+
+${thumbs}
+
+</div>
+
+`;
+
 }
+
 });
 
-if(!html)html='<div class="card">조회 결과가 없습니다.</div>';
+if(!html){
 
-document.getElementById('result').innerHTML=html;
-})();
+html=`
+<div class="card">
+조회 결과가 없습니다.
+</div>
+`;
 
-function openViewer(src){
-viewer.style.display='flex';
-viewerImg.src=src;
 }
 
-viewer.onclick=function(){this.style.display='none';}
-</script></body></html>
+result.innerHTML=html;
+
+})();
+
+function openModal(task){
+
+document.getElementById('modal').style.display='flex';
+
+let imgs='';
+
+if(task.images&&task.images.length){
+
+imgs+='<div class="modal-images">';
+
+task.images.forEach(img=>{
+
+imgs+=`
+<img
+src="${img}"
+onclick="openViewer('${img}')"
+>
+`;
+
+});
+
+imgs+='</div>';
+
+}
+
+document.getElementById('modalContent').innerHTML=`
+
+<div class="date">
+${task.date}
+</div>
+
+<div class="modal-title">
+${task.title}
+</div>
+
+<div class="status">
+${task.status==='done'?'완료':task.status==='progress'?'진행중':'미완료'}
+</div>
+
+<div class="modal-memo">
+${task.memo||''}
+</div>
+
+${imgs}
+
+`;
+
+}
+
+function closeModal(){
+
+document.getElementById('modal').style.display='none';
+
+}
+
+function openViewer(src){
+
+document.getElementById('viewer').style.display='flex';
+
+document.getElementById('viewerImg').src=src;
+
+}
+
+document.getElementById('viewer').onclick=function(){
+
+this.style.display='none';
+
+}
+
+</script>
+
+</body>
+</html>
