@@ -212,16 +212,27 @@ font-size:12px !important;
 <body>
 
 <header>
+
 <div class="header-left">
+
 <img src="tiretech-logo.png" class="company-logo">
-<a href="index.html" class="logo-text">WORKBOARD</a>
+
+<a href="index.html" class="logo-text">
+WORKBOARD
+</a>
+
 </div>
+
 </header>
 
 <div class="container">
-<a href="index.html" class="home-btn">홈으로 가기</a>
+
+<a href="index.html" class="home-btn">
+홈으로 가기
+</a>
 
 <div class="card">
+
 <div class="group">
 <label>업무 날짜</label>
 <input type="date" id="date">
@@ -229,255 +240,354 @@ font-size:12px !important;
 
 <div id="tasks"></div>
 
-<button class="main-btn" onclick="addTask()">+ 업무 추가</button>
-<button class="main-btn save-btn" onclick="saveAll()">업무 저장</button>
+<button class="main-btn" onclick="addTask()">
++ 업무 추가
+</button>
+
+<button class="main-btn save-btn" onclick="saveAll()">
+업무 저장
+</button>
+
 </div>
 
 <div class="edit-list" id="editList"></div>
+
 </div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+
 const supabaseUrl='https://ttunieohxvnhwiikxfzu.supabase.co';
+
 const supabaseKey='sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
 
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
 
 async function saveTask(task){
-  await supabaseClient.from('tasks').insert([task]);
+
+await supabaseClient
+.from('tasks')
+.insert([task]);
+
 }
 
 async function getTasks(){
-  const { data, error } = await supabaseClient
-    .from('tasks')
-    .select('*')
-    .order('id', {ascending:false});
-  return data || [];
+
+const { data,error } = await supabaseClient
+.from('tasks')
+.select('*')
+.order('id',{ascending:false});
+
+return data || [];
+
 }
 
 async function deleteTask(id){
-  await supabaseClient.from('tasks').delete().eq('id', id);
-  loadTaskList();
+
+await supabaseClient
+.from('tasks')
+.delete()
+.eq('id',id);
+
+loadTaskList();
+
 }
 
-async function updateTask(id, data){
-  await supabaseClient.from('tasks').update(data).eq('id', id);
-  loadTaskList();
+async function updateTask(id,data){
+
+await supabaseClient
+.from('tasks')
+.update(data)
+.eq('id',id);
+
+loadTaskList();
+
 }
+
 
 function addTask(editData=null){
-  const div = document.createElement('div');
-  div.className = 'task';
 
-  div.innerHTML = `
-    <div class="group">
-      <label>업무내용</label>
-      <input type="text" class="title" value="${editData?.title||''}">
-    </div>
-    <div class="row">
-      <select class="status">
-        <option value="done">완료</option>
-        <option value="progress">진행중</option>
-        <option value="pending">미완료</option>
-      </select>
-      <select class="category">
-        <option>마케팅</option>
-        <option>블로그</option>
-        <option>플레이스</option>
-        <option>광고</option>
-        <option>디자인</option>
-      </select>
-    </div>
-    <div class="group">
-      <label>메모</label>
-      <textarea class="memo">${editData?.memo||''}</textarea>
-    </div>
-    <div class="group">
-      <label>이미지 업로드</label>
-      <input type="file" class="images" multiple accept="image/*">
-      <div class="preview-list"></div>
-    </div>
-  `;
+const div=document.createElement('div');
 
-  document.getElementById('tasks').appendChild(div);
+div.className='task';
 
-  if(editData){
-    div.dataset.editId = editData.id;
-  }
+div.innerHTML=`
 
-  setupImageUpload(div);
+<div class="group">
+<label>업무내용</label>
+<input type="text" class="title" value="${editData?.title||''}">
+</div>
 
-  if(editData){
-    div.querySelector('.status').value = editData.status;
-    if(div.querySelector('.category')) div.querySelector('.category').value = editData.category || '디자인';
-    
-    let savedImages = editData.images || [];
-    if (typeof savedImages === 'string') {
-      try { savedImages = JSON.parse(savedImages); } catch(e) { savedImages = []; }
-    }
-    
-    div.savedImageUrls = Array.isArray(savedImages) ? [...savedImages] : [];
-    
-    const preview = div.querySelector('.preview-list');
-    div.savedImageUrls.forEach(imgUrl => {
-      if(!imgUrl) return;
-      const wrap = document.createElement('div');
-      wrap.className = 'preview-wrap';
-      wrap.innerHTML = `
-        <img src="${imgUrl}" class="preview-image">
-        <button class="delete-image" type="button">✕</button>
-      `;
-      
-      wrap.querySelector('.delete-image').onclick = function() {
-        const index = div.savedImageUrls.indexOf(imgUrl);
-        if(index > -1) div.savedImageUrls.splice(index, 1);
-        wrap.remove();
-      };
-      preview.appendChild(wrap);
-    });
-  } else {
-    div.savedImageUrls = [];
-  }
+<div class="row">
+
+<select class="status">
+
+<option value="done">완료</option>
+<option value="progress">진행중</option>
+<option value="pending">미완료</option>
+
+</select>
+
+
+<select class="category">
+<option>마케팅</option>
+<option>블로그</option>
+<option>플레이스</option>
+<option>광고</option>
+<option>디자인</option>
+</select>
+
+
+</div>
+
+<div class="group">
+<label>메모</label>
+<textarea class="memo">${editData?.memo||''}</textarea>
+</div>
+
+<div class="group">
+
+<label>이미지 업로드</label>
+
+<input
+type="file"
+class="images"
+multiple
+accept="image/*"
+>
+
+<div class="preview-list"></div>
+
+</div>
+
+`;
+
+document.getElementById('tasks').appendChild(div);
+
+if(editData){
+div.dataset.editId=editData.id;
+}
+
+setupImageUpload(div);
+
+if(editData){
+div.querySelector('.status').value=editData.status;
+}
+
 }
 
 function setupImageUpload(taskElement){
-  const input = taskElement.querySelector('.images');
-  const preview = taskElement.querySelector('.preview-list');
 
-  if(!taskElement.imageFiles) {
-    taskElement.imageFiles = [];
-  }
+const input=taskElement.querySelector('.images');
 
-  input.addEventListener('change', function(e){
-    const files = Array.from(e.target.files);
+const preview=taskElement.querySelector('.preview-list');
 
-    files.forEach(file => {
-      taskElement.imageFiles.push(file);
-      const reader = new FileReader();
+taskElement.imageFiles=[];
 
-      reader.onload = function(ev){
-        const wrap = document.createElement('div');
-        wrap.className = 'preview-wrap';
-        
-        const img = document.createElement('img');
-        img.src = ev.target.result;
-        img.className = 'preview-image';
-        
-        const del = document.createElement('button');
-        del.className = 'delete-image';
-        del.innerText = '✕';
+input.addEventListener('change',function(e){
 
-        del.onclick = function(){
-          const index = taskElement.imageFiles.indexOf(file);
-          if(index > -1) taskElement.imageFiles.splice(index, 1);
-          wrap.remove();
-        }
+const files=Array.from(e.target.files);
 
-        wrap.appendChild(img);
-        wrap.appendChild(del);
-        preview.appendChild(wrap);
-      }
-      reader.readAsDataURL(file);
-    });
-    input.value = '';
-  });
+files.forEach(file=>{
+
+taskElement.imageFiles.push(file);
+
+const reader=new FileReader();
+
+reader.onload=function(ev){
+
+const wrap=document.createElement('div');
+
+wrap.className='preview-wrap';
+
+const img=document.createElement('img');
+
+img.src=ev.target.result;
+
+img.className='preview-image';
+
+const del=document.createElement('button');
+
+del.className='delete-image';
+
+del.innerText='✕';
+
+del.onclick=function(){
+
+const index=Array.from(preview.children).indexOf(wrap);
+
+taskElement.imageFiles.splice(index,1);
+
+wrap.remove();
+
 }
 
-// 첫 페이지 기본 업무 폼 실행
+wrap.appendChild(img);
+wrap.appendChild(del);
+
+preview.appendChild(wrap);
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+input.value='';
+
+});
+
+}
+
 addTask();
 
 async function saveAll(){
-  const date = document.getElementById('date').value;
 
-  if(!date){
-    alert('날짜를 선택해주세요.');
-    return;
-  }
+const date=document.getElementById('date').value;
 
-  const tasks = document.querySelectorAll('.task');
+if(!date){
+alert('날짜를 선택해주세요.');
+return;
+}
 
-  for(const task of tasks){
-    const finalImages = task.savedImageUrls ? [...task.savedImageUrls] : [];
+const tasks=document.querySelectorAll('.task');
 
-    if(task.imageFiles && task.imageFiles.length) {
-      for(const file of task.imageFiles){
-        try {
-          const base64Str = await toBase64(file);
-          finalImages.push(base64Str);
-        } catch(err) {
-          console.error("이미지 변환 실패:", err);
-        }
-      }
-    }
+for(const task of tasks){
 
-    const data = {
-      date,
-      title: task.querySelector('.title').value,
-      status: task.querySelector('.status').value,
-      category: task.querySelector('.category')?.value || '디자인',
-      memo: task.querySelector('.memo').value,
-      images: JSON.stringify(finalImages)
-    };
+const images=[];
 
-    const editId = task.dataset.editId;
+for(const file of task.imageFiles){
 
-    if(editId){
-      data.id = parseInt(editId);
-      await updateTask(parseInt(editId), data);
-    } else {
-      await saveTask(data);
-    }
-  }
+images.push(await toBase64(file));
 
-  alert('업무 저장 완료');
-  document.getElementById('tasks').innerHTML = '';
-  addTask();
-  loadTaskList();
+}
+
+const data={
+
+date,
+title:task.querySelector('.title').value,
+status:task.querySelector('.status').value,
+category:task.querySelector('.category')?.value || '디자인',
+memo:task.querySelector('.memo').value,
+images
+
+};
+
+const editId=task.dataset.editId;
+
+if(editId){
+data.id=parseInt(editId);
+await updateTask(parseInt(editId),data);
+}
+else{
+await saveTask(data);
+}
+
+}
+
+alert('업무 저장 완료');
+
+document.getElementById('tasks').innerHTML='';
+
+addTask();
+
+loadTaskList();
+
 }
 
 async function loadTaskList(){
-  const list = document.getElementById('editList');
-  const tasks = await getTasks();
 
-  list.innerHTML = '';
+const list=document.getElementById('editList');
 
-  tasks.forEach(task => {
-    const div = document.createElement('div');
-    div.className = 'edit-item';
+const tasks=await getTasks();
 
-    div.innerHTML = `
-      <div>
-        <div style="font-size:14px;color:#aaa;margin-bottom:8px;">${task.date}</div>
-        <div style="font-size:18px;font-weight:800;">${task.title}</div>
-      </div>
-      <div class="edit-buttons">
-        <button class="small-btn edit-btn" onclick='startEdit(${JSON.stringify(task)})'>수정</button>
-        <button class="small-btn delete-btn" onclick="deleteTask(${task.id})">삭제</button>
-      </div>
-    `;
-    list.appendChild(div);
-  });
+list.innerHTML='';
+
+tasks.reverse().forEach(task=>{
+
+const div=document.createElement('div');
+
+div.className='edit-item';
+
+div.innerHTML=`
+
+<div>
+
+<div style="font-size:14px;color:#aaa;margin-bottom:8px;">
+${task.date}
+</div>
+
+<div style="font-size:18px;font-weight:800;">
+${task.title}
+</div>
+
+</div>
+
+<div class="edit-buttons">
+
+<button
+class="small-btn edit-btn"
+onclick='startEdit(${JSON.stringify(task)})'
+>
+수정
+</button>
+
+<button
+class="small-btn delete-btn"
+onclick="deleteTask(${task.id})"
+>
+삭제
+</button>
+
+</div>
+
+`;
+
+list.appendChild(div);
+
+});
+
 }
 
 function startEdit(task){
-  document.getElementById('tasks').innerHTML = '';
-  document.getElementById('date').value = task.date;
-  addTask(task);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+document.getElementById('tasks').innerHTML='';
+
+document.getElementById('date').value=task.date;
+
+addTask(task);
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
+
 }
 
 function toBase64(file){
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+
+return new Promise((resolve,reject)=>{
+
+const reader=new FileReader();
+
+reader.onload=()=>resolve(reader.result);
+
+reader.onerror=reject;
+
+reader.readAsDataURL(file);
+
+});
+
 }
 
-// 목록 초기화 로드 실행
 loadTaskList();
+
 </script>
 
 </body>
