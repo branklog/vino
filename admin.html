@@ -1,1 +1,164 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무 등록</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Pretendard', sans-serif;
+}
+
+body{
+  background:#f5f5f7;
+  padding:40px 20px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+}
+
+.card{
+  background:#fff;
+  border-radius:24px;
+  padding:35px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+h1{
+  margin-bottom:30px;
+  color:#7d1aa8;
+}
+
+.input-group{
+  margin-bottom:20px;
+}
+
+label{
+  display:block;
+  margin-bottom:10px;
+  font-weight:700;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:16px;
+  border:1px solid #ddd;
+  border-radius:14px;
+  font-size:15px;
+}
+
+textarea{
+  min-height:120px;
+}
+
+button{
+  width:100%;
+  height:60px;
+  border:none;
+  border-radius:16px;
+  background:#7d1aa8;
+  color:#fff;
+  font-size:17px;
+  font-weight:800;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="card">
+
+    <h1>업무 등록</h1>
+
+    <div class="input-group">
+      <label>날짜</label>
+      <input type="date" id="date">
+    </div>
+
+    <div class="input-group">
+      <label>카테고리</label>
+      <select id="category">
+        <option>블로그 관리</option>
+        <option>플레이스 운영</option>
+        <option>광고 셋팅</option>
+        <option>스토어 운영</option>
+        <option>디자인 업무</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label>업무명</label>
+      <input type="text" id="title">
+    </div>
+
+    <div class="input-group">
+      <label>상태</label>
+      <select id="status">
+        <option value="done">완료</option>
+        <option value="working">진행중</option>
+        <option value="waiting">대기</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label>메모</label>
+      <textarea id="memo"></textarea>
+    </div>
+
+    <button onclick="saveWork()">
+      업무 저장
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+function saveWork(){
+
+  const date = document.getElementById('date').value;
+  const category = document.getElementById('category').value;
+  const title = document.getElementById('title').value;
+  const status = document.getElementById('status').value;
+  const memo = document.getElementById('memo').value;
+
+  if(!date || !title){
+    alert('날짜와 업무명을 입력해주세요.');
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem('workData')) || {};
+
+  if(!data[date]){
+    data[date] = [];
+  }
+
+  data[date].push({
+    category,
+    title,
+    status,
+    memo
+  });
+
+  localStorage.setItem('workData', JSON.stringify(data));
+
+  alert('업무가 저장되었습니다.');
+
+  document.getElementById('title').value = '';
+  document.getElementById('memo').value = '';
+}
+</script>
+
+</body>
+</html>
