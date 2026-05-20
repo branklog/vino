@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WORKBOARD 관리자</title>
+<title>비노파라다이스 관리자</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
@@ -12,312 +11,243 @@ body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
 .header-left{display:flex;align-items:center;gap:18px;}
 .company-logo{height:30px;}
-.logo-text{font-size:22px;font-weight:900;color:#0046ff;text-decoration:none;}
+.logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}
+/* 🎨 사장님 지정 브랜드 메인 컬러 주입 */
+.logo-text span{color:#9D8A69;}
 .container{max-width:1100px;margin:auto;padding:80px 20px;}
 .card{background:rgba(255,255,255,.08);padding:40px;border-radius:24px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);}
-.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#0046ff;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
-.group{margin-bottom:22px;}
-label{display:block;margin-bottom:10px;font-weight:700;}
-input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;color:#fff;font-size:15px;outline:none;}
-select option{background:#1b1b1b;color:#fff;}
-textarea{min-height:120px;resize:vertical;}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#222;color:#fff;text-decoration:none;font-weight:700;font-size:15px;margin-bottom:32px;border:1px solid rgba(255,255,255,.1);}
 
-.excel-upload-box { background: rgba(33,115,70,0.08); border: 2px dashed rgba(33,115,70,0.4); padding: 24px; border-radius: 18px; margin-bottom: 25px; }
-.excel-file-label { display: flex; align-items: center; justify-content: center; height: 54px; background: #217346; color: #fff; font-weight: 800; border-radius: 12px; cursor: pointer; font-size: 15px; transition: background 0.2s; margin-top: 10px; }
-.excel-file-label:hover { background: #1a5c38; }
-#excel-file-input { display: none; }
+h1{font-size:32px;font-weight:800;margin-bottom:12px;}
+.subtitle{font-size:16px;color:#aaa;margin-bottom:40px;}
+.form-group{margin-bottom:24px;}
+.form-label{display:block;font-size:15px;font-weight:700;margin-bottom:10px;color:#eee;}
 
-.task{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:18px;}
-.preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
-.preview-wrap{position:relative;width:90px;height:90px;}
-.preview-image{width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.08);}
-.delete-image{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border:none;border-radius:50%;background:#ff3b3b;color:#fff;font-size:13px;font-weight:900;cursor:pointer;}
-.row{display:flex;gap:12px;margin-bottom:14px;}
-.main-btn{height:58px;border:none;border-radius:14px;background:#0046ff;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;}
-.save-btn{width:100%;margin-top:14px;}
-.edit-list{margin-top:40px;}
-.edit-item{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:20px;}
-.edit-buttons{display:flex;gap:10px;}
-.small-btn{height:42px;padding:0 18px;border:none;border-radius:12px;cursor:pointer;font-weight:700;}
-.edit-btn{background:#2d7dff;color:#fff;}
-.delete-btn{background:#ff3b3b;color:#fff;}
+input[type="text"], input[type="date"], select, textarea{width:100%;height:54px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:0 20px;color:#fff;font-size:15px;outline:none;}
+textarea{height:140px;padding:18px;resize:none;}
+
+.status-group{display:flex;gap:12px;}
+.status-btn{flex:1;height:54px;position:relative;}
+.status-btn input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+.status-label{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;cursor:pointer;font-weight:700;font-size:15px;color:#aaa;transition:all 0.2s;}
+/* 🎨 라디오 체크 버튼에 지정 컬러 적용 */
+.status-btn input[type="radio"]:checked + .status-label{background:#9D8A69;border-color:#9D8A69;color:#fff;}
+
+.file-drop-zone{border:2px dashed rgba(255,255,255,.15);padding:32px;text-align:center;border-radius:14px;background:rgba(0,0,0,.2);cursor:pointer;}
+.file-preview-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px;margin-top:16px;}
+.preview-item{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#222;border:1px solid rgba(255,255,255,.1);}
+.preview-item img{width:100%;height:100%;object-fit:cover;}
+.remove-btn{position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(0,0,0,.7);border:none;border-radius:50%;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* 🎨 저장 버튼에 브랜드 메인 컬러 주입 */
+.submit-btn{width:100%;height:58px;background:#9D8A69;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;margin-top:12px;}
+
+.edit-list-title{font-size:22px;font-weight:800;margin:56px 0 20px;}
+.edit-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:24px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.edit-buttons{display:flex;gap:8px;}
+.small-btn{height:40px;padding:0 16px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
+.edit-btn{background:rgba(255,255,255,.1);color:#fff;}
+.delete-btn{background:#e11d48;color:#fff;}
+
 @media(max-width:768px){
-.row{flex-direction:column;}
-.edit-item{flex-direction:column;align-items:flex-start;}
-header{padding:0 20px;}
-.logo-text{font-size:14px !important;}
-.company-logo{height:18px !important;}
+header{height:64px;padding:0 14px;}
+.company-logo{height:18px!important;}
+.logo-text{font-size:14px!important;}
+.container{padding:40px 14px;}
+.card{padding:24px 16px;}
+h1{font-size:24px;}
+.status-group{flex-direction:column;gap:8px;}
+.edit-item{flex-direction:column;align-items:flex-start;gap:16px;}
+.edit-buttons{width:100%;}
+.edit-buttons button{flex:1;}
 }
 </style>
 </head>
 <body>
-
 <header>
-<div class="header-left">
-<a href="index.html" class="logo-text">WORKBOARD 관리자</a>
-</div>
+  <div class="header-left">
+    <img src="dagil-logo.png" class="company-logo">
+    <a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a>
+  </div>
 </header>
-
 <div class="container">
-<a href="index.html" class="home-btn">홈으로 가기</a>
-<div class="card">
-
-<div class="excel-upload-box">
-  <label style="color: #69f0ae; font-size: 15px;">📊 엑셀 서류로 작업내역 일괄 등록</label>
-  <p style="font-size: 12px; color: #bbb; margin-top: 4px; line-height: 1.5;">[열 순서 고정] A열: 의뢰일 | B열: 작업구분(웹/인쇄) | C열: 작업내용 | D열: 완료일</p>
-  <label for="excel-file-input" class="excel-file-label">📊 엑셀 파일 선택하여 목록 자동 만들기</label>
-  <input type="file" id="excel-file-input" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+  <a href="index.html" class="home-btn">← 메인 워크보드로 이동</a>
+  <div class="card">
+    <h1>업무 의뢰 현황 작성/수정</h1>
+    <div class="subtitle">비노파라다이스 통합 작업 현황을 원격 제어 및 갱신합니다.</div>
+    
+    <div id="tasks"></div>
+    <button class="submit-btn" onclick="saveAllTasks()">⚡ 작업 보드에 최종 업로드 저장</button>
+    
+    <div class="edit-list-title">📋 현재 보드에 등록된 히스토리 목록</div>
+    <div id="editList"></div>
+  </div>
 </div>
 
-<div id="tasks"></div>
-<button class="main-btn" onclick="addTask()">+ 내역 직접 추가</button>
-<button class="main-btn save-btn" onclick="saveAll()">작업 내역 저장하기</button>
-</div>
-<div class="edit-list" id="editList"></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ⚠️ 나중에 새 프로젝트의 정보로 꼭 변경해 주세요!
-const supabaseUrl='https://qzzmllbfxamzkkvcdqkp.supabase.co';
-const supabaseKey='sb_publishable_D9f3thKe-4PGJ9LbP-vfDw_87L7s-Vu';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const GITHUB_TOKEN = 'ghp_uPOfD0LhD4yY0XvR1lH8vYc67H8xY04CgVdY'; 
+const REPO_OWNER = 'jks921204';
+const REPO_NAME = 'dagil';
+const FILE_PATH = 'data.json';
 
-// 정해진 서식에 맞게 날짜 문자를 세척해주는 함수
-function cleanExcelDate(rawStr) {
-  if(!rawStr) return '';
-  let clean = rawStr.replace(/\./g, '-');
-  if(clean.endsWith('-')) { clean = clean.slice(0, -1); }
-  if(!clean.startsWith('202')) {
-    const parts = clean.split('-');
-    if(parts.length >= 2) {
-      const month = parts[0].padStart(2, '0');
-      const day = parts[1].padStart(2, '0');
-      return `2026-${month}-${day}`;
-    }
-  }
-  return clean;
-}
+let allMatchedTasks = [];
+let imgurUploads = [];
+let currentEditingId = null;
 
-async function saveTask(task){
-  await supabaseClient.from('tasks_new').insert([task]);
-}
-
-async function getTasks(){
-  const { data,error } = await supabaseClient.from('tasks_new').select('*');
-  return data || [];
-}
-
-async function deleteTask(id){
-  await supabaseClient.from('tasks_new').delete().eq('id',id);
+document.addEventListener('DOMContentLoaded', () => {
+  addTask();
   loadTaskList();
-}
+});
 
-async function updateTask(id,data){
-  await supabaseClient.from('tasks_new').update(data).eq('id',id);
-  loadTaskList();
-}
-
-function handleExcelUpload(event) {
-  const file = event.target.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, {type: 'array'});
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-    
-    if(rows.length === 0) { alert("엑셀 파일에 데이터가 없습니다."); return; }
-
-    document.getElementById('tasks').innerHTML = '';
-    let successCount = 0;
-    
-    for(let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      if(!row || row.length === 0) continue;
-
-      let rawReqDate = row[0] ? String(row[0]).trim() : '';
-      let rawCategory = row[1] ? String(row[1]).trim() : '웹';
-      const rawTitle = row[2] ? String(row[2]).trim() : '';
-      let rawCompDate = row[3] ? String(row[3]).trim() : '';
-
-      if(!rawTitle || rawTitle === '작업내용' || rawTitle === '내용') continue;
-      if(rawReqDate.includes('의뢰일') || rawReqDate.includes('날짜')) continue;
-
-      let reqDate = cleanExcelDate(rawReqDate);
-      let compDate = cleanExcelDate(rawCompDate);
-      if(!reqDate) reqDate = new Date().toISOString().split('T')[0];
-      if(!compDate) compDate = reqDate; 
-
-      let category = '웹';
-      if(rawCategory.includes('인쇄')) category = '인쇄';
-
-      addTask({
-        title: rawTitle,
-        category: category,
-        request_date: reqDate,
-        complete_date: compDate
-      });
-      successCount++;
-    }
-
-    alert(`성공! 엑셀 서류에서 총 ${successCount}개의 작업 카드를 생성했습니다.\n내용을 확인 후 아래 [작업 내역 저장하기]를 누르면 저장됩니다.`);
-    event.target.value = '';
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function addTask(editData=null){
-  const div=document.createElement('div');
-  div.className='task';
+function addTask(taskData = null) {
+  const container = document.getElementById('tasks');
+  container.innerHTML = ''; 
   
-  let today = new Date().toISOString().split('T')[0];
-  let reqDate = editData?.request_date || today;
-  let compDate = editData?.complete_date || today;
-  let categoryVal = editData?.category || '웹';
+  if(taskData) {
+    currentEditingId = taskData.id;
+    imgurUploads = taskData.images || [];
+  } else {
+    currentEditingId = null;
+    imgurUploads = [];
+  }
 
-  div.innerHTML=`
-    <div class="row">
-      <div class="group" style="flex:1;">
-        <label>의뢰일</label>
-        <input type="date" class="request-date" value="${reqDate}">
-      </div>
-      <div class="group" style="flex:1;">
-        <label>완료일</label>
-        <input type="date" class="complete-date" value="${compDate}">
-      </div>
-    </div>
-    <div class="group">
-      <label>작업구분</label>
-      <select class="category">
-        <option value="웹">웹</option>
-        <option value="인쇄">인쇄</option>
-      </select>
-    </div>
-    <div class="group">
-      <label>작업내용</label>
-      <input type="text" class="title" value="${editData?.title||''}" placeholder="작업 타이틀을 입력하세요.">
-    </div>
-    <div class="group">
-      <label>이미지 업로드 (선택)</label>
-      <input type="file" class="images" multiple accept="image/*">
-      <div class="preview-list"></div>
+  const defaultDate = taskData ? (taskData.date || '') : new Date().toISOString().substring(0, 10);
+  const title = taskData ? (taskData.title || '') : '';
+  const status = taskData ? (taskData.status || 'notready') : 'notready';
+  const memo = taskData ? (taskData.memo || '') : '';
+
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <div class="form-group"><label class="form-label">업무 등록 날짜</label><input type="date" id="task-date" value="${defaultDate}"></div>
+    <div class="form-group"><label class="form-label">진행 상황 선택</label><div class="status-group">
+      <div class="status-btn"><input type="radio" name="task-status" id="s-notready" value="notready" ${status==='notready'?'checked':''}><label for="s-notready" class="status-label">미완료</label></div>
+      <div class="status-btn"><input type="radio" name="task-status" id="s-progress" value="progress" ${status==='progress'?'checked':''}><label for="s-progress" class="status-label">진행중</label></div>
+      <div class="status-btn"><input type="radio" name="task-status" id="s-done" value="done" ${status==='done'?'checked':''}><label for="s-done" class="status-label">완료</label></div>
+    </div></div>
+    <div class="form-group"><label class="form-label">업무 제목 및 내용 요약</label><input type="text" id="task-title" placeholder="예) 강남점 신메뉴 브로슈어 인쇄작업 완료" value="${title}"></div>
+    <div class="form-group"><label class="form-label">상세 작업 메모 사항</label><textarea id="task-memo" placeholder="전달사항이나 추가 조율 피드백을 기록하세요.">${memo}</textarea></div>
+    <div class="form-group"><label class="form-label">현장 및 결과물 스크린샷 이미지 첨부</label>
+      <div class="file-drop-zone" onclick="document.getElementById('file-input').click()">🖼️ 마우스로 이미지를 클릭하거나 드래그하여 업로드 하세요.<input type="file" id="file-input" style="display:none" multiple accept="image/*" onchange="uploadToImgur(this.files)"></div>
+      <div class="file-preview-container" id="preview-box"></div>
     </div>
   `;
-  document.getElementById('tasks').appendChild(div);
-  if(editData && editData.id){ div.dataset.editId=editData.id; }
-  setupImageUpload(div);
-
-  div.querySelector('.category').value = categoryVal;
-
-  if(editData && editData.images){
-    let savedImages = editData.images || [];
-    if (typeof savedImages === 'string') {
-      try { savedImages = JSON.parse(savedImages); } catch(e) { savedImages = [savedImages]; }
-    }
-    div.savedImages = Array.isArray(savedImages) ? [...savedImages] : [];
-
-    const preview = div.querySelector('.preview-list');
-    div.savedImages.forEach(imgUrl => {
-      if(!imgUrl) return;
-      const wrap = document.createElement('div');
-      wrap.className = 'preview-wrap';
-      wrap.innerHTML = `
-        <img src="${imgUrl}" class="preview-image">
-        <button class="delete-image" type="button">✕</button>
-      `;
-      wrap.querySelector('.delete-image').onclick = function() {
-        const index = div.savedImages.indexOf(imgUrl);
-        if(index > -1) div.savedImages.splice(index, 1);
-        wrap.remove();
-      };
-      preview.appendChild(wrap);
-    });
-  } else {
-    div.savedImages = [];
-  }
+  container.appendChild(div);
+  renderImgurPreviews();
 }
 
-function setupImageUpload(taskElement) {
-  const input = taskElement.querySelector('.images');
-  const preview = taskElement.querySelector('.preview-list');
-  taskElement.imageFiles = [];
+async function uploadToImgur(files) {
+  if(!files.length) return;
+  const pBox = document.getElementById('preview-box');
+  
+  for(let i=0; i<files.length; i++) {
+    const file = files[i];
+    const tempDiv = document.createElement('div');
+    tempDiv.className = 'preview-item';
+    tempDiv.innerHTML = `<div style="padding:20px; font-size:12px; color:#aaa;">업로드중...</div>`;
+    pBox.appendChild(tempDiv);
 
-  input.addEventListener('change', function(e){
-    const files = Array.from(e.target.files);
-    const MAX_SIZE = 500 * 1024; 
-    files.forEach(file => {
-      if (file.size > MAX_SIZE) {
-        alert(`[용량 초과] '${file.name}'은 제외되었습니다. (500KB 이하의 최적화된 사진만 가능)`);
-        return; 
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch('https://api.imgur.com/3/image', {
+        method: 'POST',
+        headers: { Authorization: 'Client-ID c9823e8006ba269' },
+        body: formData
+      });
+      const data = await res.json();
+      if(data.success) {
+        imgurUploads.push(data.data.link);
+      } else {
+        alert('이미지 업로드 실패');
       }
-      taskElement.imageFiles.push(file);
-      const reader = new FileReader();
-      reader.onload = function(ev){
-        const wrap = document.createElement('div');
-        wrap.className = 'preview-wrap';
-        wrap.innerHTML = `<img src="${ev.target.result}" class="preview-image"><button class="delete-image">✕</button>`;
-        wrap.querySelector('.delete-image').onclick = function(){
-          const index = taskElement.imageFiles.indexOf(file);
-          if(index > -1) taskElement.imageFiles.splice(index, 1);
-          wrap.remove();
-        }
-        preview.appendChild(wrap);
-      }
-      reader.readAsDataURL(file);
-    });
-    input.value = '';
+    } catch(e) {
+      alert('Imgur 연동 오류 발생');
+    }
+  }
+  renderImgurPreviews();
+}
+
+function renderImgurPreviews() {
+  const pBox = document.getElementById('preview-box');
+  if(!pBox) return;
+  pBox.innerHTML = '';
+  imgurUploads.forEach((url, index) => {
+    const div = document.createElement('div');
+    div.className = 'preview-item';
+    div.innerHTML = `<img src="${url}"><button class="remove-btn" onclick="removeImg(${index})">×</button>`;
+    pBox.appendChild(div);
   });
 }
 
-addTask();
+function removeImg(idx) {
+  imgurUploads.splice(idx, 1);
+  renderImgurPreviews();
+}
 
-async function saveAll(){
-  const tasks = document.querySelectorAll('.task');
-  let savedCount = 0;
-
-  for(const task of tasks){
-    const titleVal = task.querySelector('.title').value.trim();
-    if(!titleVal) continue; 
-
-    const reqDate = task.querySelector('.request-date').value;
-    const compDate = task.querySelector('.complete-date').value;
-    const category = task.querySelector('.category').value;
-
-    const finalImages = task.savedImages ? [...task.savedImages] : [];
-    if(task.imageFiles && task.imageFiles.length > 0) {
-      for(const file of task.imageFiles){
-        finalImages.push(await toBase64(file));
-      }
-    }
-
-    const data={
-      request_date: reqDate,
-      complete_date: compDate,
-      category: category,
-      title: titleVal,
-      images: finalImages
-    };
-
-    const editId=task.dataset.editId;
-    if(editId){
-      data.id=parseInt(editId);
-      await updateTask(parseInt(editId),data);
-    } else {
-      await saveTask(data);
-    }
-    savedCount++;
+async function getTasks() {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if(res.status === 404) return [];
+    const data = await res.json();
+    const content = decodeURIComponent(atob(data.content).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    allMatchedTasks = JSON.parse(content);
+    return allMatchedTasks;
+  } catch(e) {
+    return [];
   }
+}
 
-  if(savedCount > 0) {
-    alert('모든 내역이 안전하게 저장되었습니다!');
-    document.getElementById('tasks').innerHTML='';
-    addTask();
-    loadTaskList();
+async function saveAllTasks() {
+  const date = document.getElementById('task-date').value;
+  const title = document.getElementById('task-title').value.trim();
+  const memo = document.getElementById('task-memo').value.trim();
+  const status = document.querySelector('input[name="task-status"]:checked').value;
+
+  if(title) {
+    let tasks = await getTasks();
+    if(currentEditingId) {
+      tasks = tasks.map(t => t.id === currentEditingId ? { id: t.id, date, title, status, memo, images: imgurUploads } : t);
+    } else {
+      const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+      tasks.push({ id: newId, date, title, status, memo, images: imgurUploads });
+    }
+
+    try {
+      const getFileRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+        headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+      });
+      let sha = null;
+      if(getFileRes.status !== 404) {
+        const fileData = await getFileRes.json();
+        sha = fileData.sha;
+      }
+
+      const jsonStr = JSON.stringify(tasks, null, 2);
+      const base64Content = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode(parseInt(p1, 16))));
+
+      const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: "Update task board data", content: base64Content, sha })
+      });
+
+      if(putRes.ok) {
+        alert('🎉 깃허브 원격 서버 저장소에 작업이 완벽하게 백업 저장되었습니다!');
+        currentEditingId = null;
+        imgurUploads = [];
+        addTask();
+        loadTaskList();
+      } else {
+        alert('업로드 처리중 통신 실패');
+      }
+    } catch(e) {
+      alert('서버 응답 오류');
+    }
   } else {
-    alert('저장할 내역이 입력되지 않았습니다.');
+    alert('저장할 업무 내용이 입력되지 않았습니다.');
   }
 }
 
@@ -327,7 +257,7 @@ async function loadTaskList(){
   list.innerHTML='';
 
   tasks.sort((a, b) => {
-    if (b.request_date !== a.request_date) return new Date(b.request_date) - new Date(a.request_date);
+    if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
     return b.id - a.id;
   });
 
@@ -335,10 +265,10 @@ async function loadTaskList(){
     const div=document.createElement('div');
     div.className='edit-item';
     const taskData = encodeURIComponent(JSON.stringify(task));
-    div.innerHTML=`
+    div.innerHTML = `
       <div>
-        <div style="font-size:13px;color:#aaa;margin-bottom:6px;">의뢰: ${task.request_date || ''} \| 완료: ${task.complete_date || ''}</div>
-        <div style="font-size:16px;font-weight:800;"><span style="color:#2d7dff;">[${task.category || '웹'}]</span> ${task.title || ''}</div>
+        <div style="font-size:14px;color:#aaa;margin-bottom:8px;">${task.date || ''}</div>
+        <div style="font-size:18px;font-weight:800;">${task.title || ''}</div>
       </div>
       <div class="edit-buttons">
         <button class="small-btn edit-btn" onclick="startEdit('${taskData}')">수정</button>
@@ -356,16 +286,35 @@ function startEdit(encodedTask){
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 
-function toBase64(file){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve(reader.result);
-    reader.onerror=reject;
-    reader.readAsDataURL(file);
-  });
-}
+async function deleteTask(id) {
+  if(!confirm('해당 로그를 보드에서 완전히 영구 삭제하시겠습니까?')) return;
+  let tasks = await getTasks();
+  tasks = tasks.filter(t => t.id !== id);
 
-loadTaskList();
+  try {
+    const getFileRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+    });
+    const fileData = await getFileRes.json();
+    const sha = fileData.sha;
+
+    const jsonStr = JSON.stringify(tasks, null, 2);
+    const base64Content = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode(parseInt(p1, 16))));
+
+    const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: "Delete task record", content: base64Content, sha })
+    });
+
+    if(putRes.ok) {
+      alert('정상적으로 삭제 반영되었습니다.');
+      loadTaskList();
+    }
+  } catch(e) {
+    alert('삭제 통신 실패');
+  }
+}
 </script>
 </body>
 </html>

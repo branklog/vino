@@ -1,154 +1,207 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RESULT BOARD</title>
+<title>RESULT</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
 body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
+.header-left{display:flex;align-items:center;gap:18px;}
+.company-logo{height:30px;}
 .logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}
+/* 🎨 브랜드 고유 메인 컬러 패밀리룩 매칭 */
+.logo-text span{color:#9D8A69;}
+
+.hero-bg{
+  min-height:calc(100vh - 90px);
+  background:linear-gradient(rgba(0,0,0,0.65),rgba(0,0,0,0.65)),url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center;
+  background-attachment: fixed;
+}
 .container{max-width:1200px;margin:auto;padding:80px 20px;}
 
-.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; }
-.report-range-bar label { font-weight:700; font-size:14px; color:#aaa; }
-.report-range-bar input[type="date"] { background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); padding:10px 14px; border-radius:10px; color:#fff; font-size:14px; outline:none; }
-.excel-down-btn { background:#217346 !important; color:#fff; font-weight:800; border:none; padding:11px 20px; border-radius:10px; cursor:pointer; font-size:14px; margin-left:auto; display:inline-flex; align-items:center; gap:6px; }
+/* 📊 기간 선택 바 및 엑셀 버튼 디자인 */
+.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; backdrop-filter:blur(10px); }
+.report-range-bar input[type="date"] { height:46px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:0 14px; color:#fff; font-size:14px; outline:none; }
+.excel-btn { height:46px; padding:0 22px; background:#9D8A69; border:none; border-radius:10px; color:#fff; font-weight:800; font-size:14px; cursor:pointer; margin-left:auto; transition:background 0.2s; display:inline-flex; align-items:center; gap:6px; }
+.excel-btn:hover { background:#7d6c4e; }
 
-.search-bar{display:flex;gap:12px;margin-bottom:32px;}
-.search-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;color:#fff;font-size:16px;outline:none;}
-.search-btn{background:#fff;color:#111;border:none;border-radius:16px;padding:0 32px;font-weight:800;cursor:pointer;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
-.item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;}
-.item-header{display:flex;justify-content:space-between;align-items:flex-start;}
-.badge{padding:6px 14px;border-radius:30px;font-size:12px;font-weight:800;}
-.badge.web{background:rgba(0,70,255,0.15);color:#4285f4;}
-.badge.print{background:rgba(214,0,0,0.15);color:#ff4e4e;}
-.item-title{font-size:20px;font-weight:800;line-height:1.4;word-break:keep-all;}
-.item-date{font-size:13px;color:#888;display:flex;flex-direction:column;gap:4px;}
-.img-box{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
-.img-box img{width:70px;height:70px;object-fit:cover;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);}
+/* 🧾 테이블 스타일 테마 정립 */
+.table-wrapper { width:100%; background:rgba(255,255,255,.05); border-radius:20px; border:1px solid rgba(255,255,255,.08); overflow:hidden; backdrop-filter:blur(10px); }
+table { width:100%; border-collapse:collapse; text-align:left; }
+th { background:rgba(255,255,255,.04); padding:20px; font-size:15px; font-weight:800; color:#aaa; border-bottom:1px solid rgba(255,255,255,.08); }
+td { padding:22px 20px; font-size:15px; border-bottom:1px solid rgba(255,255,255,.04); color:#eee; vertical-align:top; }
+tr:last-child td { border-bottom:none; }
 
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:1000;justify-content:center;align-items:center;padding:20px;}
-.modal-content{max-width:95%;max-height:95%;object-fit:contain;border-radius:12px;}
+/* 🏷️ 진행 상태 뱃지 */
+.badge { display:inline-flex; align-items:center; justify-content:center; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:800; }
+.badge-done { background:rgba(16,185,129,.15); color:#10b981; border:1px solid rgba(16,185,129,.2); }
+.badge-progress { background:rgba(245,158,11,.15); color:#f59e0b; border:1px solid rgba(245,158,11,.2); }
+.badge-notready { background:rgba(239,68,68,.15); color:#ef4444; border:1px solid rgba(239,68,68,.2); }
+
+/* 🖼️ 첨부 썸네일 이미지 타일 */
+.thumb-gallery { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.thumb-img { width:64px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:1px solid rgba(255,255,255,.1); transition:transform 0.15s; }
+.thumb-img:hover { transform:scale(1.05); }
+
+/* 🔍 라이트박스 이미지 모달 창 크기 조율 */
+.modal { display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:20px; }
+.modal-content { max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px; box-shadow:0 24px 48px rgba(0,0,0,.5); }
+.close-modal { position:absolute; top:24px; right:32px; color:#fff; font-size:40px; cursor:pointer; font-weight:300; }
 
 @media(max-width:768px){
-.container{padding:40px 14px;}
-.search-bar{flex-direction:column;}
-.search-btn{height:54px;}
-.report-range-bar{flex-direction:column;align-items:stretch;}
-.excel-down-btn{margin-left:0;justify-content:center;margin-top:6px;}
+  header{height:64px;padding:0 14px;}
+  .company-logo{height:18px!important;}
+  .logo-text{font-size:14px!important;}
+  .container{padding:32px 10px;}
+  .report-range-bar { padding:14px; gap:8px; }
+  .excel-btn { width:100%; margin-left:0; justify-content:center; margin-top:4px; }
+  th { padding:12px 10px; font-size:13px; }
+  td { padding:14px 10px; font-size:13px; }
+  .thumb-img { width:48px; height:48px; }
 }
 </style>
 </head>
 <body>
-
 <header>
-<div class="container" style="padding:0 40px; height:90px; display:flex; align-items:center;">
-  <a href="index.html" class="logo-text" style="color:#fff;">WORKBOARD RESULT</a>
-</div>
+  <div class="header-left">
+    <img src="dagil-logo.png" class="company-logo">
+    <a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a>
+  </div>
 </header>
+<div class="hero-bg">
+  <div class="container">
+    
+    <div class="report-range-bar">
+      <span style="font-size:14px; font-weight:700; color:#ccc;">📅 내역 엑셀 다운로드 범위 지정 :</span>
+      <input type="date" id="start-date">
+      <span style="color:#666;">~</span>
+      <input type="date" id="end-date">
+      <button class="excel-btn" onclick="downloadExcel()">📊 선택 기간 엑셀다운</button>
+    </div>
 
-<div class="container">
-  
-  <div class="report-range-bar">
-    <label>기간별 엑셀 추출:</label>
-    <input type="date" id="start-date">
-    <label>~</label>
-    <input type="date" id="end-date">
-    <button class="excel-down-btn" onclick="downloadExcel()">📊 선택 기간 내역 다운로드</button>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:15%">업무 날짜</th>
+            <th style="width:15%">진행 상태</th>
+            <th style="width:45%">업무 제목 / 상세 내용 요약</th>
+            <th style="width:25%">첨부 파일</th>
+          </tr>
+        </thead>
+        <tbody id="result-tbody">
+          <tr>
+            <td colspan="4" style="text-align:center; padding:60px 0; color:#aaa;">보드 데이터 동기화 처리 중...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
-
-  <div class="search-bar">
-    <input type="text" class="search-input" id="keyword" placeholder="찾으시는 작업내용 키워드를 입력하세요..." onkeypress="if(event.keyCode==13)search()">
-    <button class="search-btn" onclick="search()">검색</button>
-  </div>
-
-  <div class="grid" id="grid"></div>
 </div>
 
-<div class="modal" id="imageModal" onclick="closeImageModal()">
+<div id="imageModal" class="modal" onclick="closeImageModal()">
+  <span class="close-modal">&times;</span>
   <img class="modal-content" id="expandedImage">
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabaseUrl='https://qzzmllbfxamzkkvcdqkp.supabase.co';
-const supabaseKey='sb_publishable_D9f3thKe-4PGJ9LbP-vfDw_87L7s-Vu';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-
 let allMatchedTasks = [];
 
-async function loadData(){
-  const { data, error } = await supabaseClient
-    .from('tasks_new')
-    .select('*');
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get('type');
+  const val = params.get('val');
+  fetchAndRender(type, val);
+});
 
-  let list = data || [];
-  
-  list.sort((a, b) => {
-    if (b.request_date !== a.request_date) return new Date(b.request_date) - new Date(a.request_date);
-    return b.id - a.id;
-  });
+async function fetchAndRender(type, val) {
+  const tbody = document.getElementById('result-tbody');
+  try {
+    const res = await fetch(`https://api.github.com/repos/jks921204/dagil/contents/data.json`, {
+      headers: { 'Authorization': `token ghp_uPOfD0LhD4yY0XvR1lH8vYc67H8xY04CgVdY`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if(!res.ok) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px 0;">데이터 파일 수집 오류</td></tr>`;
+      return;
+    }
+    const data = await res.json();
+    const content = decodeURIComponent(atob(data.content).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    const tasks = JSON.parse(content);
 
-  allMatchedTasks = list;
-  render(list);
-}
-
-function render(items){
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-
-  if(items.length === 0){
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:40px;">조회된 작업 내역이 없습니다.</div>';
-    return;
-  }
-
-  items.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'item';
-    
-    let badgeClass = item.category === '인쇄' ? 'print' : 'web';
-    let imagesHtml = '';
-    
-    if(item.images && Array.isArray(item.images)){
-      item.images.forEach(img => {
-        if(img) imagesHtml += `<img src="${img}" onclick="openImageModal('${img}')">`;
+    // 검색 필터 서식 매칭
+    let filtered = tasks;
+    if(type && val) {
+      filtered = tasks.filter(t => {
+        if(!t.date) return false;
+        if(type === 'date') return t.date === val;
+        if(type === 'month') return t.date.substring(0, 7) === val;
+        if(type === 'year') return t.date.substring(0, 4) === val;
+        return true;
       });
     }
 
-    div.innerHTML = `
-      <div class="item-header">
-        <span class="badge ${badgeClass}">${item.category || '웹'}</span>
-      </div>
-      <div class="item-title">${item.title || ''}</div>
-      <div class="item-date">
-        <div>• 의뢰일: ${item.request_date || '-'}</div>
-        <div>• 완료일: ${item.complete_date || '-'}</div>
-      </div>
-      ${imagesHtml ? `<div class="img-box">${imagesHtml}</div>` : ''}
-    `;
-    grid.appendChild(div);
-  });
+    // 정렬 규칙 보존
+    filtered.sort((a, b) => {
+      if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
+      return b.id - a.id;
+    });
+
+    allMatchedTasks = filtered; 
+
+    if(filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px 0; color:#aaa;">해당 조건의 내역이 존재하지 않습니다.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    filtered.forEach(task => {
+      const tr = document.createElement('tr');
+      
+      let statusHtml = '';
+      if(task.status === 'done') statusHtml = '<span class="badge badge-done">완료</span>';
+      else if(task.status === 'progress') statusHtml = '<span class="badge badge-progress">진행중</span>';
+      else statusHtml = '<span class="badge badge-notready">미완료</span>';
+
+      let imgHtml = '';
+      if(task.images && task.images.length > 0) {
+        imgHtml = '<div class="thumb-gallery">';
+        task.images.forEach(url => {
+          imgHtml += `<img src="${url}" class="thumb-img" onclick="openImageModal('${url}', event)">`;
+        });
+        imgHtml += '</div>';
+      } else {
+        imgHtml = '<span style="color:#555; font-size:13px;">첨부없음</span>';
+      }
+
+      const formattedMemo = task.memo ? task.memo.replace(/\n/g, '<br>') : '';
+      const memoSection = formattedMemo ? `<div style="margin-top:10px; font-size:14px; color:#aaa; background:rgba(0,0,0,.2); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,.02); word-break:break-all;">${formattedMemo}</div>` : '';
+
+      tr.innerHTML = `
+        <td style="font-weight:700; color:#9D8A69;">${task.date || ''}</td>
+        <td>${statusHtml}</td>
+        <td>
+          <div style="font-weight:800; font-size:16px; color:#fff;">${task.title || ''}</div>
+          ${memoSection}
+        </td>
+        <td>${imgHtml}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px 0;">통신 및 파싱 엔진 예외 에러</td></tr>`;
+  }
 }
 
-function search(){
-  const k = document.getElementById('keyword').value.trim().toLowerCase();
-  if(!k){ render(allMatchedTasks); return; }
-  
-  const filtered = allMatchedTasks.filter(item => {
-    const t = (item.title || '').toLowerCase();
-    const c = (item.category || '').toLowerCase();
-    return t.includes(k) || c.includes(k);
-  });
-  render(filtered);
-}
-
-function openImageModal(src){
-  document.getElementById('expandedImage').src = src;
+function openImageModal(url, e) {
+  e.stopPropagation();
+  document.getElementById('expandedImage').src = url;
   document.getElementById('imageModal').style.display = 'flex';
 }
 
@@ -157,6 +210,7 @@ function closeImageModal(){
   document.getElementById('expandedImage').src = '';
 }
 
+// 📊 엑셀 다운로드 엔진 함수 원본 로직 100% 고수
 function downloadExcel() {
   const start = document.getElementById('start-date').value;
   const end = document.getElementById('end-date').value;
@@ -167,34 +221,31 @@ function downloadExcel() {
   if(startTime > endTime) { alert('시작 날짜가 종료 날짜보다 클 수 없습니다.'); return; }
 
   const excelTasks = allMatchedTasks.filter(task => {
-    if(!task.request_date) return false;
-    const taskTime = new Date(task.request_date).getTime();
+    if(!task.date) return false;
+    const taskTime = new Date(task.date).getTime();
     return taskTime >= startTime && taskTime <= endTime;
   });
 
-  if(excelTasks.length === 0) { alert('해당 기간에는 데이터가 존재하지 않습니다.'); return; }
-
+  if(excelTasks.length === 0) { alert('해당 기간에는 데이터가 존재하지 않습니다.'); return; }\n
   const excelData = [
-    ['의뢰일', '작업구분', '작업내용', '완료일']
+    ['업무 날짜', '진행 상태', '업무 제목/내용', '상세 메모 사항']
   ];
 
   excelTasks.forEach(task => {
+    const statusText = task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료';
     excelData.push([
-      task.request_date || '',
-      task.category || '웹',
+      task.date || '',
+      statusText,
       task.title || '',
-      task.complete_date || ''
+      task.memo || ''
     ]);
   });
 
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.aoa_to_sheet(excelData);
-  XLSX.utils.book_append_sheet(workbook, worksheet, "작업내역서");
-  XLSX.writeFile(workbook, `작업내역서_${start}_to_${end}.xlsx`);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Work History");
+  XLSX.writeFile(workbook, `VinoParadise_WorkHistory_${start}_to_${end}.xlsx`);
 }
-
-// 최초 데이터 로드
-loadData();
 </script>
 </body>
 </html>
