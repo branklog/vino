@@ -83,14 +83,14 @@ async function saveData() {
     }
 
     const id = document.getElementById('edit-id').value;
-    const data = {
-        request_date: document.getElementById('req-date').value,
-        category: document.getElementById('cat').value,
-        title: document.getElementById('title').value,
-        memo: document.getElementById('memo').value,
-        images: imageUrl || null // ⚡ DB 컬럼명 images로 저장
-    };
-
+    // admin.html의 saveData 함수 내 데이터 객체 부분
+const data = {
+    request_date: document.getElementById('req-date').value,
+    category: document.getElementById('cat').value,
+    title: document.getElementById('title').value,
+    memo: document.getElementById('memo').value,
+    tasks_images: imageUrl || null // ⚡ 여기가 tasks_images로 되어야 합니다!
+};
     if(id) await client.from('tasks_new').update(data).eq('id', id);
     else await client.from('tasks_new').insert([data]);
     
