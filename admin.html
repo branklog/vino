@@ -6,7 +6,6 @@
 <title>비노파라다이스 관리자</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-/* 원본 admin 디자인 유지 */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
 body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
@@ -21,7 +20,6 @@ label{display:block;margin-bottom:10px;font-weight:700;}
 input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;color:#fff;font-size:15px;outline:none;}
 .main-btn{height:58px;border:none;border-radius:14px;background:#9D8A69;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;margin-right:10px;}
 .task{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:18px;}
-/* 엑셀 업로드 스타일 */
 .excel-box { border: 2px dashed #9D8A69; padding: 20px; margin-bottom: 20px; border-radius: 14px; }
 </style>
 </head>
@@ -32,15 +30,14 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
   <div class="card">
     <div class="excel-box">
       <p>📊 엑셀 서류로 한번에 대량 업로드하기</p>
-      <p style="font-size:12px; color:#aaa;">A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일</p>
+      <p style="font-size:12px; color:#aaa; margin-bottom:10px;">A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일</p>
       <input type="file" id="excelFile" onchange="uploadExcel(event)">
     </div>
-
     <div id="tasks"></div>
     <button class="main-btn" onclick="addTask()">+ 업무 직접 추가</button>
     <button class="main-btn" onclick="saveAll()">업무 저장</button>
   </div>
-  <div class="edit-list" id="editList"></div>
+  <div id="editList"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -49,26 +46,24 @@ const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
 const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// ⚡ 사장님이 말씀하신 모든 필드가 포함된 입력 카드
 function addTask(data={}){
   const div = document.createElement('div');
   div.className = 'task';
   div.innerHTML = `
-    <div class="group"><label>업무 날짜</label><input type="date" class="task-date" value="${data.date || ''}"></div>
-    <div class="group"><label>업무 구분</label>
+    <div class="group"><label>의뢰일</label><input type="date" class="task-date" value="${data.date || ''}"></div>
+    <div class="group"><label>업무구분</label>
         <select class="category">
             <option value="웹" ${data.category=='웹'?'selected':''}>웹</option>
             <option value="인쇄" ${data.category=='인쇄'?'selected':''}>인쇄</option>
         </select>
     </div>
-    <div class="group"><label>업무 내용</label><input type="text" class="title" value="${data.title || ''}"></div>
+    <div class="group"><label>작업내용</label><input type="text" class="title" value="${data.title || ''}"></div>
+    <div class="group"><label>완료일</label><input type="date" class="task-complete" value="${data.complete_date || ''}"></div>
     <div class="group"><label>상태</label><select class="status">
         <option value="done">완료</option>
         <option value="progress">진행중</option>
         <option value="pending">미완료</option>
     </select></div>
-    <div class="group"><label>메모</label><textarea class="memo">${data.memo || ''}</textarea></div>
-    <div class="group"><label>이미지 업로드 (선택)</label><input type="file" class="img-input"></div>
   `;
   document.getElementById('tasks').appendChild(div);
 }
@@ -76,13 +71,21 @@ function addTask(data={}){
 async function saveAll(){
   const tasks = document.querySelectorAll('.task');
   for(const task of tasks){
-    await supabaseClient.from('tasks').insert([{
-      date: task.querySelector('.task-date').value,
+    // 의뢰일/완료일이 비어있을 경우를 대비해 빈 문자열 전달
+    const data = {
+      date: task.querySelector('.task-date').value || null,
       category: task.querySelector('.category').value,
       title: task.querySelector('.title').value,
-      status: task.querySelector('.status').value,
-      memo: task.querySelector('.memo').value
-    }]);
+      complete_date: task.querySelector('.task-complete').value || null,
+      status: task.querySelector('.status').value
+    };
+    
+    const { error } = await supabaseClient.from('tasks').insert([data]);
+    if(error) {
+        console.error(error);
+        alert('저장 중 오류 발생: ' + error.message);
+        return;
+    }
   }
   alert('저장 완료!');
   location.reload();
