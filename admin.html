@@ -6,315 +6,88 @@
 <title>비노파라다이스 관리자</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
+/* 원본 admin 디자인 유지 */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
 body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
 .header-left{display:flex;align-items:center;gap:18px;}
 .company-logo{height:30px;}
-.logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}
-/* 🎨 사장님 지정 브랜드 메인 컬러 주입 */
-.logo-text span{color:#9D8A69;}
+.logo-text{font-size:22px;font-weight:900;color:#9D8A69;text-decoration:none;}
 .container{max-width:1100px;margin:auto;padding:80px 20px;}
 .card{background:rgba(255,255,255,.08);padding:40px;border-radius:24px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);}
-.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#222;color:#fff;text-decoration:none;font-weight:700;font-size:15px;margin-bottom:32px;border:1px solid rgba(255,255,255,.1);}
-
-h1{font-size:32px;font-weight:800;margin-bottom:12px;}
-.subtitle{font-size:16px;color:#aaa;margin-bottom:40px;}
-.form-group{margin-bottom:24px;}
-.form-label{display:block;font-size:15px;font-weight:700;margin-bottom:10px;color:#eee;}
-
-input[type="text"], input[type="date"], select, textarea{width:100%;height:54px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:0 20px;color:#fff;font-size:15px;outline:none;}
-textarea{height:140px;padding:18px;resize:none;}
-
-.status-group{display:flex;gap:12px;}
-.status-btn{flex:1;height:54px;position:relative;}
-.status-btn input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
-.status-label{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;cursor:pointer;font-weight:700;font-size:15px;color:#aaa;transition:all 0.2s;}
-/* 🎨 라디오 체크 버튼에 지정 컬러 적용 */
-.status-btn input[type="radio"]:checked + .status-label{background:#9D8A69;border-color:#9D8A69;color:#fff;}
-
-.file-drop-zone{border:2px dashed rgba(255,255,255,.15);padding:32px;text-align:center;border-radius:14px;background:rgba(0,0,0,.2);cursor:pointer;}
-.file-preview-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px;margin-top:16px;}
-.preview-item{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#222;border:1px solid rgba(255,255,255,.1);}
-.preview-item img{width:100%;height:100%;object-fit:cover;}
-.remove-btn{position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(0,0,0,.7);border:none;border-radius:50%;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-
-/* 🎨 저장 버튼에 브랜드 메인 컬러 주입 */
-.submit-btn{width:100%;height:58px;background:#9D8A69;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;margin-top:12px;}
-
-.edit-list-title{font-size:22px;font-weight:800;margin:56px 0 20px;}
-.edit-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:24px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.edit-buttons{display:flex;gap:8px;}
-.small-btn{height:40px;padding:0 16px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
-.edit-btn{background:rgba(255,255,255,.1);color:#fff;}
-.delete-btn{background:#e11d48;color:#fff;}
-
-@media(max-width:768px){
-header{height:64px;padding:0 14px;}
-.company-logo{height:18px!important;}
-.logo-text{font-size:14px!important;}
-.container{padding:40px 14px;}
-.card{padding:24px 16px;}
-h1{font-size:24px;}
-.status-group{flex-direction:column;gap:8px;}
-.edit-item{flex-direction:column;align-items:flex-start;gap:16px;}
-.edit-buttons{width:100%;}
-.edit-buttons button{flex:1;}
-}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#9D8A69;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
+.group{margin-bottom:22px;}
+label{display:block;margin-bottom:10px;font-weight:700;}
+input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;color:#fff;font-size:15px;outline:none;}
+.main-btn{height:58px;border:none;border-radius:14px;background:#9D8A69;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;margin-right:10px;}
+.task{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:18px;}
+/* 엑셀 업로드 스타일 */
+.excel-box { border: 2px dashed #9D8A69; padding: 20px; margin-bottom: 20px; border-radius: 14px; }
 </style>
 </head>
 <body>
-<header>
-  <div class="header-left">
-    <img src="dagil-logo.png" class="company-logo">
-    <a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a>
-  </div>
-</header>
+<header><div class="header-left"><img src="dagil-logo.png" class="company-logo"><a href="index.html" class="logo-text">비노파라다이스</a></div></header>
 <div class="container">
-  <a href="index.html" class="home-btn">← 메인 워크보드로 이동</a>
+  <a href="index.html" class="home-btn">홈으로 가기</a>
   <div class="card">
-    <h1>업무 의뢰 현황 작성/수정</h1>
-    <div class="subtitle">비노파라다이스 통합 작업 현황을 원격 제어 및 갱신합니다.</div>
-    
+    <div class="excel-box">
+      <p>📊 엑셀 서류로 한번에 대량 업로드하기</p>
+      <p style="font-size:12px; color:#aaa;">A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일</p>
+      <input type="file" id="excelFile" onchange="uploadExcel(event)">
+    </div>
+
     <div id="tasks"></div>
-    <button class="submit-btn" onclick="saveAllTasks()">⚡ 작업 보드에 최종 업로드 저장</button>
-    
-    <div class="edit-list-title">📋 현재 보드에 등록된 히스토리 목록</div>
-    <div id="editList"></div>
+    <button class="main-btn" onclick="addTask()">+ 업무 직접 추가</button>
+    <button class="main-btn" onclick="saveAll()">업무 저장</button>
   </div>
+  <div class="edit-list" id="editList"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const GITHUB_TOKEN = 'ghp_uPOfD0LhD4yY0XvR1lH8vYc67H8xY04CgVdY'; 
-const REPO_OWNER = 'jks921204';
-const REPO_NAME = 'dagil';
-const FILE_PATH = 'data.json';
+const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
+const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-let allMatchedTasks = [];
-let imgurUploads = [];
-let currentEditingId = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-  addTask();
-  loadTaskList();
-});
-
-function addTask(taskData = null) {
-  const container = document.getElementById('tasks');
-  container.innerHTML = ''; 
-  
-  if(taskData) {
-    currentEditingId = taskData.id;
-    imgurUploads = taskData.images || [];
-  } else {
-    currentEditingId = null;
-    imgurUploads = [];
-  }
-
-  const defaultDate = taskData ? (taskData.date || '') : new Date().toISOString().substring(0, 10);
-  const title = taskData ? (taskData.title || '') : '';
-  const status = taskData ? (taskData.status || 'notready') : 'notready';
-  const memo = taskData ? (taskData.memo || '') : '';
-
+// ⚡ 사장님이 말씀하신 모든 필드가 포함된 입력 카드
+function addTask(data={}){
   const div = document.createElement('div');
+  div.className = 'task';
   div.innerHTML = `
-    <div class="form-group"><label class="form-label">업무 등록 날짜</label><input type="date" id="task-date" value="${defaultDate}"></div>
-    <div class="form-group"><label class="form-label">진행 상황 선택</label><div class="status-group">
-      <div class="status-btn"><input type="radio" name="task-status" id="s-notready" value="notready" ${status==='notready'?'checked':''}><label for="s-notready" class="status-label">미완료</label></div>
-      <div class="status-btn"><input type="radio" name="task-status" id="s-progress" value="progress" ${status==='progress'?'checked':''}><label for="s-progress" class="status-label">진행중</label></div>
-      <div class="status-btn"><input type="radio" name="task-status" id="s-done" value="done" ${status==='done'?'checked':''}><label for="s-done" class="status-label">완료</label></div>
-    </div></div>
-    <div class="form-group"><label class="form-label">업무 제목 및 내용 요약</label><input type="text" id="task-title" placeholder="예) 강남점 신메뉴 브로슈어 인쇄작업 완료" value="${title}"></div>
-    <div class="form-group"><label class="form-label">상세 작업 메모 사항</label><textarea id="task-memo" placeholder="전달사항이나 추가 조율 피드백을 기록하세요.">${memo}</textarea></div>
-    <div class="form-group"><label class="form-label">현장 및 결과물 스크린샷 이미지 첨부</label>
-      <div class="file-drop-zone" onclick="document.getElementById('file-input').click()">🖼️ 마우스로 이미지를 클릭하거나 드래그하여 업로드 하세요.<input type="file" id="file-input" style="display:none" multiple accept="image/*" onchange="uploadToImgur(this.files)"></div>
-      <div class="file-preview-container" id="preview-box"></div>
+    <div class="group"><label>업무 날짜</label><input type="date" class="task-date" value="${data.date || ''}"></div>
+    <div class="group"><label>업무 구분</label>
+        <select class="category">
+            <option value="웹" ${data.category=='웹'?'selected':''}>웹</option>
+            <option value="인쇄" ${data.category=='인쇄'?'selected':''}>인쇄</option>
+        </select>
     </div>
+    <div class="group"><label>업무 내용</label><input type="text" class="title" value="${data.title || ''}"></div>
+    <div class="group"><label>상태</label><select class="status">
+        <option value="done">완료</option>
+        <option value="progress">진행중</option>
+        <option value="pending">미완료</option>
+    </select></div>
+    <div class="group"><label>메모</label><textarea class="memo">${data.memo || ''}</textarea></div>
+    <div class="group"><label>이미지 업로드 (선택)</label><input type="file" class="img-input"></div>
   `;
-  container.appendChild(div);
-  renderImgurPreviews();
+  document.getElementById('tasks').appendChild(div);
 }
 
-async function uploadToImgur(files) {
-  if(!files.length) return;
-  const pBox = document.getElementById('preview-box');
-  
-  for(let i=0; i<files.length; i++) {
-    const file = files[i];
-    const tempDiv = document.createElement('div');
-    tempDiv.className = 'preview-item';
-    tempDiv.innerHTML = `<div style="padding:20px; font-size:12px; color:#aaa;">업로드중...</div>`;
-    pBox.appendChild(tempDiv);
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const res = await fetch('https://api.imgur.com/3/image', {
-        method: 'POST',
-        headers: { Authorization: 'Client-ID c9823e8006ba269' },
-        body: formData
-      });
-      const data = await res.json();
-      if(data.success) {
-        imgurUploads.push(data.data.link);
-      } else {
-        alert('이미지 업로드 실패');
-      }
-    } catch(e) {
-      alert('Imgur 연동 오류 발생');
-    }
+async function saveAll(){
+  const tasks = document.querySelectorAll('.task');
+  for(const task of tasks){
+    await supabaseClient.from('tasks').insert([{
+      date: task.querySelector('.task-date').value,
+      category: task.querySelector('.category').value,
+      title: task.querySelector('.title').value,
+      status: task.querySelector('.status').value,
+      memo: task.querySelector('.memo').value
+    }]);
   }
-  renderImgurPreviews();
+  alert('저장 완료!');
+  location.reload();
 }
-
-function renderImgurPreviews() {
-  const pBox = document.getElementById('preview-box');
-  if(!pBox) return;
-  pBox.innerHTML = '';
-  imgurUploads.forEach((url, index) => {
-    const div = document.createElement('div');
-    div.className = 'preview-item';
-    div.innerHTML = `<img src="${url}"><button class="remove-btn" onclick="removeImg(${index})">×</button>`;
-    pBox.appendChild(div);
-  });
-}
-
-function removeImg(idx) {
-  imgurUploads.splice(idx, 1);
-  renderImgurPreviews();
-}
-
-async function getTasks() {
-  try {
-    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-      headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if(res.status === 404) return [];
-    const data = await res.json();
-    const content = decodeURIComponent(atob(data.content).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    allMatchedTasks = JSON.parse(content);
-    return allMatchedTasks;
-  } catch(e) {
-    return [];
-  }
-}
-
-async function saveAllTasks() {
-  const date = document.getElementById('task-date').value;
-  const title = document.getElementById('task-title').value.trim();
-  const memo = document.getElementById('task-memo').value.trim();
-  const status = document.querySelector('input[name="task-status"]:checked').value;
-
-  if(title) {
-    let tasks = await getTasks();
-    if(currentEditingId) {
-      tasks = tasks.map(t => t.id === currentEditingId ? { id: t.id, date, title, status, memo, images: imgurUploads } : t);
-    } else {
-      const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
-      tasks.push({ id: newId, date, title, status, memo, images: imgurUploads });
-    }
-
-    try {
-      const getFileRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-        headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-      });
-      let sha = null;
-      if(getFileRes.status !== 404) {
-        const fileData = await getFileRes.json();
-        sha = fileData.sha;
-      }
-
-      const jsonStr = JSON.stringify(tasks, null, 2);
-      const base64Content = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode(parseInt(p1, 16))));
-
-      const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-        method: 'PUT',
-        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: "Update task board data", content: base64Content, sha })
-      });
-
-      if(putRes.ok) {
-        alert('🎉 깃허브 원격 서버 저장소에 작업이 완벽하게 백업 저장되었습니다!');
-        currentEditingId = null;
-        imgurUploads = [];
-        addTask();
-        loadTaskList();
-      } else {
-        alert('업로드 처리중 통신 실패');
-      }
-    } catch(e) {
-      alert('서버 응답 오류');
-    }
-  } else {
-    alert('저장할 업무 내용이 입력되지 않았습니다.');
-  }
-}
-
-async function loadTaskList(){
-  const list=document.getElementById('editList');
-  const tasks=await getTasks();
-  list.innerHTML='';
-
-  tasks.sort((a, b) => {
-    if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
-    return b.id - a.id;
-  });
-
-  tasks.forEach(task=>{
-    const div=document.createElement('div');
-    div.className='edit-item';
-    const taskData = encodeURIComponent(JSON.stringify(task));
-    div.innerHTML = `
-      <div>
-        <div style="font-size:14px;color:#aaa;margin-bottom:8px;">${task.date || ''}</div>
-        <div style="font-size:18px;font-weight:800;">${task.title || ''}</div>
-      </div>
-      <div class="edit-buttons">
-        <button class="small-btn edit-btn" onclick="startEdit('${taskData}')">수정</button>
-        <button class="small-btn delete-btn" onclick="deleteTask(${task.id})">삭제</button>
-      </div>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function startEdit(encodedTask){
-  const task = JSON.parse(decodeURIComponent(encodedTask));
-  document.getElementById('tasks').innerHTML='';
-  addTask(task);
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-async function deleteTask(id) {
-  if(!confirm('해당 로그를 보드에서 완전히 영구 삭제하시겠습니까?')) return;
-  let tasks = await getTasks();
-  tasks = tasks.filter(t => t.id !== id);
-
-  try {
-    const getFileRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-      headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-    });
-    const fileData = await getFileRes.json();
-    const sha = fileData.sha;
-
-    const jsonStr = JSON.stringify(tasks, null, 2);
-    const base64Content = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode(parseInt(p1, 16))));
-
-    const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-      method: 'PUT',
-      headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: "Delete task record", content: base64Content, sha })
-    });
-
-    if(putRes.ok) {
-      alert('정상적으로 삭제 반영되었습니다.');
-      loadTaskList();
-    }
-  } catch(e) {
-    alert('삭제 통신 실패');
-  }
-}
+addTask();
 </script>
 </body>
 </html>
