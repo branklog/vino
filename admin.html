@@ -4,94 +4,304 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>비노파라다이스 관리자</title>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-body{background:#111;color:#fff;}
-header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
-.header-left{display:flex;align-items:center;gap:18px;}
-.company-logo{height:30px;}
-.logo-text{font-size:22px;font-weight:900;color:#9D8A69;text-decoration:none;}
-.container{max-width:1100px;margin:auto;padding:80px 20px;}
-.card{background:rgba(255,255,255,.08);padding:40px;border-radius:24px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);}
-.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#9D8A69;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
-.group{margin-bottom:22px;}
-label{display:block;margin-bottom:10px;font-weight:700;}
-input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;color:#fff;font-size:15px;outline:none;}
-.main-btn{height:58px;border:none;border-radius:14px;background:#9D8A69;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;margin-right:10px;}
-.task{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:18px;}
-.excel-box { border: 2px dashed #9D8A69; padding: 20px; margin-bottom: 20px; border-radius: 14px; }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Pretendard',sans-serif;
+}
+
+body{
+  background:#111;
+  color:#fff;
+}
+
+header{
+  height:90px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  padding:0 40px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.company-logo{
+  height:30px;
+}
+
+.logo-text{
+  font-size:22px;
+  font-weight:900;
+  color:#9D8A69;
+  text-decoration:none;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:80px 20px;
+}
+
+.card{
+  background:rgba(255,255,255,.08);
+  padding:40px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);
+}
+
+.home-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:54px;
+  padding:0 24px;
+  border-radius:14px;
+  background:#9D8A69;
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+  margin-bottom:24px;
+}
+
+.group{
+  margin-bottom:22px;
+}
+
+label{
+  display:block;
+  margin-bottom:10px;
+  font-weight:700;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:18px;
+  color:#fff;
+  font-size:15px;
+  outline:none;
+}
+
+.main-btn{
+  height:58px;
+  border:none;
+  border-radius:14px;
+  background:#9D8A69;
+  color:#fff;
+  font-weight:800;
+  padding:0 24px;
+  cursor:pointer;
+  margin-right:10px;
+  margin-top:10px;
+}
+
+.task{
+  background:rgba(255,255,255,.05);
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:18px;
+}
+
+.excel-box{
+  border:2px dashed #9D8A69;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:14px;
+}
 </style>
 </head>
+
 <body>
-<header><div class="header-left"><img src="dagil-logo.png" class="company-logo"><a href="index.html" class="logo-text">비노파라다이스</a></div></header>
+
+<header>
+  <div class="header-left">
+    <img src="dagil-logo.png" class="company-logo">
+    <a href="index.html" class="logo-text">비노파라다이스</a>
+  </div>
+</header>
+
 <div class="container">
+
   <a href="index.html" class="home-btn">홈으로 가기</a>
+
   <div class="card">
+
     <div class="excel-box">
       <p>📊 엑셀 서류로 한번에 대량 업로드하기</p>
-      <p style="font-size:12px; color:#aaa; margin-bottom:10px;">A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일</p>
-      <input type="file" id="excelFile" onchange="uploadExcel(event)">
+      <p style="font-size:12px;color:#aaa;margin-bottom:10px;">
+        A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일
+      </p>
+
+      <!-- uploadExcel 함수 없어서 일단 onchange 제거 -->
+      <input type="file" id="excelFile">
     </div>
+
     <div id="tasks"></div>
-    <button class="main-btn" onclick="addTask()">+ 업무 직접 추가</button>
-    <button class="main-btn" onclick="saveAll()">업무 저장</button>
+
+    <button class="main-btn" onclick="addTask()">
+      + 업무 직접 추가
+    </button>
+
+    <button class="main-btn" onclick="saveAll()">
+      업무 저장
+    </button>
+
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
-const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseKey = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
 
-function addTask(data={}){
+const supabaseClient = window.supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+);
+
+function addTask(data = {}) {
+
   const div = document.createElement('div');
+
   div.className = 'task';
+
   div.innerHTML = `
-    <div class="group"><label>의뢰일</label><input type="date" class="task-date" value="${data.date || ''}"></div>
-    <div class="group"><label>업무구분</label>
-        <select class="category">
-            <option value="웹" ${data.category=='웹'?'selected':''}>웹</option>
-            <option value="인쇄" ${data.category=='인쇄'?'selected':''}>인쇄</option>
-        </select>
+  
+    <div class="group">
+      <label>의뢰일</label>
+      <input 
+        type="date" 
+        class="task-date" 
+        value="${data.request_date || ''}"
+      >
     </div>
-    <div class="group"><label>작업내용</label><input type="text" class="title" value="${data.title || ''}"></div>
-    <div class="group"><label>완료일</label><input type="date" class="task-complete" value="${data.complete_date || ''}"></div>
-    <div class="group"><label>상태</label><select class="status">
-        <option value="done">완료</option>
-        <option value="progress">진행중</option>
-        <option value="pending">미완료</option>
-    </select></div>
+
+    <div class="group">
+      <label>업무구분</label>
+
+      <select class="category">
+        <option value="웹"
+          ${data.category === '웹' ? 'selected' : ''}>
+          웹
+        </option>
+
+        <option value="인쇄"
+          ${data.category === '인쇄' ? 'selected' : ''}>
+          인쇄
+        </option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label>작업내용</label>
+
+      <input 
+        type="text" 
+        class="title" 
+        value="${data.title || ''}"
+      >
+    </div>
+
+    <div class="group">
+      <label>완료일</label>
+
+      <input 
+        type="date" 
+        class="task-complete" 
+        value="${data.complete_date || ''}"
+      >
+    </div>
+
+    <div class="group">
+      <label>상태</label>
+
+      <select class="status">
+
+        <option value="done"
+          ${data.status === 'done' ? 'selected' : ''}>
+          완료
+        </option>
+
+        <option value="progress"
+          ${data.status === 'progress' ? 'selected' : ''}>
+          진행중
+        </option>
+
+        <option value="pending"
+          ${data.status === 'pending' ? 'selected' : ''}>
+          미완료
+        </option>
+
+      </select>
+    </div>
+
   `;
+
   document.getElementById('tasks').appendChild(div);
 }
 
-async function saveAll(){
+async function saveAll() {
+
   const tasks = document.querySelectorAll('.task');
-  for(const task of tasks){
-    // ⚡ DB 컬럼명에 맞춰 수정: date -> request_date
+
+  for (const task of tasks) {
+
     const data = {
-      request_date: task.querySelector('.task-date').value || null,
-      category: task.querySelector('.category').value,
-      title: task.querySelector('.title').value,
-      complete_date: task.querySelector('.task-complete').value || null,
-      status: task.querySelector('.status').value
+
+      request_date:
+        task.querySelector('.task-date').value || null,
+
+      category:
+        task.querySelector('.category').value,
+
+      title:
+        task.querySelector('.title').value,
+
+      complete_date:
+        task.querySelector('.task-complete').value || null,
+
+      status:
+        task.querySelector('.status').value
     };
-    
-    // ⚡ 테이블명 tasks -> tasks_new
-    const { error } = await supabaseClient.from('tasks_new').insert([data]);
-    
-    if(error) {
-        console.error(error);
-        alert('저장 중 오류 발생: ' + error.message);
-        return;
+
+    console.log('저장 데이터:', data);
+
+    const { error } = await supabaseClient
+      .from('tasks_new')
+      .insert([data]);
+
+    if (error) {
+
+      console.error(error);
+
+      alert('저장 중 오류 발생: ' + error.message);
+
+      return;
     }
   }
+
   alert('저장 완료!');
+
   location.reload();
 }
+
 addTask();
 </script>
+
 </body>
 </html>
