@@ -1,1 +1,200 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESULT BOARD</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+body{background:#111;color:#fff;}
+header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
+.logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}
+.container{max-width:1200px;margin:auto;padding:80px 20px;}
+
+.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; }
+.report-range-bar label { font-weight:700; font-size:14px; color:#aaa; }
+.report-range-bar input[type="date"] { background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); padding:10px 14px; border-radius:10px; color:#fff; font-size:14px; outline:none; }
+.excel-down-btn { background:#217346 !important; color:#fff; font-weight:800; border:none; padding:11px 20px; border-radius:10px; cursor:pointer; font-size:14px; margin-left:auto; display:inline-flex; align-items:center; gap:6px; }
+
+.search-bar{display:flex;gap:12px;margin-bottom:32px;}
+.search-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;color:#fff;font-size:16px;outline:none;}
+.search-btn{background:#fff;color:#111;border:none;border-radius:16px;padding:0 32px;font-weight:800;cursor:pointer;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;}
+.item-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.badge{padding:6px 14px;border-radius:30px;font-size:12px;font-weight:800;}
+.badge.web{background:rgba(0,70,255,0.15);color:#4285f4;}
+.badge.print{background:rgba(214,0,0,0.15);color:#ff4e4e;}
+.item-title{font-size:20px;font-weight:800;line-height:1.4;word-break:keep-all;}
+.item-date{font-size:13px;color:#888;display:flex;flex-direction:column;gap:4px;}
+.img-box{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.img-box img{width:70px;height:70px;object-fit:cover;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);}
+
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:1000;justify-content:center;align-items:center;padding:20px;}
+.modal-content{max-width:95%;max-height:95%;object-fit:contain;border-radius:12px;}
+
+@media(max-width:768px){
+.container{padding:40px 14px;}
+.search-bar{flex-direction:column;}
+.search-btn{height:54px;}
+.report-range-bar{flex-direction:column;align-items:stretch;}
+.excel-down-btn{margin-left:0;justify-content:center;margin-top:6px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="container" style="padding:0 40px; height:90px; display:flex; align-items:center;">
+  <a href="index.html" class="logo-text" style="color:#fff;">WORKBOARD RESULT</a>
+</div>
+</header>
+
+<div class="container">
+  
+  <div class="report-range-bar">
+    <label>기간별 엑셀 추출:</label>
+    <input type="date" id="start-date">
+    <label>~</label>
+    <input type="date" id="end-date">
+    <button class="excel-down-btn" onclick="downloadExcel()">📊 선택 기간 내역 다운로드</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" class="search-input" id="keyword" placeholder="찾으시는 작업내용 키워드를 입력하세요..." onkeypress="if(event.keyCode==13)search()">
+    <button class="search-btn" onclick="search()">검색</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="modal" id="imageModal" onclick="closeImageModal()">
+  <img class="modal-content" id="expandedImage">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabaseUrl='https://qzzmllbfxamzkkvcdqkp.supabase.co';
+const supabaseKey='sb_publishable_D9f3thKe-4PGJ9LbP-vfDw_87L7s-Vu';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+let allMatchedTasks = [];
+
+async function loadData(){
+  const { data, error } = await supabaseClient
+    .from('tasks_new')
+    .select('*');
+
+  let list = data || [];
+  
+  list.sort((a, b) => {
+    if (b.request_date !== a.request_date) return new Date(b.request_date) - new Date(a.request_date);
+    return b.id - a.id;
+  });
+
+  allMatchedTasks = list;
+  render(list);
+}
+
+function render(items){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  if(items.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:40px;">조회된 작업 내역이 없습니다.</div>';
+    return;
+  }
+
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    
+    let badgeClass = item.category === '인쇄' ? 'print' : 'web';
+    let imagesHtml = '';
+    
+    if(item.images && Array.isArray(item.images)){
+      item.images.forEach(img => {
+        if(img) imagesHtml += `<img src="${img}" onclick="openImageModal('${img}')">`;
+      });
+    }
+
+    div.innerHTML = `
+      <div class="item-header">
+        <span class="badge ${badgeClass}">${item.category || '웹'}</span>
+      </div>
+      <div class="item-title">${item.title || ''}</div>
+      <div class="item-date">
+        <div>• 의뢰일: ${item.request_date || '-'}</div>
+        <div>• 완료일: ${item.complete_date || '-'}</div>
+      </div>
+      ${imagesHtml ? `<div class="img-box">${imagesHtml}</div>` : ''}
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function search(){
+  const k = document.getElementById('keyword').value.trim().toLowerCase();
+  if(!k){ render(allMatchedTasks); return; }
+  
+  const filtered = allMatchedTasks.filter(item => {
+    const t = (item.title || '').toLowerCase();
+    const c = (item.category || '').toLowerCase();
+    return t.includes(k) || c.includes(k);
+  });
+  render(filtered);
+}
+
+function openImageModal(src){
+  document.getElementById('expandedImage').src = src;
+  document.getElementById('imageModal').style.display = 'flex';
+}
+
+function closeImageModal(){
+  document.getElementById('imageModal').style.display = 'none';
+  document.getElementById('expandedImage').src = '';
+}
+
+function downloadExcel() {
+  const start = document.getElementById('start-date').value;
+  const end = document.getElementById('end-date').value;
+
+  if(!start || !end) { alert('시작 날짜와 종료 날짜를 모두 선택해주세요.'); return; }
+  const startTime = new Date(start).getTime();
+  const endTime = new Date(end).getTime();
+  if(startTime > endTime) { alert('시작 날짜가 종료 날짜보다 클 수 없습니다.'); return; }
+
+  const excelTasks = allMatchedTasks.filter(task => {
+    if(!task.request_date) return false;
+    const taskTime = new Date(task.request_date).getTime();
+    return taskTime >= startTime && taskTime <= endTime;
+  });
+
+  if(excelTasks.length === 0) { alert('해당 기간에는 데이터가 존재하지 않습니다.'); return; }
+
+  const excelData = [
+    ['의뢰일', '작업구분', '작업내용', '완료일']
+  ];
+
+  excelTasks.forEach(task => {
+    excelData.push([
+      task.request_date || '',
+      task.category || '웹',
+      task.title || '',
+      task.complete_date || ''
+    ]);
+  });
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "작업내역서");
+  XLSX.writeFile(workbook, `작업내역서_${start}_to_${end}.xlsx`);
+}
+
+// 최초 데이터 로드
+loadData();
+</script>
+</body>
+</html>
