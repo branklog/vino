@@ -2,99 +2,117 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RESULT</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-body{background:#111;color:#fff;}
-header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
-.header-left{display:flex;align-items:center;gap:18px;}.company-logo{height:30px;}.logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}.container{max-width:1200px;margin:auto;padding:80px 20px;}
-.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; }
-button { height:45px; padding:0 20px; border-radius:10px; background:#9D8A69; color:#fff; border:none; cursor:pointer; font-weight:700; }
-input { padding:10px; border-radius:8px; border:none; background:#333; color:#fff; }
-.task-item { background:rgba(255,255,255,.05); padding:20px; border-radius:18px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
-/* 사장님이 쓰시던 홈 버튼 스타일 그대로 적용 */
-.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#9D8A69;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
+    :root { --brand-color: #9D8A69; }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+    body{background:#111;color:#fff;padding-bottom:50px;}
+    
+    header{height:80px; background:#fff; display:flex; align-items:center; padding:0 40px; margin-bottom:30px;}
+    .logo-area{display:flex; align-items:center; gap:15px;}
+    .company-logo{height:35px;}
+    .logo-text{font-size:22px; font-weight:900; color:var(--brand-color); text-decoration:none;}
 
-@media(max-width:768px){
-    header{height:60px; padding:0 15px;}
-    .company-logo{height:16px;}
-    .logo-text{font-size:14px;}
-    .container{padding:40px 15px;}
-    .report-range-bar{flex-direction:column; align-items:flex-start; gap:10px;}
-    .home-btn{height:40px; font-size:13px; margin-bottom:15px;}
-}
-
+    .container { max-width: 1000px; margin: auto; padding: 0 20px; }
+    .control-box { background:#222; padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid #333; }
+    .report-range-bar { display:flex; align-items:center; gap:15px; font-weight:bold; }
+    input { padding:12px; border-radius:6px; border:none; background:#333; color:#fff; font-size:14px; }
+    
+    /* 버튼 크기 복구 */
+    button { padding:12px 24px; border-radius:8px; border:none; cursor:pointer; font-weight:700; color:#fff; background:var(--brand-color); font-size:14px; }
+    .filter-bar { display:flex; gap:10px; margin-bottom:30px; }
+    .btn-common { background:#333; }
+    .btn-home { background:#ff0000 !important; }
+    .btn-common.active { background:var(--brand-color) !important; }
+    
+    .task-item { background:#222; padding:20px; border-radius:15px; margin-bottom:12px; display:flex; align-items:center; gap:20px; cursor:pointer; border:1px solid #333; }
+    .status-badge { padding:4px 12px; border-radius:4px; font-size:12px; background:#1e4620; color:#4caf50; font-weight:bold; }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="header-left">
+  <div class="logo-area">
     <img src="dagil-logo.png" class="company-logo">
     <a href="index.html" class="logo-text">WORKBOARD</a>
   </div>
 </header>
 
 <div class="container">
-  <a href="index.html" class="home-btn">홈으로 가기</a>
-  
-  <div class="report-range-bar">
-    <label>리포트 기간</label>
-    <input type="date" id="start-date"> <span>~</span> <input type="date" id="end-date">
-    <button onclick="downloadExcel()">📊 엑셀 다운로드</button>
-  </div>
-  <div id="resultList">불러오는 중...</div>
+    <div class="control-box">
+        <div class="report-range-bar">
+            <label>리포트 기간 :</label>
+            <input type="date" id="start-date"> <span>~</span> <input type="date" id="end-date">
+            <button onclick="downloadExcel()" style="background:#28a745;">📊 엑셀 다운로드</button>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <button class="btn-common btn-home" onclick="location.href='index.html'">홈으로 가기</button>
+        <button class="btn-common active" onclick="setFilter(this, '전체')">전체</button>
+        <button class="btn-common" onclick="setFilter(this, '완료')">완료</button>
+        <button class="btn-common" onclick="setFilter(this, '진행중')">진행중</button>
+        <button class="btn-common" onclick="setFilter(this, '미완료')">미완료</button>
+    </div>
+
+    <div id="resultList"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
-const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-const client = supabase.createClient(supabaseUrl, supabaseKey);
+const client = supabase.createClient('https://ttunieohxvnhwiikxfzu.supabase.co', 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP');
+let allTasks = [];
 
-let allMatchedTasks = [];
+// 오늘 날짜 설정
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').value = today;
+    document.getElementById('end-date').value = today;
+    getAllTasks();
+});
 
 async function getAllTasks() {
-  const { data, error } = await client.from('tasks_new').select('*').order('id', {ascending: false});
-  if(error) { console.error(error); return; }
-  allMatchedTasks = data || [];
-  renderList(allMatchedTasks);
+    const { data } = await client.from('tasks_new').select('*').order('request_date', {ascending: false});
+    allTasks = data || [];
+    renderList(allTasks);
 }
 
 function renderList(tasks) {
-  const list = document.getElementById('resultList');
-  list.innerHTML = '';
-  tasks.forEach(task => {
-    const div = document.createElement('div');
-    div.className = 'task-item';
-    div.innerHTML = `
-      <div>
-        <div style="font-size:12px; color:#aaa;">${task.request_date || ''}</div>
-        <div style="font-size:18px; font-weight:800;">${task.title || ''}</div>
-        <div style="font-size:14px; color:#ddd;">메모: ${task.memo || ''}</div>
-      </div>
-      <div>${task.category || ''}</div>
-    `;
-    list.appendChild(div);
-  });
+    const list = document.getElementById('resultList');
+    list.innerHTML = '';
+    if(!tasks || tasks.length === 0) { list.innerHTML = '<div style="text-align:center; padding:50px;">데이터가 없습니다.</div>'; return; }
+    
+    tasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.onclick = () => { location.href = `detail.html?id=${task.id}`; };
+        div.innerHTML = `
+            <div style="width:120px; font-size:14px; color:#ccc;">${task.request_date || ''}</div>
+            <div class="status-badge">완료</div>
+            <div style="flex-grow:1; font-weight:600;">${task.title || ''}</div>
+        `;
+        list.appendChild(div);
+    });
+}
+
+function setFilter(btn, filter) {
+    document.querySelectorAll('.btn-common').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList(filter === '전체' ? allTasks : allTasks.filter(t => t.status === filter));
 }
 
 function downloadExcel() {
-  const start = document.getElementById('start-date').value;
-  const end = document.getElementById('end-date').value;
-  if(!start || !end) { alert('기간을 선택해주세요.'); return; }
-  const excelTasks = allMatchedTasks.filter(t => t.request_date >= start && t.request_date <= end);
-  if(excelTasks.length === 0) { alert('데이터가 없습니다.'); return; }
-  const excelData = [['의뢰일', '업무구분', '제목', '메모', '완료일']];
-  excelTasks.forEach(t => excelData.push([t.request_date, t.category, t.title, t.memo, t.complete_date]));
-  const ws = XLSX.utils.aoa_to_sheet(excelData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Tasks");
-  XLSX.writeFile(wb, "비노파라다이스_업무내역.xlsx");
+    const start = document.getElementById('start-date').value;
+    const end = document.getElementById('end-date').value;
+    const excelTasks = allTasks.filter(t => t.request_date >= start && t.request_date <= end);
+    const excelData = [['의뢰일', '구분', '제목', '메모', '완료일']];
+    excelTasks.forEach(t => excelData.push([t.request_date, t.category, t.title, t.memo, t.complete_date]));
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Tasks");
+    XLSX.writeFile(wb, "업무내역.xlsx");
 }
-
-getAllTasks();
 </script>
 </body>
 </html>
