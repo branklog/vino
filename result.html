@@ -64,8 +64,9 @@ const client = supabase.createClient('https://ttunieohxvnhwiikxfzu.supabase.co',
 let allTasks = [];
 
 function getImgUrl(task) {
-    if (!task.images) return null;
-    return Array.isArray(task.images) ? task.images[0] : task.images;
+    // ⚡ 여기가 'images'가 아니라 'tasks_images'여야 합니다!
+    if (!task.tasks_images) return null;
+    return Array.isArray(task.tasks_images) ? task.tasks_images[0] : task.tasks_images;
 }
 
 async function getAllTasks() {
@@ -93,15 +94,19 @@ function renderList(tasks) {
     });
 }
 
-function showDetail(task) {
-    const imgUrl = getImgUrl(task);
+function showDetail(task) {    
+    // ⚡ 여기가 task.tasks_images 여야 합니다!
+    const imgUrl = task.tasks_images || ''; 
+    
     document.getElementById('modalData').innerHTML = `
-        <div style="font-size:14px; color:#888;">${task.request_date}</div>
-        <h2 style="margin:10px 0;">${task.title}</h2>
-        <p style="margin:20px 0;">${task.memo || '내용 없음'}</p>
+        <div style="font-size:14px; color:#888;">${task.request_date}</div>        
+        <h2 style="margin:10px 0;">${task.title}</h2>        
+        <p style="margin:20px 0;">${task.memo || '내용 없음'}</p>        
+        
         ${imgUrl ? `<img src="${imgUrl}" style="width:100%; border-radius:10px; cursor:pointer;" onclick="window.open(this.src)">` : ''}
-        <button onclick="document.getElementById('detailModal').style.display='none'" style="margin-top:20px; background:#ff0000; width:100%; padding:15px; border:none; border-radius:8px; color:#fff; font-weight:bold; cursor:pointer;">닫기</button>
-    `;
+        
+        <button onclick="document.getElementById('detailModal').style.display='none'" style="...">닫기</button>    
+    `;    
     document.getElementById('detailModal').style.display = 'flex';
 }
 
