@@ -10,8 +10,8 @@
 body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
 .header-left{display:flex;align-items:center;gap:18px;}
-.company-logo{height:30px;}
-.logo-text{font-size:22px;font-weight:900;color:#9D8A69;text-decoration:none;}
+.company-logo{height:22px;} 
+.logo-text{font-size:18px;font-weight:900;color:#9D8A69;text-decoration:none;}
 .container{max-width:1100px;margin:auto;padding:80px 20px;}
 .card{background:rgba(255,255,255,.08);padding:40px;border-radius:24px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);}
 .home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#9D8A69;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
@@ -21,6 +21,18 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
 .main-btn{height:58px;border:none;border-radius:14px;background:#9D8A69;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;margin-right:10px;margin-top:10px;}
 .task{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:18px;}
 .excel-box{border:2px dashed #9D8A69;padding:20px;margin-bottom:20px;border-radius:14px;}
+
+/* ⚡ 모바일 화면에서 로고와 글자 더 줄이기 */
+@media(max-width:768px){
+    header{height:60px; padding:0 15px;}
+    .company-logo{height:16px;}
+    .logo-text{font-size:14px;}
+    .container{padding:40px 15px;}
+    .row{gap:10px}
+    input{height:48px;font-size:14px}
+    button{width:100px;height:48px;font-size:14px}
+    .hero h1 { font-size: 32px !important; line-height: 1.2; }
+}
 </style>
 </head>
 <body>
@@ -28,7 +40,7 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
 <header>
   <div class="header-left">
     <img src="dagil-logo.png" class="company-logo">
-    <a href="index.html" class="logo-text">비노파라다이스</a>
+    <a href="index.html" class="logo-text">WORK BOARD</a>
   </div>
 </header>
 
@@ -49,7 +61,7 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
 <script>
 const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
 const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const client = supabase.createClient(supabaseUrl, supabaseKey);
 
 function addTask(data = {}) {
   const div = document.createElement('div');
@@ -72,17 +84,16 @@ function addTask(data = {}) {
 async function saveAll() {
   const tasks = document.querySelectorAll('.task');
   for (const task of tasks) {
-    // ⚡ 사장님 DB 컬럼 구조에 100% 맞춘 데이터 객체
     const data = {
       title: task.querySelector('.title').value,
       memo: task.querySelector('.memo').value,
       request_date: task.querySelector('.task-date').value || null,
       complete_date: task.querySelector('.task-complete').value || null,
       category: task.querySelector('.category').value,
-      images: null // 기본값 null
+      images: null
     };
     
-    const { error } = await supabaseClient.from('tasks_new').insert([data]);
+    const { error } = await client.from('tasks_new').insert([data]);
     if (error) {
       console.error(error);
       alert('저장 오류: ' + error.message);
