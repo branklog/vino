@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -37,6 +38,7 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
   <div class="card">
     <div class="excel-box">
       <p>📊 엑셀 서류로 한번에 대량 업로드하기</p>
+      <p style="font-size:12px;color:#aaa;margin-bottom:10px;">A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일</p>
       <input type="file" id="excelFile">
     </div>
     <div id="tasks"></div>
@@ -47,13 +49,13 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// 기존 const supabase = window.supabase.createClient(...) 부분을 삭제하고 아래로 교체하세요!
+// 기존의 const supabaseClient = window.supabase.createClient(...) 부분을 찾아서 삭제하고 아래로 교체하세요!
 
 const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
 const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
 
-// ⚡ window를 빼고 supabase.createClient로 직접 연결합니다.
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// ⚡ 여기가 핵심입니다. window를 빼고 supabase.createClient로 호출하세요.
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 function addTask(data = {}) {
   const div = document.createElement('div');
@@ -82,21 +84,18 @@ function addTask(data = {}) {
 async function saveAll() {
   const tasks = document.querySelectorAll('.task');
   for (const task of tasks) {
-    // ⚡ 사장님의 DB 테이블 구조(id, title, memo, images, request_date, complete_date, category)에 완벽 일치
     const data = {
-      title: task.querySelector('.title').value,
-      memo: task.querySelector('.memo').value,
       request_date: task.querySelector('.task-date').value || null,
-      complete_date: task.querySelector('.task-complete').value || null,
       category: task.querySelector('.category').value,
-      images: null // images는 테이블에 있으니 null로 처리
+      title: task.querySelector('.title').value,
+      complete_date: task.querySelector('.task-complete').value || null,
+      status: task.querySelector('.status').value
     };
     
-    // 테이블명 tasks_new에 정확히 전송
-    const { error } = await supabase.from('tasks_new').insert([data]);
-    
+    // ⚡ 테이블명 tasks_new 확인
+    const { error } = await supabaseClient.from('tasks_new').insert([data]);
     if (error) {
-      console.error('저장 실패:', error);
+      console.error(error);
       alert('저장 중 오류 발생: ' + error.message);
       return;
     }
