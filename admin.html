@@ -49,9 +49,12 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ⚡ 사장님의 정확한 키값 적용
+// 기존 코드 지우고 이걸로 덮어쓰세요
 const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
 const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ⚡ 여기를 주목해주세요! window.supabase가 아니라 supabase.createClient로 호출합니다.
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 function addTask(data = {}) {
   const div = document.createElement('div');
