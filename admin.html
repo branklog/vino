@@ -1,1 +1,371 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBOARD 관리자</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
+body{background:#111;color:#fff;}
+header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
+.header-left{display:flex;align-items:center;gap:18px;}
+.company-logo{height:30px;}
+.logo-text{font-size:22px;font-weight:900;color:#0046ff;text-decoration:none;}
+.container{max-width:1100px;margin:auto;padding:80px 20px;}
+.card{background:rgba(255,255,255,.08);padding:40px;border-radius:24px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#0046ff;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
+.group{margin-bottom:22px;}
+label{display:block;margin-bottom:10px;font-weight:700;}
+input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;color:#fff;font-size:15px;outline:none;}
+select option{background:#1b1b1b;color:#fff;}
+textarea{min-height:120px;resize:vertical;}
+
+.excel-upload-box { background: rgba(33,115,70,0.08); border: 2px dashed rgba(33,115,70,0.4); padding: 24px; border-radius: 18px; margin-bottom: 25px; }
+.excel-file-label { display: flex; align-items: center; justify-content: center; height: 54px; background: #217346; color: #fff; font-weight: 800; border-radius: 12px; cursor: pointer; font-size: 15px; transition: background 0.2s; margin-top: 10px; }
+.excel-file-label:hover { background: #1a5c38; }
+#excel-file-input { display: none; }
+
+.task{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:18px;}
+.preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
+.preview-wrap{position:relative;width:90px;height:90px;}
+.preview-image{width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.08);}
+.delete-image{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border:none;border-radius:50%;background:#ff3b3b;color:#fff;font-size:13px;font-weight:900;cursor:pointer;}
+.row{display:flex;gap:12px;margin-bottom:14px;}
+.main-btn{height:58px;border:none;border-radius:14px;background:#0046ff;color:#fff;font-weight:800;padding:0 24px;cursor:pointer;}
+.save-btn{width:100%;margin-top:14px;}
+.edit-list{margin-top:40px;}
+.edit-item{background:rgba(255,255,255,.05);padding:20px;border-radius:18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:20px;}
+.edit-buttons{display:flex;gap:10px;}
+.small-btn{height:42px;padding:0 18px;border:none;border-radius:12px;cursor:pointer;font-weight:700;}
+.edit-btn{background:#2d7dff;color:#fff;}
+.delete-btn{background:#ff3b3b;color:#fff;}
+@media(max-width:768px){
+.row{flex-direction:column;}
+.edit-item{flex-direction:column;align-items:flex-start;}
+header{padding:0 20px;}
+.logo-text{font-size:14px !important;}
+.company-logo{height:18px !important;}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="header-left">
+<a href="index.html" class="logo-text">WORKBOARD 관리자</a>
+</div>
+</header>
+
+<div class="container">
+<a href="index.html" class="home-btn">홈으로 가기</a>
+<div class="card">
+
+<div class="excel-upload-box">
+  <label style="color: #69f0ae; font-size: 15px;">📊 엑셀 서류로 작업내역 일괄 등록</label>
+  <p style="font-size: 12px; color: #bbb; margin-top: 4px; line-height: 1.5;">[열 순서 고정] A열: 의뢰일 | B열: 작업구분(웹/인쇄) | C열: 작업내용 | D열: 완료일</p>
+  <label for="excel-file-input" class="excel-file-label">📊 엑셀 파일 선택하여 목록 자동 만들기</label>
+  <input type="file" id="excel-file-input" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+</div>
+
+<div id="tasks"></div>
+<button class="main-btn" onclick="addTask()">+ 내역 직접 추가</button>
+<button class="main-btn save-btn" onclick="saveAll()">작업 내역 저장하기</button>
+</div>
+<div class="edit-list" id="editList"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ⚠️ 나중에 새 프로젝트의 정보로 꼭 변경해 주세요!
+const supabaseUrl='https://qzzmllbfxamzkkvcdqkp.supabase.co';
+const supabaseKey='sb_publishable_D9f3thKe-4PGJ9LbP-vfDw_87L7s-Vu';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// 정해진 서식에 맞게 날짜 문자를 세척해주는 함수
+function cleanExcelDate(rawStr) {
+  if(!rawStr) return '';
+  let clean = rawStr.replace(/\./g, '-');
+  if(clean.endsWith('-')) { clean = clean.slice(0, -1); }
+  if(!clean.startsWith('202')) {
+    const parts = clean.split('-');
+    if(parts.length >= 2) {
+      const month = parts[0].padStart(2, '0');
+      const day = parts[1].padStart(2, '0');
+      return `2026-${month}-${day}`;
+    }
+  }
+  return clean;
+}
+
+async function saveTask(task){
+  await supabaseClient.from('tasks_new').insert([task]);
+}
+
+async function getTasks(){
+  const { data,error } = await supabaseClient.from('tasks_new').select('*');
+  return data || [];
+}
+
+async function deleteTask(id){
+  await supabaseClient.from('tasks_new').delete().eq('id',id);
+  loadTaskList();
+}
+
+async function updateTask(id,data){
+  await supabaseClient.from('tasks_new').update(data).eq('id',id);
+  loadTaskList();
+}
+
+function handleExcelUpload(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+    
+    if(rows.length === 0) { alert("엑셀 파일에 데이터가 없습니다."); return; }
+
+    document.getElementById('tasks').innerHTML = '';
+    let successCount = 0;
+    
+    for(let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if(!row || row.length === 0) continue;
+
+      let rawReqDate = row[0] ? String(row[0]).trim() : '';
+      let rawCategory = row[1] ? String(row[1]).trim() : '웹';
+      const rawTitle = row[2] ? String(row[2]).trim() : '';
+      let rawCompDate = row[3] ? String(row[3]).trim() : '';
+
+      if(!rawTitle || rawTitle === '작업내용' || rawTitle === '내용') continue;
+      if(rawReqDate.includes('의뢰일') || rawReqDate.includes('날짜')) continue;
+
+      let reqDate = cleanExcelDate(rawReqDate);
+      let compDate = cleanExcelDate(rawCompDate);
+      if(!reqDate) reqDate = new Date().toISOString().split('T')[0];
+      if(!compDate) compDate = reqDate; 
+
+      let category = '웹';
+      if(rawCategory.includes('인쇄')) category = '인쇄';
+
+      addTask({
+        title: rawTitle,
+        category: category,
+        request_date: reqDate,
+        complete_date: compDate
+      });
+      successCount++;
+    }
+
+    alert(`성공! 엑셀 서류에서 총 ${successCount}개의 작업 카드를 생성했습니다.\n내용을 확인 후 아래 [작업 내역 저장하기]를 누르면 저장됩니다.`);
+    event.target.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function addTask(editData=null){
+  const div=document.createElement('div');
+  div.className='task';
+  
+  let today = new Date().toISOString().split('T')[0];
+  let reqDate = editData?.request_date || today;
+  let compDate = editData?.complete_date || today;
+  let categoryVal = editData?.category || '웹';
+
+  div.innerHTML=`
+    <div class="row">
+      <div class="group" style="flex:1;">
+        <label>의뢰일</label>
+        <input type="date" class="request-date" value="${reqDate}">
+      </div>
+      <div class="group" style="flex:1;">
+        <label>완료일</label>
+        <input type="date" class="complete-date" value="${compDate}">
+      </div>
+    </div>
+    <div class="group">
+      <label>작업구분</label>
+      <select class="category">
+        <option value="웹">웹</option>
+        <option value="인쇄">인쇄</option>
+      </select>
+    </div>
+    <div class="group">
+      <label>작업내용</label>
+      <input type="text" class="title" value="${editData?.title||''}" placeholder="작업 타이틀을 입력하세요.">
+    </div>
+    <div class="group">
+      <label>이미지 업로드 (선택)</label>
+      <input type="file" class="images" multiple accept="image/*">
+      <div class="preview-list"></div>
+    </div>
+  `;
+  document.getElementById('tasks').appendChild(div);
+  if(editData && editData.id){ div.dataset.editId=editData.id; }
+  setupImageUpload(div);
+
+  div.querySelector('.category').value = categoryVal;
+
+  if(editData && editData.images){
+    let savedImages = editData.images || [];
+    if (typeof savedImages === 'string') {
+      try { savedImages = JSON.parse(savedImages); } catch(e) { savedImages = [savedImages]; }
+    }
+    div.savedImages = Array.isArray(savedImages) ? [...savedImages] : [];
+
+    const preview = div.querySelector('.preview-list');
+    div.savedImages.forEach(imgUrl => {
+      if(!imgUrl) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'preview-wrap';
+      wrap.innerHTML = `
+        <img src="${imgUrl}" class="preview-image">
+        <button class="delete-image" type="button">✕</button>
+      `;
+      wrap.querySelector('.delete-image').onclick = function() {
+        const index = div.savedImages.indexOf(imgUrl);
+        if(index > -1) div.savedImages.splice(index, 1);
+        wrap.remove();
+      };
+      preview.appendChild(wrap);
+    });
+  } else {
+    div.savedImages = [];
+  }
+}
+
+function setupImageUpload(taskElement) {
+  const input = taskElement.querySelector('.images');
+  const preview = taskElement.querySelector('.preview-list');
+  taskElement.imageFiles = [];
+
+  input.addEventListener('change', function(e){
+    const files = Array.from(e.target.files);
+    const MAX_SIZE = 500 * 1024; 
+    files.forEach(file => {
+      if (file.size > MAX_SIZE) {
+        alert(`[용량 초과] '${file.name}'은 제외되었습니다. (500KB 이하의 최적화된 사진만 가능)`);
+        return; 
+      }
+      taskElement.imageFiles.push(file);
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        const wrap = document.createElement('div');
+        wrap.className = 'preview-wrap';
+        wrap.innerHTML = `<img src="${ev.target.result}" class="preview-image"><button class="delete-image">✕</button>`;
+        wrap.querySelector('.delete-image').onclick = function(){
+          const index = taskElement.imageFiles.indexOf(file);
+          if(index > -1) taskElement.imageFiles.splice(index, 1);
+          wrap.remove();
+        }
+        preview.appendChild(wrap);
+      }
+      reader.readAsDataURL(file);
+    });
+    input.value = '';
+  });
+}
+
+addTask();
+
+async function saveAll(){
+  const tasks = document.querySelectorAll('.task');
+  let savedCount = 0;
+
+  for(const task of tasks){
+    const titleVal = task.querySelector('.title').value.trim();
+    if(!titleVal) continue; 
+
+    const reqDate = task.querySelector('.request-date').value;
+    const compDate = task.querySelector('.complete-date').value;
+    const category = task.querySelector('.category').value;
+
+    const finalImages = task.savedImages ? [...task.savedImages] : [];
+    if(task.imageFiles && task.imageFiles.length > 0) {
+      for(const file of task.imageFiles){
+        finalImages.push(await toBase64(file));
+      }
+    }
+
+    const data={
+      request_date: reqDate,
+      complete_date: compDate,
+      category: category,
+      title: titleVal,
+      images: finalImages
+    };
+
+    const editId=task.dataset.editId;
+    if(editId){
+      data.id=parseInt(editId);
+      await updateTask(parseInt(editId),data);
+    } else {
+      await saveTask(data);
+    }
+    savedCount++;
+  }
+
+  if(savedCount > 0) {
+    alert('모든 내역이 안전하게 저장되었습니다!');
+    document.getElementById('tasks').innerHTML='';
+    addTask();
+    loadTaskList();
+  } else {
+    alert('저장할 내역이 입력되지 않았습니다.');
+  }
+}
+
+async function loadTaskList(){
+  const list=document.getElementById('editList');
+  const tasks=await getTasks();
+  list.innerHTML='';
+
+  tasks.sort((a, b) => {
+    if (b.request_date !== a.request_date) return new Date(b.request_date) - new Date(a.request_date);
+    return b.id - a.id;
+  });
+
+  tasks.forEach(task=>{
+    const div=document.createElement('div');
+    div.className='edit-item';
+    const taskData = encodeURIComponent(JSON.stringify(task));
+    div.innerHTML=`
+      <div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:6px;">의뢰: ${task.request_date || ''} \| 완료: ${task.complete_date || ''}</div>
+        <div style="font-size:16px;font-weight:800;"><span style="color:#2d7dff;">[${task.category || '웹'}]</span> ${task.title || ''}</div>
+      </div>
+      <div class="edit-buttons">
+        <button class="small-btn edit-btn" onclick="startEdit('${taskData}')">수정</button>
+        <button class="small-btn delete-btn" onclick="deleteTask(${task.id})">삭제</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function startEdit(encodedTask){
+  const task = JSON.parse(decodeURIComponent(encodedTask));
+  document.getElementById('tasks').innerHTML='';
+  addTask(task);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function toBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+loadTaskList();
+</script>
+</body>
+</html>
