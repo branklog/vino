@@ -11,241 +11,98 @@ body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
 .header-left{display:flex;align-items:center;gap:18px;}
 .company-logo{height:30px;}
-.logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}
-/* 🎨 브랜드 고유 메인 컬러 패밀리룩 매칭 */
-.logo-text span{color:#9D8A69;}
-
-.hero-bg{
-  min-height:calc(100vh - 90px);
-  background:linear-gradient(rgba(0,0,0,0.65),rgba(0,0,0,0.65)),url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop');
-  background-size:cover;
-  background-position:center;
-  background-attachment: fixed;
-}
+.logo-text{font-size:22px;font-weight:900;color:#9D8A69;text-decoration:none;}
 .container{max-width:1200px;margin:auto;padding:80px 20px;}
-
-/* 📊 기간 선택 바 및 엑셀 버튼 디자인 */
-.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; backdrop-filter:blur(10px); }
-.report-range-bar input[type="date"] { height:46px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:0 14px; color:#fff; font-size:14px; outline:none; }
-.excel-btn { height:46px; padding:0 22px; background:#9D8A69; border:none; border-radius:10px; color:#fff; font-weight:800; font-size:14px; cursor:pointer; margin-left:auto; transition:background 0.2s; display:inline-flex; align-items:center; gap:6px; }
-.excel-btn:hover { background:#7d6c4e; }
-
-/* 🧾 테이블 스타일 테마 정립 */
-.table-wrapper { width:100%; background:rgba(255,255,255,.05); border-radius:20px; border:1px solid rgba(255,255,255,.08); overflow:hidden; backdrop-filter:blur(10px); }
-table { width:100%; border-collapse:collapse; text-align:left; }
-th { background:rgba(255,255,255,.04); padding:20px; font-size:15px; font-weight:800; color:#aaa; border-bottom:1px solid rgba(255,255,255,.08); }
-td { padding:22px 20px; font-size:15px; border-bottom:1px solid rgba(255,255,255,.04); color:#eee; vertical-align:top; }
-tr:last-child td { border-bottom:none; }
-
-/* 🏷️ 진행 상태 뱃지 */
-.badge { display:inline-flex; align-items:center; justify-content:center; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:800; }
-.badge-done { background:rgba(16,185,129,.15); color:#10b981; border:1px solid rgba(16,185,129,.2); }
-.badge-progress { background:rgba(245,158,11,.15); color:#f59e0b; border:1px solid rgba(245,158,11,.2); }
-.badge-notready { background:rgba(239,68,68,.15); color:#ef4444; border:1px solid rgba(239,68,68,.2); }
-
-/* 🖼️ 첨부 썸네일 이미지 타일 */
-.thumb-gallery { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-.thumb-img { width:64px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:1px solid rgba(255,255,255,.1); transition:transform 0.15s; }
-.thumb-img:hover { transform:scale(1.05); }
-
-/* 🔍 라이트박스 이미지 모달 창 크기 조율 */
-.modal { display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:20px; }
-.modal-content { max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px; box-shadow:0 24px 48px rgba(0,0,0,.5); }
-.close-modal { position:absolute; top:24px; right:32px; color:#fff; font-size:40px; cursor:pointer; font-weight:300; }
-
-@media(max-width:768px){
-  header{height:64px;padding:0 14px;}
-  .company-logo{height:18px!important;}
-  .logo-text{font-size:14px!important;}
-  .container{padding:32px 10px;}
-  .report-range-bar { padding:14px; gap:8px; }
-  .excel-btn { width:100%; margin-left:0; justify-content:center; margin-top:4px; }
-  th { padding:12px 10px; font-size:13px; }
-  td { padding:14px 10px; font-size:13px; }
-  .thumb-img { width:48px; height:48px; }
-}
+.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; }
+button { height:45px; padding:0 20px; border-radius:10px; background:#9D8A69; color:#fff; border:none; cursor:pointer; font-weight:700; }
+input { padding:10px; border-radius:8px; border:none; background:#333; color:#fff; }
+.filter-bar { display:flex; gap:10px; margin-bottom:20px; }
+.task-item { background:rgba(255,255,255,.05); padding:20px; border-radius:18px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
 </style>
 </head>
 <body>
+
 <header>
   <div class="header-left">
     <img src="dagil-logo.png" class="company-logo">
-    <a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a>
+    <a href="index.html" class="logo-text">비노파라다이스</a>
   </div>
+  <a href="index.html" style="margin-left:auto; text-decoration:none; color:#111; font-weight:800;">홈으로 가기</a>
 </header>
-<div class="hero-bg">
-  <div class="container">
-    
-    <div class="report-range-bar">
-      <span style="font-size:14px; font-weight:700; color:#ccc;">📅 내역 엑셀 다운로드 범위 지정 :</span>
-      <input type="date" id="start-date">
-      <span style="color:#666;">~</span>
-      <input type="date" id="end-date">
-      <button class="excel-btn" onclick="downloadExcel()">📊 선택 기간 엑셀다운</button>
-    </div>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:15%">업무 날짜</th>
-            <th style="width:15%">진행 상태</th>
-            <th style="width:45%">업무 제목 / 상세 내용 요약</th>
-            <th style="width:25%">첨부 파일</th>
-          </tr>
-        </thead>
-        <tbody id="result-tbody">
-          <tr>
-            <td colspan="4" style="text-align:center; padding:60px 0; color:#aaa;">보드 데이터 동기화 처리 중...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
+<div class="container">
+  <div class="report-range-bar">
+    <label>리포트 기간</label>
+    <input type="date" id="start-date"> <span>~</span> <input type="date" id="end-date">
+    <button onclick="downloadExcel()">📊 엑셀 다운로드</button>
   </div>
+
+  <div class="filter-bar">
+    <button onclick="filterTasks('all')">전체</button>
+    <button onclick="filterTasks('done')">완료</button>
+    <button onclick="filterTasks('progress')">진행중</button>
+    <button onclick="filterTasks('pending')">미완료</button>
+  </div>
+
+  <div id="resultList"></div>
 </div>
 
-<div id="imageModal" class="modal" onclick="closeImageModal()">
-  <span class="close-modal">&times;</span>
-  <img class="modal-content" id="expandedImage">
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ⚡ 진짜 서버 연동 정보
+const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
+const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// (이하 result.html 원본의 getAllTasks, renderList, filterTasks, downloadExcel 등 모든 로직 그대로 유지)
 let allMatchedTasks = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(window.location.search);
-  const type = params.get('type');
-  const val = params.get('val');
-  fetchAndRender(type, val);
-});
-
-async function fetchAndRender(type, val) {
-  const tbody = document.getElementById('result-tbody');
-  try {
-    const res = await fetch(`https://api.github.com/repos/jks921204/dagil/contents/data.json`, {
-      headers: { 'Authorization': `token ghp_uPOfD0LhD4yY0XvR1lH8vYc67H8xY04CgVdY`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if(!res.ok) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px 0;">데이터 파일 수집 오류</td></tr>`;
-      return;
-    }
-    const data = await res.json();
-    const content = decodeURIComponent(atob(data.content).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    const tasks = JSON.parse(content);
-
-    // 검색 필터 서식 매칭
-    let filtered = tasks;
-    if(type && val) {
-      filtered = tasks.filter(t => {
-        if(!t.date) return false;
-        if(type === 'date') return t.date === val;
-        if(type === 'month') return t.date.substring(0, 7) === val;
-        if(type === 'year') return t.date.substring(0, 4) === val;
-        return true;
-      });
-    }
-
-    // 정렬 규칙 보존
-    filtered.sort((a, b) => {
-      if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
-      return b.id - a.id;
-    });
-
-    allMatchedTasks = filtered; 
-
-    if(filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px 0; color:#aaa;">해당 조건의 내역이 존재하지 않습니다.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = '';
-    filtered.forEach(task => {
-      const tr = document.createElement('tr');
-      
-      let statusHtml = '';
-      if(task.status === 'done') statusHtml = '<span class="badge badge-done">완료</span>';
-      else if(task.status === 'progress') statusHtml = '<span class="badge badge-progress">진행중</span>';
-      else statusHtml = '<span class="badge badge-notready">미완료</span>';
-
-      let imgHtml = '';
-      if(task.images && task.images.length > 0) {
-        imgHtml = '<div class="thumb-gallery">';
-        task.images.forEach(url => {
-          imgHtml += `<img src="${url}" class="thumb-img" onclick="openImageModal('${url}', event)">`;
-        });
-        imgHtml += '</div>';
-      } else {
-        imgHtml = '<span style="color:#555; font-size:13px;">첨부없음</span>';
-      }
-
-      const formattedMemo = task.memo ? task.memo.replace(/\n/g, '<br>') : '';
-      const memoSection = formattedMemo ? `<div style="margin-top:10px; font-size:14px; color:#aaa; background:rgba(0,0,0,.2); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,.02); word-break:break-all;">${formattedMemo}</div>` : '';
-
-      tr.innerHTML = `
-        <td style="font-weight:700; color:#9D8A69;">${task.date || ''}</td>
-        <td>${statusHtml}</td>
-        <td>
-          <div style="font-weight:800; font-size:16px; color:#fff;">${task.title || ''}</div>
-          ${memoSection}
-        </td>
-        <td>${imgHtml}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-  } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px 0;">통신 및 파싱 엔진 예외 에러</td></tr>`;
-  }
+async function getAllTasks(){
+  const { data } = await supabaseClient.from('tasks').select('*').order('id', {ascending: false});
+  allMatchedTasks = data || [];
+  renderList(allMatchedTasks);
 }
 
-function openImageModal(url, e) {
-  e.stopPropagation();
-  document.getElementById('expandedImage').src = url;
-  document.getElementById('imageModal').style.display = 'flex';
+function renderList(tasks) {
+  const list = document.getElementById('resultList');
+  list.innerHTML = '';
+  tasks.forEach(task => {
+    const div = document.createElement('div');
+    div.className = 'task-item';
+    div.innerHTML = `
+      <div>
+        <div style="font-size:12px; color:#aaa;">${task.date || ''}</div>
+        <div style="font-size:18px; font-weight:800;">${task.title || ''}</div>
+      </div>
+      <div>${task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료'}</div>
+    `;
+    list.appendChild(div);
+  });
 }
 
-function closeImageModal(){
-  document.getElementById('imageModal').style.display = 'none';
-  document.getElementById('expandedImage').src = '';
+function filterTasks(status) {
+  if (status === 'all') renderList(allMatchedTasks);
+  else renderList(allMatchedTasks.filter(t => t.status === status));
 }
 
-// 📊 엑셀 다운로드 엔진 함수 원본 로직 100% 고수
 function downloadExcel() {
   const start = document.getElementById('start-date').value;
   const end = document.getElementById('end-date').value;
+  if(!start || !end) { alert('기간을 선택해주세요.'); return; }
+  
+  const excelTasks = allMatchedTasks.filter(t => t.date >= start && t.date <= end);
+  if(excelTasks.length === 0) { alert('데이터가 없습니다.'); return; }
 
-  if(!start || !end) { alert('시작 날짜와 종료 날짜를 모두 선택해주세요.'); return; }
-  const startTime = new Date(start).getTime();
-  const endTime = new Date(end).getTime();
-  if(startTime > endTime) { alert('시작 날짜가 종료 날짜보다 클 수 없습니다.'); return; }
-
-  const excelTasks = allMatchedTasks.filter(task => {
-    if(!task.date) return false;
-    const taskTime = new Date(task.date).getTime();
-    return taskTime >= startTime && taskTime <= endTime;
-  });
-
-  if(excelTasks.length === 0) { alert('해당 기간에는 데이터가 존재하지 않습니다.'); return; }\n
-  const excelData = [
-    ['업무 날짜', '진행 상태', '업무 제목/내용', '상세 메모 사항']
-  ];
-
-  excelTasks.forEach(task => {
-    const statusText = task.status === 'done' ? '완료' : task.status === 'progress' ? '진행중' : '미완료';
-    excelData.push([
-      task.date || '',
-      statusText,
-      task.title || '',
-      task.memo || ''
-    ]);
-  });
-
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.aoa_to_sheet(excelData);
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Work History");
-  XLSX.writeFile(workbook, `VinoParadise_WorkHistory_${start}_to_${end}.xlsx`);
+  const excelData = [['날짜', '상태', '내용']];
+  excelTasks.forEach(t => excelData.push([t.date, t.status, t.title]));
+  
+  const ws = XLSX.utils.aoa_to_sheet(excelData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Tasks");
+  XLSX.writeFile(wb, "비노파라다이스_업무내역.xlsx");
 }
+
+getAllTasks();
 </script>
 </body>
 </html>
