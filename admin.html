@@ -37,7 +37,6 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
     <button class="main-btn" onclick="addTask()">+ 업무 직접 추가</button>
     <button class="main-btn" onclick="saveAll()">업무 저장</button>
   </div>
-  <div id="editList"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -71,16 +70,18 @@ function addTask(data={}){
 async function saveAll(){
   const tasks = document.querySelectorAll('.task');
   for(const task of tasks){
-    // 의뢰일/완료일이 비어있을 경우를 대비해 빈 문자열 전달
+    // ⚡ DB 컬럼명에 맞춰 수정: date -> request_date
     const data = {
-      date: task.querySelector('.task-date').value || null,
+      request_date: task.querySelector('.task-date').value || null,
       category: task.querySelector('.category').value,
       title: task.querySelector('.title').value,
       complete_date: task.querySelector('.task-complete').value || null,
       status: task.querySelector('.status').value
     };
     
-    const { error } = await supabaseClient.from('tasks').insert([data]);
+    // ⚡ 테이블명 tasks -> tasks_new
+    const { error } = await supabaseClient.from('tasks_new').insert([data]);
+    
     if(error) {
         console.error(error);
         alert('저장 중 오류 발생: ' + error.message);
