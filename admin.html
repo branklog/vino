@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>비노파라다이스 관리자</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --brand-color: #9D8A69; }
@@ -42,7 +41,7 @@
     <a href="index.html" class="home-btn">← 홈으로 가기</a>
     <div class="card">
         <input type="hidden" id="edit-id">
-        <div class="group"><label>의뢰날짜</label><input type="date" id="req-date"></div>
+        <input type="hidden" id="current-image-url"> <div class="group"><label>의뢰날짜</label><input type="date" id="req-date"></div>
         <div class="group"><label>업무구분</label><select id="cat"><option>웹</option><option>인쇄</option><option>디자인</option></select></div>
         <div class="group"><label>작업내용</label><input type="text" id="title"></div>
         <div class="group"><label>메모</label><input type="text" id="memo"></div>
@@ -74,16 +73,12 @@ document.getElementById('task-file').addEventListener('change', function(e) {
 
 async function saveData() {
     const file = document.getElementById('task-file').files[0];
-    let imageUrl = "";
+    let imageUrl = document.getElementById('current-image-url').value;
 
     if (file) {
         const fileName = `${Date.now()}_${file.name}`;
         const { data, error } = await client.storage.from('tasks_images').upload(fileName, file);
-        if (error) {
-            console.error("업로드 상세 에러:", error);
-            alert("업로드 실패: " + error.message);
-            return;
-        }
+        if (error) { alert("업로드 실패: " + error.message); return; }
         imageUrl = client.storage.from('tasks_images').getPublicUrl(fileName).data.publicUrl;
     }
 
@@ -93,7 +88,7 @@ async function saveData() {
         category: document.getElementById('cat').value,
         title: document.getElementById('title').value,
         memo: document.getElementById('memo').value,
-        image_url: imageUrl || undefined
+        images: imageUrl || null // ⚡ DB 컬럼명 images로 저장
     };
 
     if(id) await client.from('tasks_new').update(data).eq('id', id);
@@ -109,10 +104,11 @@ async function loadList() {
     const list = document.getElementById('taskList');
     list.innerHTML = '';
     data.forEach(t => {
+        const img = t.images ? (Array.isArray(t.images) ? t.images[0] : t.images) : null;
         list.innerHTML += `
             <div class="task-item">
                 <div style="display:flex; align-items:center;">
-                    ${t.image_url ? `<img src="${t.image_url}" class="task-img">` : ''}
+                    ${img ? `<img src="${img}" class="task-img">` : ''}
                     <div>
                         <strong>${t.title}</strong> (${t.category})<br>
                         <small style="color:#aaa;">메모: ${t.memo || '없음'}</small>
@@ -128,6 +124,7 @@ async function loadList() {
 
 function resetForm() {
     document.getElementById('edit-id').value = "";
+    document.getElementById('current-image-url').value = "";
     document.getElementById('save-btn').innerText = "업무 저장";
     document.getElementById('title').value = "";
     document.getElementById('memo').value = "";
@@ -141,6 +138,7 @@ function editMode(t) {
     document.getElementById('cat').value = t.category;
     document.getElementById('title').value = t.title;
     document.getElementById('memo').value = t.memo || "";
+    document.getElementById('current-image-url').value = t.images || "";
     document.getElementById('save-btn').innerText = "수정하기";
 }
 
