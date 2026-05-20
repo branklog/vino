@@ -9,19 +9,36 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
 body{background:#111;color:#fff;}
 header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;}
-.header-left{display:flex;align-items:center;gap:18px;}.company-logo{height:30px;}.logo-text{font-size:22px;font-weight:900;color:#9D8A69;text-decoration:none;}.container{max-width:1200px;margin:auto;padding:80px 20px;}.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; }button { height:45px; padding:0 20px; border-radius:10px; background:#9D8A69; color:#fff; border:none; cursor:pointer; font-weight:700; }input { padding:10px; border-radius:8px; border:none; background:#333; color:#fff; }.filter-bar { display:flex; gap:10px; margin-bottom:20px; }.task-item { background:rgba(255,255,255,.05); padding:20px; border-radius:18px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
+.header-left{display:flex;align-items:center;gap:18px;}.company-logo{height:30px;}.logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none;}.container{max-width:1200px;margin:auto;padding:80px 20px;}
+.report-range-bar { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.05); padding:16px 24px; border-radius:18px; border:1px solid rgba(255,255,255,.1); margin-bottom:24px; flex-wrap:wrap; }
+button { height:45px; padding:0 20px; border-radius:10px; background:#9D8A69; color:#fff; border:none; cursor:pointer; font-weight:700; }
+input { padding:10px; border-radius:8px; border:none; background:#333; color:#fff; }
+.task-item { background:rgba(255,255,255,.05); padding:20px; border-radius:18px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
+/* 사장님이 쓰시던 홈 버튼 스타일 그대로 적용 */
+.home-btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 24px;border-radius:14px;background:#9D8A69;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
+
+@media(max-width:768px){
+    header{height:60px; padding:0 15px;}
+    .company-logo{height:16px;}
+    .logo-text{font-size:14px;}
+    .container{padding:40px 15px;}
+    .report-range-bar{flex-direction:column; align-items:flex-start; gap:10px;}
+    .home-btn{height:40px; font-size:13px; margin-bottom:15px;}
+}
+
 </style>
 </head>
 <body>
 <header>
   <div class="header-left">
     <img src="dagil-logo.png" class="company-logo">
-    <a href="index.html" class="logo-text">비노파라다이스</a>
+    <a href="index.html" class="logo-text">WORKBOARD</a>
   </div>
-  <a href="index.html" style="margin-left:auto; text-decoration:none; color:#111; font-weight:800;">홈으로 가기</a>
 </header>
 
 <div class="container">
+  <a href="index.html" class="home-btn">홈으로 가기</a>
+  
   <div class="report-range-bar">
     <label>리포트 기간</label>
     <input type="date" id="start-date"> <span>~</span> <input type="date" id="end-date">
@@ -32,19 +49,13 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// 1. API 연결 설정 (URL과 키 확인 완료)
 const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
 const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-
-const client = supabase.createClient(
-  supabaseUrl,
-  supabaseKey
-);
+const client = supabase.createClient(supabaseUrl, supabaseKey);
 
 let allMatchedTasks = [];
 
 async function getAllTasks() {
-  // ⚡ 테이블명을 tasks_new로 정확히 변경
   const { data, error } = await client.from('tasks_new').select('*').order('id', {ascending: false});
   if(error) { console.error(error); return; }
   allMatchedTasks = data || [];
@@ -73,13 +84,10 @@ function downloadExcel() {
   const start = document.getElementById('start-date').value;
   const end = document.getElementById('end-date').value;
   if(!start || !end) { alert('기간을 선택해주세요.'); return; }
-  
   const excelTasks = allMatchedTasks.filter(t => t.request_date >= start && t.request_date <= end);
   if(excelTasks.length === 0) { alert('데이터가 없습니다.'); return; }
-
   const excelData = [['의뢰일', '업무구분', '제목', '메모', '완료일']];
   excelTasks.forEach(t => excelData.push([t.request_date, t.category, t.title, t.memo, t.complete_date]));
-  
   const ws = XLSX.utils.aoa_to_sheet(excelData);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Tasks");
