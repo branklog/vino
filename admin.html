@@ -76,25 +76,31 @@ async function uploadExcel(event) {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        // 1번 인덱스부터 시작해서 헤더(제목줄)를 건너뜁니다
+        const list = document.getElementById('taskList');
+        // 기존 목록을 지우고 미리보기 제목을 띄웁니다.
+        list.innerHTML = '<h3 style="margin-bottom:15px; color:var(--brand-color);">📊 엑셀 미리보기 (아직 저장 안 됨!)</h3>';
+        
         for (let i = 1; i < rows.length; i++) {
             const row = rows[i];
-            
-            // 데이터가 있는 행만 저장
-            if (row[2]) { 
-                await client.from('tasks_new').insert([{
-                    request_date: row[0],  // A열: 의뢰일
-                    category: row[1],      // B열: 업무구분
-                    title: row[2],         // C열: 작업내용
-                    complete_date: row[3]  // D열: 완료일
-                }]);
-            }
+            if (!row[2]) continue;
+
+            // 여기서 DB에 저장하지 않고 화면에만 카드를 그립니다.
+            list.innerHTML += `
+                <div class="task-item" style="border: 1px solid var(--brand-color);">
+                    <div>
+                        <strong>${row[2]}</strong> (${row[1]})<br>
+                        <small style="color:#aaa;">의뢰일: ${row[0]} | 완료일: ${row[3]}</small>
+                    </div>
+                </div>
+            `;
         }
-        alert("엑셀 데이터 업로드가 완료되었습니다!");
-        loadList(); // 목록 새로고침
+        alert("목록을 확인하세요! 엑셀 내용이 화면에 떴습니다. 이제 '업무 저장' 버튼을 누르면 DB로 등록됩니다.");
     };
     reader.readAsArrayBuffer(file);
 }
+
+
+    
 
 async function saveData() {
     const file = document.getElementById('task-file').files[0];
