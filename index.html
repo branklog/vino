@@ -7,25 +7,21 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 .header-left{display:flex;align-items:center;gap:18px}
 .company-logo{height:30px}
 .logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none}
-/* 🎨 지정 브랜드 메인 컬러 반영 */
 .logo-text span{color:#9D8A69}
 .hero{min-height:calc(100vh - 90px);background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1920&auto=format&fit=crop');background-size:cover}
 .container{max-width:1200px;margin:auto;padding:120px 20px}
-
-/* 📐 원본 대길간판 고유의 분리형 box 및 간격 서식 100% 복원 */
 .box{background:rgba(255,255,255,.08);padding:28px;border-radius:24px;margin-bottom:24px}
 .box h2{font-size:24px;font-weight:700}
 .row{display:flex;gap:12px;margin-top:14px}
 
-/* 📐 인풋창과 버튼의 높이 및 너비 규격을 대길 원본 수치와 똑같이 고정 */
-input{flex:1;height:60px;border:none;border-radius:14px;padding:0 18px;background:rgba(255,255,255,.12);color:#fff;font-size:16px;outline:none}
+/* 📐 PC 화면 인풋 규격 정의 */
+input{flex:1;width:100%;height:60px;border:none;border-radius:14px;padding:0 18px;background:rgba(255,255,255,.12);color:#fff;font-size:16px;outline:none}
 input::-webkit-calendar-picker-indicator { filter: invert(100%); cursor: pointer; }
 
-/* 🎨 조회 버튼의 가로 크기(180px) 및 메인 브랜드 색상 전면 동기화 */
+/* 📐 PC 화면 버튼 너비 180px 고정 */
 button{width:180px;height:60px;border:none;border-radius:14px;background:#9D8A69;color:#fff;font-weight:800;font-size:16px;cursor:pointer;transition:background 0.2s}
 button:hover{background:#7d6c4e}
 
-/* 📱 모바일 환경 반응형 크기 균형 서식 그대로 유지 */
 @media(max-width:768px){
 header{height:64px;padding:0 14px}
 .company-logo{height:18px !important}
@@ -35,9 +31,11 @@ header{height:64px;padding:0 14px}
 h1{font-size:28px !important;line-height:1.4;margin-bottom:16px !important}
 .box{padding:18px;border-radius:18px;margin-bottom:16px}
 .box h2{font-size:18px}
-.row{flex-direction:column;gap:10px}
-input{height:48px;font-size:14px;width:100%}
-button{width:100%;height:48px;font-size:14px}
+
+/* 📐 [핵심 수정] 모바일에서 flex 배치 시 인풋과 버튼 너비 균형을 강제로 일치시켜 삐져나오는 현상 차단 */
+.row{display:flex;flex-direction:row;gap:10px}
+input{flex:1;width:0;min-width:0;height:48px;font-size:14px} /* width:0과 min-width:0으로 텍스트 인풋 혼자 튀는 버그 해결 */
+button{flex:none;width:100px;height:48px;font-size:14px} /* 모바일에서 세 버튼 모두 가로 100px로 우측 라인 칼정렬 */
 }
 </style></head><body>
 <header><div class="header-left"><img src="dagil-logo.png" class="company-logo"><a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a></div></header>
@@ -54,6 +52,4 @@ button{width:100%;height:48px;font-size:14px}
 <script>
 function go(mode,value){
 if(!value)return alert('값 입력');
-location.href='result.html?mode='+mode+'&value='+value;
-}
-</script></body></html>
+location.href='result.html?mode='+mode+'&value='+value
