@@ -7,41 +7,25 @@ header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40p
 .header-left{display:flex;align-items:center;gap:18px}
 .company-logo{height:30px}
 .logo-text{font-size:22px;font-weight:900;color:#111;text-decoration:none}
-/* 🎨 사장님 고유 지정 브랜드 컬러 반영 */
+/* 🎨 지정 브랜드 메인 컬러 반영 */
 .logo-text span{color:#9D8A69}
-
-/* 📸 레퍼런스 감성의 상업용 완전 무료 고해상도 화사한 인테리어 배경 교체 */
-.hero{
-  min-height:calc(100vh - 90px);
-  background:linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1920&auto=format&fit=crop');
-  background-size:cover;
-  background-position:center;
-}
-
+.hero{min-height:calc(100vh - 90px);background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1920&auto=format&fit=crop');background-size:cover}
 .container{max-width:1200px;margin:auto;padding:120px 20px}
-.box{background:rgba(255,255,255,.08);padding:28px;border-radius:24px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px)}
-.box h2{font-size:24px;font-weight:700;margin-bottom:14px}
-.row{display:flex;gap:20px;margin-top:32px}
-input{flex:1;height:58px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:0 20px;color:#fff;font-size:16px;outline:none}
 
-/* 🔘 원본 스타일 규격 + 지정 컬러 입힌 버튼 */
-button{
-  height:58px;
-  border:none;
-  border-radius:14px;
-  background:#9D8A69;
-  color:#fff;
-  font-weight:800;
-  padding:0 32px;
-  cursor:pointer;
-  font-size:16px;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-}
+/* 📐 원본 대길간판 고유의 분리형 box 및 간격 서식 100% 복원 */
+.box{background:rgba(255,255,255,.08);padding:28px;border-radius:24px;margin-bottom:24px}
+.box h2{font-size:24px;font-weight:700}
+.row{display:flex;gap:12px;margin-top:14px}
+
+/* 📐 인풋창과 버튼의 높이 및 너비 규격을 대길 원본 수치와 똑같이 고정 */
+input{flex:1;height:60px;border:none;border-radius:14px;padding:0 18px;background:rgba(255,255,255,.12);color:#fff;font-size:16px;outline:none}
+input::-webkit-calendar-picker-indicator { filter: invert(100%); cursor: pointer; }
+
+/* 🎨 조회 버튼의 가로 크기(180px) 및 메인 브랜드 색상 전면 동기화 */
+button{width:180px;height:60px;border:none;border-radius:14px;background:#9D8A69;color:#fff;font-weight:800;font-size:16px;cursor:pointer;transition:background 0.2s}
 button:hover{background:#7d6c4e}
 
+/* 📱 모바일 환경 반응형 크기 균형 서식 그대로 유지 */
 @media(max-width:768px){
 header{height:64px;padding:0 14px}
 .company-logo{height:18px !important}
@@ -51,89 +35,25 @@ header{height:64px;padding:0 14px}
 h1{font-size:28px !important;line-height:1.4;margin-bottom:16px !important}
 .box{padding:18px;border-radius:18px;margin-bottom:16px}
 .box h2{font-size:18px}
-.row{flex-direction:column}
-input{height:48px;font-size:14px}
+.row{flex-direction:column;gap:10px}
+input{height:48px;font-size:14px;width:100%}
 button{width:100%;height:48px;font-size:14px}
 }
-</style>
-<script>
-// 🔒 [월별 조회 전용 7자리 글자 완벽 통제 엔진] 숫자가 아닌 기호 자동 정제 및 2026-05 형태로 딱 고정
-function checkMonthInput(el) {
-  // 숫자와 하이픈(-)만 남기고 싹 청소
-  let val = el.value.replace(/[^0-9-]/g, '');
-  
-  // 숫자가 마구 입력될 때 자동으로 YYYY-MM 서식 맞춰주기
-  if (val.length === 4 && !val.includes('-')) {
-    val += '-';
-  }
-  
-  // 7자리 (YYYY-MM 즉, 2026-05 총 7글자)가 넘어가면 칼같이 자르기
-  if (val.length > 7) {
-    val = val.slice(0, 7);
-  }
-  el.value = val;
-}
+</style></head><body>
+<header><div class="header-left"><img src="dagil-logo.png" class="company-logo"><a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a></div></header>
+<section class="hero"><div class="container">
 
-// 🔒 [년도별 조회 전용 4자리 철벽 차단 엔진] 딱 4글자 넘어가면 키보드 자체를 락걸어버림
-function checkYearInput(el) {
-  let val = el.value.replace(/[^0-9]/g, ''); // 오직 숫자만 입력되도록 강제 청소
-  if (val.length > 4) {
-    val = val.slice(0, 4); // 5글자 이상은 강제로 싹둑 자름
-  }
-  el.value = val;
-}
-</script>
-</head><body>
-<header>
-  <div class="header-left">
-    <img src="dagil-logo.png" class="company-logo">
-    <a href="index.html" class="logo-text">비노파라다이스 <span>WORKBOARD</span></a>
-  </div>
-</header>
-<section class="hero">
-  <div class="container">
+<h1 style="font-size:64px;margin-bottom:20px">비노파라다이스 WORKBOARD</h1>
 
-  <h1 style="font-size:64px;margin-bottom:20px">비노파라다이스 WORKBOARD</h1>
-  <p style="font-size:18px;color:#aaa;margin-bottom:40px">실시간 의뢰 현황 수집 및 통합 관리가 가능한 워크보드 허브 시스템입니다.</p>
-
-  <div class="box">
-    <h2>작업 내역 날짜별 실시간 조회하기</h2>
-    
-    <div class="row">
-      <input type="date" id="search-date">
-      <button onclick="searchByDate()">일자별 조회</button>
-    </div>
-    
-    <div class="row" style="margin-top:20px">
-      <input type="text" id="search-month" placeholder="연-월 입력 (예: 2026-05)" maxlength="7" oninput="checkMonthInput(this)">
-      <button onclick="searchByMonth()">월별 조회</button>
-    </div>
-    
-    <div class="row" style="margin-top:20px">
-      <input type="text" id="search-year" placeholder="년도 4자리 입력 (예: 2026)" maxlength="4" oninput="checkYearInput(this)">
-      <button onclick="searchByYear()" style="margin-left:20px">년도별 조회</button>
-    </div>
-  </div>
+<div class="box"><h2>일별 조회</h2><div class="row"><input type="date" id="day"><button onclick="go('day',day.value)">조회</button></div></div>
+<div class="box"><h2>월별 조회</h2><div class="row"><input type="month" id="month"><button onclick="go('month',month.value)">조회</button></div></div>
+<div class="box"><h2>년도별 조회</h2><div class="row"><input type="number" id="year" placeholder="2026"><button onclick="go('year',year.value)">조회</button></div></div>
 
 </div></section>
 
 <script>
-function searchByDate(){
-  const d = document.getElementById('search-date').value;
-  if(!d){alert('조회할 날짜를 선택해주세요.');return}
-  location.href=`result.html?type=date&val=${d}`;
+function go(mode,value){
+if(!value)return alert('값 입력');
+location.href='result.html?mode='+mode+'&value='+value;
 }
-function searchByMonth(){
-  const m = document.getElementById('search-month').value;
-  if(!m){alert('조회할 월을 입력해주세요 (형식: 2026-05).');return}
-  if(m.length < 7){alert('연도와 월을 올바르게 입력해주세요 (예: 2026-05).');return}
-  location.href=`result.html?type=month&val=${m}`;
-}
-function searchByYear(){
-  const y = document.getElementById('search-year').value;
-  if(!y){alert('조회할 년도를 입력해주세요.');return}
-  if(y.length < 4){alert('년도 4자리를 정확히 입력해주세요 (예: 2026).');return}
-  location.href=`result.html?type=year&val=${y}`;
-}
-</script>
-</body></html>
+</script></body></html>
