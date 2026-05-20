@@ -1,39 +1,33 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>비노파라다이스 관리자</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-    :root { --brand-color: #9D8A69; }
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
-    body{background:#111;color:#fff;padding-bottom:50px;}
-    
-    header{height:90px;background:#fff;display:flex;align-items:center;padding:0 40px;margin-bottom:30px;}
-    .header-left{display:flex;align-items:center;gap:18px;}
-    .company-logo{height:22px;}
-    .logo-text{font-size:18px;font-weight:900;color:var(--brand-color);text-decoration:none;}
-    
-    .container{max-width:1100px;margin:auto;padding:0 20px;}
-    .home-btn{display:inline-block;padding:12px 24px;border-radius:14px;background:#ff0000;color:#fff;text-decoration:none;font-weight:800;margin-bottom:24px;}
-    
-    .card{background:rgba(255,255,255,.08);padding:30px;border-radius:24px;margin-bottom:30px;}
-    
-    .excel-card{border:2px dashed var(--brand-color);padding:30px;border-radius:24px;margin-bottom:30px;text-align:center;}
-    #excelFile { display: none; }
-    .custom-excel-btn { background: var(--brand-color); color: #fff; padding: 15px 30px; border-radius: 12px; cursor: pointer; font-weight: 800; display: inline-block; }
-    
-    .group{margin-bottom:22px;}
-    label{display:block;margin-bottom:10px;font-weight:700;}
-    input,select{width:100%;padding:18px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:14px;color:#fff;}
-    
-    .btn-wrap { display: flex; gap: 10px; justify-content: flex-start; margin-top: 20px; }
-    .main-btn{padding:12px 20px; border-radius:12px; border:none; cursor:pointer; font-weight:800; background:var(--brand-color); color:#fff; font-size:14px;}
-    
-    .task-item{background:rgba(255,255,255,.1);padding:20px;border-radius:18px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;}
-    .btn-action{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;margin-left:5px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비노파라다이스 관리자</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --brand-color: #9D8A69; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Pretendard', sans-serif; }
+        body { background:#111; color:#fff; padding-bottom:50px; }
+        header { height:90px; background:#fff; display:flex; align-items:center; padding:0 40px; margin-bottom:30px; }
+        .header-left { display:flex; align-items:center; gap:18px; }
+        .company-logo { height:22px; }
+        .logo-text { font-size:18px; font-weight:900; color:var(--brand-color); text-decoration:none; }
+        .container { max-width:1100px; margin:auto; padding:0 20px; }
+        .home-btn { display:inline-block; padding:12px 24px; border-radius:14px; background:#ff0000; color:#fff; text-decoration:none; font-weight:800; margin-bottom:24px; }
+        .card { background:rgba(255,255,255,.08); padding:30px; border-radius:24px; margin-bottom:30px; }
+        .group { margin-bottom:22px; }
+        label { display:block; margin-bottom:10px; font-weight:700; }
+        input, select { width:100%; padding:18px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08); border-radius:14px; color:#fff; }
+        .btn-wrap { display: flex; gap: 10px; margin-top: 20px; }
+        .main-btn { padding:15px 20px; border-radius:12px; border:none; cursor:pointer; font-weight:800; background:var(--brand-color); color:#fff; font-size:14px; }
+        .task-item { background:rgba(255,255,255,.1); padding:20px; border-radius:18px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
+        .task-img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; margin-right: 15px; }
+        #file-preview { display:none; width:100px; height:100px; border-radius:10px; object-fit:cover; margin-top:10px; border:1px solid #555; }
+        @media(max-width:768px) { .btn-wrap { flex-direction: column; } .task-item { flex-direction: column; align-items: flex-start; } }
+    </style>
 </head>
 <body>
 
@@ -46,56 +40,68 @@
 
 <div class="container">
     <a href="index.html" class="home-btn">← 홈으로 가기</a>
-
     <div class="card">
-        <div class="excel-card">
-            <p style="margin-bottom:10px;">📊 엑셀 서류로 한번에 대량 업로드하기</p>
-            <p style="font-size:13px; color:#aaa; margin-bottom:15px;">A: 의뢰날짜 | B: 업무구분 | C: 작업내용 | D: 완료일</p>
-            <label for="excelFile" class="custom-excel-btn">📊 엑셀 파일(.xlsx) 선택하여 목록 자동 만들기</label>
-            <input type="file" id="excelFile">
-        </div>
-
         <input type="hidden" id="edit-id">
         <div class="group"><label>의뢰날짜</label><input type="date" id="req-date"></div>
         <div class="group"><label>업무구분</label><select id="cat"><option>웹</option><option>인쇄</option><option>디자인</option></select></div>
         <div class="group"><label>작업내용</label><input type="text" id="title"></div>
         <div class="group"><label>메모</label><input type="text" id="memo"></div>
-        <div class="group"><label>이미지 업로드 (선택)</label><input type="file" id="task-file" style="background:transparent;"></div>
-        
+        <div class="group">
+            <label>이미지 업로드</label>
+            <input type="file" id="task-file" style="background:transparent;">
+            <img id="file-preview">
+        </div>
         <div class="btn-wrap">
-            <button class="main-btn" onclick="addTaskMode()">+ 업무 직접 추가</button>
+            <button class="main-btn" onclick="resetForm()">+ 새로 입력하기</button>
             <button class="main-btn" id="save-btn" onclick="saveData()">업무 저장</button>
-            <button class="main-btn" style="background:#555;" onclick="resetForm()">취소</button>
         </div>
     </div>
-
     <div id="taskList"></div>
 </div>
 
 <script>
 const client = supabase.createClient('https://ttunieohxvnhwiikxfzu.supabase.co', 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP');
 
+document.getElementById('task-file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('file-preview');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => { preview.src = e.target.result; preview.style.display = 'block'; }
+        reader.readAsDataURL(file);
+    }
+});
+
 async function saveData() {
+    const file = document.getElementById('task-file').files[0];
+    let imageUrl = "";
+
+    if (file) {
+        const fileName = `${Date.now()}_${file.name}`;
+        const { data, error } = await client.storage.from('tasks_images').upload(fileName, file);
+        if (error) {
+            console.error("업로드 상세 에러:", error);
+            alert("업로드 실패: " + error.message);
+            return;
+        }
+        imageUrl = client.storage.from('tasks_images').getPublicUrl(fileName).data.publicUrl;
+    }
+
     const id = document.getElementById('edit-id').value;
     const data = {
         request_date: document.getElementById('req-date').value,
         category: document.getElementById('cat').value,
         title: document.getElementById('title').value,
-        memo: document.getElementById('memo').value
+        memo: document.getElementById('memo').value,
+        image_url: imageUrl || undefined
     };
+
     if(id) await client.from('tasks_new').update(data).eq('id', id);
     else await client.from('tasks_new').insert([data]);
+    
     alert("처리되었습니다!");
     resetForm();
     loadList();
-}
-
-function addTaskMode() { resetForm(); alert("입력창을 비웠습니다. 내용을 입력하세요."); }
-function resetForm() {
-    document.getElementById('edit-id').value = "";
-    document.getElementById('save-btn').innerText = "업무 저장";
-    document.getElementById('title').value = "";
-    document.getElementById('memo').value = "";
 }
 
 async function loadList() {
@@ -105,16 +111,28 @@ async function loadList() {
     data.forEach(t => {
         list.innerHTML += `
             <div class="task-item">
-                <div>
-                    <strong>${t.title}</strong> (${t.category})<br>
-                    <small style="color:#aaa;">메모: ${t.memo || '없음'}</small>
+                <div style="display:flex; align-items:center;">
+                    ${t.image_url ? `<img src="${t.image_url}" class="task-img">` : ''}
+                    <div>
+                        <strong>${t.title}</strong> (${t.category})<br>
+                        <small style="color:#aaa;">메모: ${t.memo || '없음'}</small>
+                    </div>
                 </div>
-                <div>
-                    <button class="btn-action" style="background:#007bff;" onclick='editMode(${JSON.stringify(t)})'>수정</button>
-                    <button class="btn-action" style="background:#ff4d4d;" onclick="deleteTask(${t.id})">삭제</button>
+                <div style="display:flex; gap:5px;">
+                    <button class="main-btn" style="background:#007bff; padding:8px 15px;" onclick='editMode(${JSON.stringify(t)})'>수정</button>
+                    <button class="main-btn" style="background:#ff4d4d; padding:8px 15px;" onclick="deleteTask(${t.id})">삭제</button>
                 </div>
             </div>`;
     });
+}
+
+function resetForm() {
+    document.getElementById('edit-id').value = "";
+    document.getElementById('save-btn').innerText = "업무 저장";
+    document.getElementById('title').value = "";
+    document.getElementById('memo').value = "";
+    document.getElementById('task-file').value = "";
+    document.getElementById('file-preview').style.display = 'none';
 }
 
 function editMode(t) {
