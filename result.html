@@ -47,10 +47,13 @@ input,textarea,select{width:100%;background:rgba(0,0,0,.35);border:1px solid rgb
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ⚡ 정확한 키값으로 수정 완료
+// 기존 const supabase = window.supabase.createClient(...) 부분을 삭제하고 아래로 교체하세요!
+
 const supabaseUrl = 'https://ttunieohxvnhwiikxfzu.supabase.co';
 const supabaseKey = 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ⚡ window를 빼고 supabase.createClient로 직접 연결합니다.
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 function addTask(data = {}) {
   const div = document.createElement('div');
