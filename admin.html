@@ -32,6 +32,67 @@
     </style>
 </head>
 <body>
+<div id="login-box" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#120f0d;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+    <div style="
+    background:#1c1a18;
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:400px;
+    border:1px solid #333;
+    ">
+
+        <h2 style="
+        margin-bottom:20px;
+        color:#9D8A69;
+        text-align:center;
+        ">
+            관리자 로그인
+        </h2>
+
+        <input
+            type="password"
+            id="admin-password"
+            placeholder="비밀번호 입력"
+            style="
+            width:100%;
+            padding:15px;
+            margin-bottom:15px;
+            ">
+
+        <button
+            onclick="checkLogin()"
+            class="main-btn"
+            style="width:100%;">
+
+            로그인
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+    
 <header>
   <div class="header-left">
     <img src="dagil-logo.png" class="company-logo">
@@ -67,6 +128,10 @@
 </div>
 
 <script>
+const ADMIN_PASSWORD = "1150";
+
+
+    
 const client = supabase.createClient('https://ttunieohxvnhwiikxfzu.supabase.co', 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP');
 
 let excelTempData = []; 
@@ -158,9 +223,23 @@ async function saveData() {
         excelTempData = [];
     }
 
-    alert("저장되었습니다!");
-    resetForm();
-    loadList();
+
+
+    const pw =
+        document.getElementById('admin-password').value;
+
+    if(pw === ADMIN_PASSWORD){
+
+        document.getElementById('login-box')
+        .style.display = 'none';
+
+    }else{
+
+        alert('비밀번호가 틀렸습니다.');
+
+    }
+
+}
 }
 
 async function loadList() {
