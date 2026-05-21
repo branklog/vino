@@ -431,8 +431,28 @@ excelTempData.push({
 
             list.innerHTML += `<div class="task-item" style="border: 1px solid var(--brand-color);"><div><strong>${row[2]}</strong> (${row[1]})<br><small>의뢰일: ${d}</small></div></div>`;
         }
-    };
-    reader.readAsArrayBuffer(file);
+   };
+
+reader.readAsArrayBuffer(file);
+
+setTimeout(async ()=>{
+
+    if(excelTempData.length > 0){
+
+        await client
+        .from('tasks_new')
+        .insert(excelTempData);
+
+        alert('엑셀 데이터 저장 완료!');
+
+        excelTempData = [];
+
+        loadList();
+
+    }
+
+},500);
+
 }
 
 // 이미지 미리보기
