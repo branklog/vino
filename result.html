@@ -12,24 +12,181 @@
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
         body{background:#111;color:#fff;}
         header{height:80px; background:#fff; display:flex; align-items:center; padding:0 40px; margin-bottom:30px;}
+        @media(max-width:600px){
+
+    header{
+        padding:0 20px;
+        height:70px;
+    }
+
+    .logo-text{
+        font-size:18px;
+    }
+
+    .company-logo{
+        height:28px;
+    }
+}
         .logo-area{display:flex; align-items:center; gap:15px;}
         .company-logo{height:35px;}
         .logo-text{font-size:22px; font-weight:900; color:var(--brand-color); text-decoration:none;}
         .container { width:100%; max-width:1200px; margin:auto; padding:0 20px 50px 20px; }
         .control-box { background:#222; padding:25px; border-radius:15px; margin-bottom:20px; border:1px solid #333; }
         .report-range-bar { display:flex; align-items:center; gap:15px; font-weight:bold; flex-wrap: wrap; }
+        .report-range-bar input{
+    min-width:140px;
+}
+
+@media(max-width:600px){
+
+    .report-range-bar{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .report-range-bar input,
+    .btn-excel{
+        width:100%;
+    }
+}
         input { padding:12px; border-radius:6px; border:none; background:#333; color:#fff; }
         .btn-excel { background:var(--excel-green); padding:12px 30px; border-radius:8px; border:none; cursor:pointer; font-weight:700; color:#fff; }
-        .filter-bar { display:flex; gap:10px; margin-bottom:30px; overflow-x: auto; padding-bottom: 10px; }
-        .btn-menu { padding:12px 30px; border-radius:8px; border:none; cursor:pointer; font-weight:700; color:#fff; background:#333; white-space: nowrap; }
+       .filter-bar {
+    display:flex;
+    gap:10px;
+    margin-bottom:30px;
+    overflow-x:auto;
+    padding-bottom:10px;
+
+    scrollbar-width:none;
+}
+
+.filter-bar::-webkit-scrollbar{
+    display:none;
+}
+       .btn-menu {
+    padding:10px 18px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+    color:#fff;
+    background:#333;
+    white-space: nowrap;
+    font-size:14px;
+}
         .btn-home { background:var(--btn-red) !important; }
         .btn-menu.active { background:var(--btn-red) !important; }
-        .task-item { background:#222; padding:20px; border-radius:15px; margin-bottom:12px; display:flex; align-items:center; gap:20px; cursor:pointer; border:1px solid #333; }
-        .task-thumb { width:60px; height:60px; border-radius:8px; object-fit:cover; flex-shrink:0; background:#333; }
-        .status-badge { padding:4px 12px; border-radius:4px; font-size:12px; background:#1e4620; color:#4caf50; font-weight:bold; }
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; }
-        .modal-content { background:#222; padding:30px; border-radius:20px; width:90%; max-width:600px; position:relative; }
-        @media(max-width:600px) { .task-item { gap: 10px; padding: 15px; } .task-thumb { width: 45px; height: 45px; } }
+   .task-item {
+    background:#222;
+    padding:16px;
+    border-radius:15px;
+    margin-bottom:12px;
+    display:flex;
+    gap:15px;
+    cursor:pointer;
+    border:1px solid #333;
+    align-items:flex-start;
+    transition:0.2s;
+}
+
+.task-item:active{
+    transform:scale(0.98);
+}
+.task-thumb {
+    width:70px;
+    height:70px;
+    border-radius:10px;
+    object-fit:cover;
+    flex-shrink:0;
+    background:#333;
+}
+
+.task-content {
+    flex:1;
+    min-width:0;
+}
+
+.task-title {
+    font-size:16px;
+    font-weight:700;
+    margin-bottom:8px;
+    line-height:1.4;
+    word-break:break-word;
+
+    overflow:hidden;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+}
+
+.task-meta {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.task-date {
+    font-size:13px;
+    color:#aaa;
+}
+
+.status-badge {
+    padding:4px 10px;
+    border-radius:30px;
+    font-size:11px;
+    background:#1e4620;
+    color:#4caf50;
+    font-weight:bold;
+}
+
+@media(max-width:600px){
+
+    .task-item{
+        padding:14px;
+        gap:12px;
+    }
+
+    .task-thumb{
+        width:55px;
+        height:55px;
+    }
+
+    .task-title{
+        font-size:14px;
+    }
+
+    .task-date{
+        font-size:12px;
+    }
+}
+.modal {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+    padding:15px;
+}
+
+.modal-content {
+    background:#222;
+    padding:20px;
+    border-radius:20px;
+    width:92%;
+    max-width:600px;
+    position:relative;
+    max-height:90vh;
+    overflow-y:auto;
+}
+
+        
     </style>
 </head>
 <body>
@@ -84,13 +241,33 @@ function renderList(tasks) {
         div.className = 'task-item';
         div.onclick = () => showDetail(task);
         const imgUrl = getImgUrl(task);
-        div.innerHTML = `
-            ${imgUrl ? `<img src="${imgUrl}" class="task-thumb" onerror="this.style.display='none'">` : `<div class="task-thumb"></div>`}
-            <div style="width:120px; font-size:14px; color:#ccc;">${task.request_date || ''}</div>
-            <div class="status-badge">완료</div>
-            <div style="flex-grow:1; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${task.title || ''}</div>
-        `;
-        list.appendChild(div);
+ div.innerHTML = `
+    ${imgUrl
+        ? `<img src="${imgUrl}" class="task-thumb" onerror="this.style.display='none'">`
+        : `<div class="task-thumb"></div>`}
+
+    <div class="task-content">
+
+        <div class="task-title">
+            ${task.title || ''}
+        </div>
+
+        <div class="task-meta">
+
+            <div class="task-date">
+                ${task.request_date || ''}
+            </div>
+
+            <div class="status-badge">
+                완료
+            </div>
+
+        </div>
+
+    </div>
+`;
+
+list.appendChild(div);
     });
 }
 
@@ -103,9 +280,35 @@ function showDetail(task) {
         <h2 style="margin:10px 0;">${task.title}</h2>        
         <p style="margin:20px 0;">${task.memo || '내용 없음'}</p>        
         
-        ${imgUrl ? `<img src="${imgUrl}" style="width:100%; border-radius:10px; cursor:pointer;" onclick="window.open(this.src)">` : ''}
+      ${imgUrl ? `
+<img 
+src="${imgUrl}" 
+style="
+width:100%;
+border-radius:10px;
+cursor:pointer;
+max-height:70vh;
+object-fit:contain;
+background:#111;
+"
+onclick="window.open(this.src)">
+` : ''}
         
-        <button onclick="document.getElementById('detailModal').style.display='none'" style="...">닫기</button>    
+        <button
+onclick="document.getElementById('detailModal').style.display='none'"
+style="
+margin-top:20px;
+background:#ff0000;
+width:100%;
+padding:15px;
+border:none;
+border-radius:8px;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+">
+닫기
+</button>
     `;    
     document.getElementById('detailModal').style.display = 'flex';
 }
@@ -127,6 +330,14 @@ function downloadExcel() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('detailModal')
+.addEventListener('click', function(e){
+
+    if(e.target === this){
+        this.style.display = 'none';
+    }
+
+});
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('start-date').value = today;
     document.getElementById('end-date').value = today;
