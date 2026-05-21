@@ -53,8 +53,10 @@
 
 .top-btns .home-btn{
     width:100%;
+    justify-content:center;
+    padding:14px;
+    border-radius:16px;
 }
-
     
     header{
         height:60px;
@@ -250,15 +252,10 @@ z-index:9999;
   </div>
 </header>
 <div class="container">
+<div class="top-btns">
 
-    <div class="top-btns">
-
-        <a href="index.html" class="home-btn">
-            ← 홈으로 가기
-       
-
-
-
+    <a href="index.html" class="home-btn">
+        ← 홈으로 가기
     </a>
 
     <button
@@ -275,7 +272,6 @@ z-index:9999;
     </button>
 
 </div>
-    
     
     <div class="card" style="padding:20px; border:2px dashed var(--brand-color);">
         <input type="file" id="excel-file" accept=".xlsx, .xls" style="display:none;" onchange="uploadExcel(event)">
