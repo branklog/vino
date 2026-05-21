@@ -557,8 +557,11 @@ const status =
     // 2. 실제 이미지 업로드 로직 (사장님이 주신 코드 적용)
 for(const file of selectedFiles){
 
-    const fileName =
-        `${Date.now()}_${file.name}`;
+   const ext =
+    file.name.split('.').pop();
+
+const fileName =
+    `${Date.now()}_${Math.random().toString(36).substring(2)}.${ext}`;
 
     const { error } =
         await client.storage
