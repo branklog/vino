@@ -8,7 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --brand-color: #9D8A69; --btn-red: #ff0000; --excel-green: #28a745; }
+    :root {
+    --brand-color: #9D8A69;
+    --dark-brown: #1B0000;
+    --button-color: #9D8A69;
+    --button-hover: #8a7758;
+    --excel-green: #7A8B5B;
+}
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Pretendard',sans-serif;}
         body{background:#111;color:#fff;}
         header{height:80px; background:#fff; display:flex; align-items:center; padding:0 40px; margin-bottom:30px;}
@@ -78,7 +84,7 @@
     }
 }
 
-        input { padding:12px; border-radius:6px; border:none; background:#333; color:#fff; }
+        input { padding:12px; border-radius:6px; border:none; background:#2a1d1d; color:#fff; }
         .btn-excel { background:var(--excel-green); padding:12px 30px; border-radius:8px; border:none; cursor:pointer; font-weight:700; color:#fff; }
         .search-box{
     margin-bottom:15px;
@@ -123,8 +129,13 @@
     font-size:12px;
     flex-shrink:0;
 }
-        .btn-home { background:var(--btn-red) !important; }
-        .btn-menu.active { background:var(--btn-red) !important; }
+       .btn-home {
+    background:var(--button-color) !important;
+}
+
+.btn-menu.active {
+    background:var(--button-color) !important;
+}
    .task-item {
     background:#222;
     padding:16px;
@@ -184,8 +195,8 @@
     padding:4px 10px;
     border-radius:30px;
     font-size:11px;
-    background:#1e4620;
-    color:#4caf50;
+    background:rgba(157,138,105,0.15);
+    color:#c8b08a;
     font-weight:bold;
 }
 
