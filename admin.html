@@ -433,19 +433,7 @@ excelTempData.push({
         }
 
         // 엑셀 자동 저장
-        if(excelTempData.length > 0){
-
-            await client
-            .from('tasks_new')
-            .insert(excelTempData);
-
-            alert('엑셀 데이터 저장 완료!');
-
-            excelTempData = [];
-
-            loadList();
-
-        }
+    
 
     };
 
@@ -603,7 +591,10 @@ for(const file of selectedFiles){
         title: title,
 memo: memo,
 status: status,
-tasks_images: imageUrls
+tasks_images:
+imageUrls.length > 0
+? imageUrls
+: document.getElementById('current-image-url').value || []
     };
 
     // 4. 수정(update) 또는 신규 저장(insert) 실행
@@ -687,12 +678,38 @@ async function loadList() {
                 <div><strong>${t.title}</strong> (${t.category})<br><small style="color:#aaa;">메모: ${t.memo || '없음'}</small></div>
             </div>
             <div style="display:flex; gap:5px;">
-                <button class="main-btn" style="background:#7A8B5B; padding:8px 15px;" onclick='editMode(${JSON.stringify(t)})'>수정</button>
+            <button
+class="main-btn"
+style="background:#7A8B5B; padding:8px 15px;"
+onclick="editModeById(${t.id})">
+
+수정
+
+</button>
                 <button class="main-btn" style="background:#8a7758; padding:8px 15px;" onclick="deleteTask(${t.id})">삭제</button>
             </div>
         </div>`;
     });
 }
+async function editModeById(id){
+
+    const { data } =
+        await client
+        .from('tasks_new')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if(data){
+
+        editMode(data);
+
+    }
+
+}
+
+
+    
 function resetForm() {
 
     document.getElementById('edit-id').value = "";
@@ -715,7 +732,8 @@ function resetForm() {
 }
 function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('complete-date').value =
     t.complete_date || "";document.getElementById('cat').value = t.category; document.getElementById('status').value =
-    t.status || 'progress';document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; selectedFiles = [];
+    t.status || 'progress';document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value =
+JSON.stringify(t.tasks_images || []); document.getElementById('save-btn').innerText = "수정하기"; selectedFiles = [];
 
 const preview =
 document.getElementById('file-preview');
