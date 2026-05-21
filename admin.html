@@ -128,7 +128,7 @@ z-index:9999;
 </div>
 
 <script>
-const ADMIN_PASSWORD = "1150";
+
 
 
     
@@ -218,28 +218,43 @@ async function saveData() {
     }
 
     // 5. 엑셀 대기 데이터 저장
-    if (typeof excelTempData !== 'undefined' && excelTempData.length > 0) {
-        await client.from('tasks_new').insert(excelTempData);
-        excelTempData = [];
-    }
+  if (typeof excelTempData !== 'undefined' && excelTempData.length > 0) {
+    await client.from('tasks_new').insert(excelTempData);
+    excelTempData = [];
+}
 
-
-
-    const pw =
-        document.getElementById('admin-password').value;
-
-    if(pw === ADMIN_PASSWORD){
-
-        document.getElementById('login-box')
-        .style.display = 'none';
-
-    }else{
-
-        alert('비밀번호가 틀렸습니다.');
-
-    }
+alert("저장되었습니다!");
+resetForm();
+loadList();
 
 }
+async function checkLogin(){
+
+    const email =
+        "네이메일@gmail.com";
+
+    const password =
+        document.getElementById('admin-password')
+        .value;
+
+    const { data, error } =
+        await client.auth.signInWithPassword({
+
+            email: ellyhee77@gmail.com,
+            password: password
+
+        });
+
+    if(error){
+
+        alert("로그인 실패");
+        return;
+
+    }
+
+    document.getElementById('login-box')
+    .style.display = 'none';
+
 }
 
 async function loadList() {
@@ -262,7 +277,27 @@ async function loadList() {
 function resetForm() { document.getElementById('edit-id').value = ""; document.getElementById('current-image-url').value = ""; document.getElementById('save-btn').innerText = "업무 저장"; document.getElementById('title').value = ""; document.getElementById('memo').value = ""; document.getElementById('task-file').value = ""; document.getElementById('file-preview').style.display = 'none'; }
 function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('cat').value = t.category; document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; document.getElementById('file-preview').src = t.tasks_images || ""; document.getElementById('file-preview').style.display = t.tasks_images ? 'block' : 'none'; }
 async function deleteTask(id) { await client.from('tasks_new').delete().eq('id', id); loadList(); }
-loadList();
+checkSession();
+
+async function checkSession(){
+
+    const { data } =
+        await client.auth.getSession();
+
+    if(data.session){
+
+        document.getElementById('login-box')
+        .style.display = 'none';
+
+    }
+
+    loadList();
+
+}
+
+
+
+    
 </script>
 </body>
 </html>
