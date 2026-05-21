@@ -392,9 +392,15 @@ function renderList(tasks) {
                 ${task.request_date || ''}
             </div>
 
-            <div class="status-badge">
-                완료
-            </div>
+         <div class="status-badge">
+
+${task.status === 'done'
+? '완료'
+: task.status === 'pending'
+? '미완료'
+: '진행중'}
+
+</div>
 
         </div>
 
