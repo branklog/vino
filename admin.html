@@ -101,6 +101,20 @@ z-index:9999;
 </header>
 <div class="container">
     <a href="index.html" class="home-btn">← 홈으로 가기</a>
+<button
+    class="home-btn"
+    onclick="logout()"
+    style="
+    border:none;
+    cursor:pointer;
+    margin-left:10px;
+    background:#6b5b45;
+    ">
+
+    로그아웃
+
+</button>
+    
     
     <div class="card" style="padding:20px; border:2px dashed var(--brand-color);">
         <input type="file" id="excel-file" accept=".xlsx, .xls" style="display:none;" onchange="uploadExcel(event)">
@@ -293,7 +307,29 @@ async function checkSession(){
     loadList();
 
 }
+async function checkSession(){
 
+    const { data } =
+        await client.auth.getSession();
+
+    if(data.session){
+
+        document.getElementById('login-box')
+        .style.display = 'none';
+
+    }
+
+    loadList();
+
+}
+
+async function logout(){
+
+    await client.auth.signOut();
+
+    location.reload();
+
+}
 
 
     
