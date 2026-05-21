@@ -105,39 +105,55 @@ document.getElementById('task-file').addEventListener('change', function(e) {
 });
 
 async function saveData() {
-    const fileInput = document.getElementById('task-file');
+    // 1. 입력창 데이터 가져오기
+    const editId = document.getElementById('edit-id').value;
+    const reqDate = document.getElementById('req-date').value;
+    const cat = document.getElementById('cat').value;
+    const title = document.getElementById('title').value;
+    const memo = document.getElementById('memo').value;
+    const file = document.getElementById('task-file').files[0];
     let imageUrl = document.getElementById('current-image-url').value;
-    
-    // 이미지 파일이 선택된 경우 버킷에 업로드
-    if (fileInput.files && fileInput.files[0]) {
-        const file = fileInput.files[0];
-        const fileName = 'tasks/' + Date.now() + '_' + file.name;
-        const { data, error } = await client.storage.from('tasks_images').upload(fileName, file);
-        if (!error) {
-            const { data: publicUrlData } = client.storage.from('tasks_images').getPublicUrl(fileName);
-            imageUrl = publicUrlData.publicUrl;
+
+    // 2. 실제 이미지 업로드 로직 (사장님이 주신 코드 적용)
+    if (file) {
+        const fileName = `${Date.now()}_${file.name}`;
+        const { data, error } = await client.storage
+            .from('tasks_images')
+            .upload(fileName, file);
+
+        if (error) {
+            alert("업로드 실패: " + error.message);
+            return;
         }
+
+        imageUrl = client.storage
+            .from('tasks_images')
+            .getPublicUrl(fileName)
+            .data.publicUrl;
     }
-    
+
+    // 3. 수파베이스에 저장할 데이터 객체
     const taskData = {
-        request_date: document.getElementById('req-date').value,
-        category: document.getElementById('cat').value,
-        title: document.getElementById('title').value,
-        memo: document.getElementById('memo').value,
+        request_date: reqDate,
+        category: cat,
+        title: title,
+        memo: memo,
         tasks_images: imageUrl
     };
 
-    const editId = document.getElementById('edit-id').value;
+    // 4. 수정(update) 또는 신규 저장(insert) 실행
     if (editId) {
         await client.from('tasks_new').update(taskData).eq('id', editId);
     } else {
         await client.from('tasks_new').insert([taskData]);
     }
 
-    if (excelTempData.length > 0) {
+    // 5. 엑셀 대기 데이터 저장
+    if (typeof excelTempData !== 'undefined' && excelTempData.length > 0) {
         await client.from('tasks_new').insert(excelTempData);
         excelTempData = [];
     }
+
     alert("저장되었습니다!");
     resetForm();
     loadList();
