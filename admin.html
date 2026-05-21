@@ -334,21 +334,6 @@ for(const file of selectedFiles){
 }
 
 
-    
-            .from('tasks_images')
-            .upload(fileName, file);
-
-        if (error) {
-            alert("업로드 실패: " + error.message);
-            return;
-        }
-
-        imageUrl = client.storage
-            .from('tasks_images')
-            .getPublicUrl(fileName)
-            .data.publicUrl;
-    }
-
     // 3. 수파베이스에 저장할 데이터 객체
     const taskData = {
         complete_date: completeDate,
@@ -413,7 +398,9 @@ async function loadList() {
     if(data) data.forEach(t => {
         list.innerHTML += `<div class="task-item">
             <div style="display:flex; align-items:center;">
-                ${t.tasks_images ? `<img src="${t.tasks_images}" class="task-img">` : ''}
+            ${Array.isArray(t.tasks_images) && t.tasks_images.length
+? `<img src="${t.tasks_images[0]}" class="task-img">`
+: ''}
                 <div><strong>${t.title}</strong> (${t.category})<br><small style="color:#aaa;">메모: ${t.memo || '없음'}</small></div>
             </div>
             <div style="display:flex; gap:5px;">
@@ -423,10 +410,53 @@ async function loadList() {
         </div>`;
     });
 }
-function resetForm() { document.getElementById('edit-id').value = ""; document.getElementById('current-image-url').value = ""; document.getElementById('save-btn').innerText = "업무 저장"; document.getElementById('title').value = ""; document.getElementById('memo').value = ""; document.getElementById('task-file').value = ""; document.getElementById('file-preview').style.display = 'none'; }
+function resetForm() {
+
+    document.getElementById('edit-id').value = "";
+
+    document.getElementById('current-image-url').value = "";
+
+    document.getElementById('save-btn').innerText =
+    "업무 저장";
+
+    document.getElementById('title').value = "";
+
+    document.getElementById('memo').value = "";
+
+    document.getElementById('task-file').value = "";
+
+    document.getElementById('file-preview').innerHTML = '';
+
+    selectedFiles = [];
+
+}
 function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('complete-date').value =
     t.complete_date || "";document.getElementById('cat').value = t.category; document.getElementById('status').value =
-    t.status || 'progress';document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; document.getElementById('file-preview').src = t.tasks_images || ""; document.getElementById('file-preview').style.display = t.tasks_images ? 'block' : 'none'; }
+    t.status || 'progress';document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; selectedFiles = [];
+
+const preview =
+document.getElementById('file-preview');
+
+preview.innerHTML = '';
+
+if(Array.isArray(t.tasks_images)){
+
+    t.tasks_images.forEach(img=>{
+
+        preview.innerHTML += `
+        <img
+        src="${img}"
+        style="
+        width:90px;
+        height:90px;
+        object-fit:cover;
+        border-radius:10px;
+        border:1px solid #555;
+        ">
+        `;
+    });
+
+} }
 async function deleteTask(id) { await client.from('tasks_new').delete().eq('id', id); loadList(); }
 checkSession();
 
