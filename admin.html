@@ -47,7 +47,15 @@
     margin-top:10px;
 }
 @media(max-width:768px){
+.top-btns{
+    flex-direction:column;
+}
 
+.top-btns .home-btn{
+    width:100%;
+}
+
+    
     header{
         height:60px;
         padding:0 16px;
@@ -163,7 +171,12 @@
 
 }
 
-
+.top-btns{
+    display:flex;
+    gap:10px;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+}
 
         
     </style>
@@ -237,20 +250,31 @@ z-index:9999;
   </div>
 </header>
 <div class="container">
-    <a href="index.html" class="home-btn">← 홈으로 가기</a>
-<button
-    class="home-btn"
-    onclick="logout()"
-    style="
-    border:none;
-    cursor:pointer;
-    margin-left:10px;
-    background:#6b5b45;
-    ">
 
-    로그아웃
+    <div class="top-btns">
 
-</button>
+        <a href="index.html" class="home-btn">
+            ← 홈으로 가기
+       
+
+
+
+    </a>
+
+    <button
+        class="home-btn"
+        onclick="logout()"
+        style="
+        border:none;
+        cursor:pointer;
+        background:#6b5b45;
+        ">
+
+        로그아웃
+
+    </button>
+
+</div>
     
     
     <div class="card" style="padding:20px; border:2px dashed var(--brand-color);">
