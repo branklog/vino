@@ -108,25 +108,39 @@ async function uploadExcel(event) {
     
 
 async function saveData() {
-    // 1. 일반 입력창 데이터 저장
-    const file = document.getElementById('task-file').files[0];
-    let imageUrl = document.getElementById('current-image-url').value;
+    // 1. 입력창 데이터 가져오기
+    const editId = document.getElementById('edit-id').value;
+    const reqDate = document.getElementById('req-date').value;
+    const cat = document.getElementById('cat').value;
+    const title = document.getElementById('title').value;
+    const memo = document.getElementById('memo').value;
+    const imageUrl = document.getElementById('current-image-url').value;
     
-    // (이미지 업로드 로직 생략 - 기존 코드 그대로 사용)
-    
-    const taskData = { /* 기존 입력창 데이터들... */ };
-    await client.from('tasks_new').insert([taskData]);
+    // 2. 수파베이스로 보낼 데이터 객체 구성
+    const taskData = {
+        request_date: reqDate,
+        category: cat,
+        title: title,
+        memo: memo,
+        tasks_images: imageUrl
+    };
 
-    // 2. 바구니에 담긴 엑셀 데이터도 한꺼번에 저장!
-    if (excelTempData.length > 0) {
-        for (const item of excelTempData) {
-            await client.from('tasks_new').insert([item]);
-        }
+    // 3. 수정인지 신규 저장인지 확인하여 실행
+    if (editId) {
+        await client.from('tasks_new').update(taskData).eq('id', editId);
+    } else {
+        await client.from('tasks_new').insert([taskData]);
+    }
+
+    // 4. 엑셀 바구니에 담긴 데이터 저장
+    if (typeof excelTempData !== 'undefined' && excelTempData.length > 0) {
+        await client.from('tasks_new').insert(excelTempData);
         excelTempData = []; // 저장 후 바구니 비우기
     }
 
-    alert("모두 저장되었습니다!");
-    loadList();
+    alert("저장되었습니다!");
+    resetForm(); // 입력창 비우기
+    loadList();  // 목록 새로고침
 }
 
 async function loadList() {
