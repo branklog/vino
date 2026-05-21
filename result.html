@@ -310,11 +310,9 @@ let allTasks = [];
 
 function getImgUrl(task) {
 
-    if (!task.images) return null;
+    if (!task.tasks_images) return null;
 
-    return Array.isArray(task.images)
-        ? task.images[0]
-        : task.images;
+    return task.tasks_images;
 }
 
 async function getAllTasks() {
