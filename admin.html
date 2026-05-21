@@ -767,7 +767,21 @@ window.scrollTo({
 });
 
 }
-async function deleteTask(id) { await client.from('tasks_new').delete().eq('id', id); loadList(); }
+async function deleteTask(id) {
+
+    const ok =
+        confirm("정말 삭제할까요?");
+
+    if(!ok) return;
+
+    await client
+    .from('tasks_new')
+    .delete()
+    .eq('id', id);
+
+    loadList();
+
+}
 checkSession();
 
 
