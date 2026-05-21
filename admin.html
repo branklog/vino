@@ -153,13 +153,14 @@ type="file"
 id="task-file"
 multiple
 style="background:transparent;">
-     <div
+<div
 id="file-preview"
 style="
 display:flex;
 gap:10px;
 flex-wrap:wrap;
 margin-top:10px;
+align-items:flex-start;
 ">
 </div>
         </div>
@@ -220,7 +221,12 @@ let selectedFiles = [];
 document.getElementById('task-file')
 .addEventListener('change', function(){
 
-    selectedFiles = [...this.files];
+  selectedFiles = [
+    ...selectedFiles,
+    ...this.files
+];
+
+this.value = '';
 
     renderPreview();
 
@@ -240,12 +246,14 @@ function renderPreview(){
         reader.onload = function(e){
 
             preview.innerHTML += `
-            <div style="
-            position:relative;
-            width:90px;
-            height:90px;
-            ">
-
+          <div style="
+position:relative;
+width:90px;
+height:90px;
+flex:none;
+overflow:hidden;
+border-radius:12px;
+">
                 <img
                 src="${e.target.result}"
                 style="
@@ -287,6 +295,8 @@ function renderPreview(){
 function removeImage(index){
 
     selectedFiles.splice(index,1);
+
+    document.getElementById('task-file').value = '';
 
     renderPreview();
 
