@@ -125,6 +125,13 @@ z-index:9999;
         <input type="hidden" id="edit-id">
         <input type="hidden" id="current-image-url">
         <div class="group"><label>의뢰날짜</label><input type="date" id="req-date"></div>
+        <div class="group">
+
+    <label>완료날짜</label>
+
+    <input type="date" id="complete-date">
+
+</div>
         <div class="group"><label>업무구분</label><select id="cat"><option>웹</option><option>인쇄</option></select></div>
         <div class="group"><label>작업내용</label><input type="text" id="title"></div>
         <div class="group"><label>메모</label><input type="text" id="memo"></div>
@@ -208,6 +215,7 @@ async function saveData() {
     // 1. 입력창 데이터 가져오기
     const editId = document.getElementById('edit-id').value;
     const reqDate = document.getElementById('req-date').value;
+    const reqDate = document.getElementById('req-date').value;
     const cat = document.getElementById('cat').value;
     const title = document.getElementById('title').value;
     const memo =
@@ -237,6 +245,7 @@ const status =
 
     // 3. 수파베이스에 저장할 데이터 객체
     const taskData = {
+        complete_date: completeDate,
         request_date: reqDate,
         category: cat,
         title: title,
@@ -309,7 +318,8 @@ async function loadList() {
     });
 }
 function resetForm() { document.getElementById('edit-id').value = ""; document.getElementById('current-image-url').value = ""; document.getElementById('save-btn').innerText = "업무 저장"; document.getElementById('title').value = ""; document.getElementById('memo').value = ""; document.getElementById('task-file').value = ""; document.getElementById('file-preview').style.display = 'none'; }
-function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('cat').value = t.category; document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; document.getElementById('file-preview').src = t.tasks_images || ""; document.getElementById('file-preview').style.display = t.tasks_images ? 'block' : 'none'; }
+function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('complete-date').value =
+    t.complete_date || "";document.getElementById('cat').value = t.category; document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; document.getElementById('file-preview').src = t.tasks_images || ""; document.getElementById('file-preview').style.display = t.tasks_images ? 'block' : 'none'; }
 async function deleteTask(id) { await client.from('tasks_new').delete().eq('id', id); loadList(); }
 checkSession();
 
