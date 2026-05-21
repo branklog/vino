@@ -39,7 +39,7 @@
     
     <div class="card" style="padding:20px; border:2px dashed var(--brand-color);">
         <input type="file" id="excel-file" accept=".xlsx, .xls" style="display:none;" onchange="uploadExcel(event)">
-        <button class="main-btn" style="background:var(--brand-color); width:100%;" onclick="document.getElementById('excel-file').click()">📊 엑셀 파일(.xlsx) 선택하여 목록 자동 만들기</button>
+        <button class="main-btn" style="background:var(--brand-color); width:100%;" onclick="document.getElementById('excel-file').click()">📊 엑셀 파일 선택하여 목록 자동 만들기</button>
     </div>
 
     <div class="card">
@@ -65,9 +65,9 @@
 <script>
 const client = supabase.createClient('https://ttunieohxvnhwiikxfzu.supabase.co', 'sb_publishable_mdIZt_b1mzvuRoBp3eLYHA_MmBJfIoP');
 
-// 엑셀에서 읽어온 데이터를 저장할 임시 바구니
 let excelTempData = []; 
 
+// 엑셀 업로드 시 날짜 변환 핵심
 async function uploadExcel(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -77,81 +77,80 @@ async function uploadExcel(event) {
         const workbook = XLSX.read(data, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        excelTempData = []; // 바구니 비우기
+        excelTempData = [];
         const list = document.getElementById('taskList');
         list.innerHTML = '<h3 style="margin-bottom:15px; color:var(--brand-color);">📊 엑셀 미리보기 (아직 저장 안 됨!)</h3>';
-        
         for (let i = 1; i < rows.length; i++) {
             const row = rows[i];
             if (!row[2]) continue;
-            
-            // 데이터를 바구니에 담기
-            excelTempData.push({
-                request_date: row[0],
-                category: row[1],
-                title: row[2],
-                complete_date: row[3]
-            });
-
-            // 화면에 카드 그리기
-            list.innerHTML += `
-                <div class="task-item" style="border: 1px solid var(--brand-color);">
-                    <div><strong>${row[2]}</strong> (${row[1]})<br>
-                    <small>의뢰일: ${row[0]} | 완료일: ${row[3]}</small></div>
-                </div>`;
+            let d = row[0];
+            if (typeof d === 'number') {
+                const dateObj = XLSX.SSF.parse_date_code(d);
+                d = `${dateObj.y}-${String(dateObj.m).padStart(2,'0')}-${String(dateObj.d).padStart(2,'0')}`;
+            }
+            excelTempData.push({ request_date: d, category: row[1], title: row[2], memo: "" });
+            list.innerHTML += `<div class="task-item" style="border: 1px solid var(--brand-color);"><div><strong>${row[2]}</strong> (${row[1]})<br><small>의뢰일: ${d}</small></div></div>`;
         }
     };
     reader.readAsArrayBuffer(file);
 }
 
-    
+// 이미지 미리보기
+document.getElementById('task-file').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => { document.getElementById('file-preview').src = e.target.result; document.getElementById('file-preview').style.display = 'block'; }
+        reader.readAsDataURL(this.files[0]);
+    }
+});
 
 async function saveData() {
-    // 1. 입력창 데이터 가져오기
-    const editId = document.getElementById('edit-id').value;
-    const reqDate = document.getElementById('req-date').value;
-    const cat = document.getElementById('cat').value;
-    const title = document.getElementById('title').value;
-    const memo = document.getElementById('memo').value;
-    const imageUrl = document.getElementById('current-image-url').value;
+    const fileInput = document.getElementById('task-file');
+    let imageUrl = document.getElementById('current-image-url').value;
     
-    // 2. 수파베이스로 보낼 데이터 객체 구성
+    // 이미지 파일이 선택된 경우 버킷에 업로드
+    if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const fileName = 'tasks/' + Date.now() + '_' + file.name;
+        const { data, error } = await client.storage.from('tasks_images').upload(fileName, file);
+        if (!error) {
+            const { data: publicUrlData } = client.storage.from('tasks_images').getPublicUrl(fileName);
+            imageUrl = publicUrlData.publicUrl;
+        }
+    }
+    
     const taskData = {
-        request_date: reqDate,
-        category: cat,
-        title: title,
-        memo: memo,
+        request_date: document.getElementById('req-date').value,
+        category: document.getElementById('cat').value,
+        title: document.getElementById('title').value,
+        memo: document.getElementById('memo').value,
         tasks_images: imageUrl
     };
 
-    // 3. 수정인지 신규 저장인지 확인하여 실행
+    const editId = document.getElementById('edit-id').value;
     if (editId) {
         await client.from('tasks_new').update(taskData).eq('id', editId);
     } else {
         await client.from('tasks_new').insert([taskData]);
     }
 
-    // 4. 엑셀 바구니에 담긴 데이터 저장
-    if (typeof excelTempData !== 'undefined' && excelTempData.length > 0) {
+    if (excelTempData.length > 0) {
         await client.from('tasks_new').insert(excelTempData);
-        excelTempData = []; // 저장 후 바구니 비우기
+        excelTempData = [];
     }
-
     alert("저장되었습니다!");
-    resetForm(); // 입력창 비우기
-    loadList();  // 목록 새로고침
+    resetForm();
+    loadList();
 }
 
 async function loadList() {
     const { data } = await client.from('tasks_new').select('*').order('request_date', {ascending: false});
     const list = document.getElementById('taskList');
     list.innerHTML = '';
-    data.forEach(t => {
-        const img = t.tasks_images;
+    if(data) data.forEach(t => {
         list.innerHTML += `<div class="task-item">
             <div style="display:flex; align-items:center;">
-                ${img ? `<img src="${img}" class="task-img">` : ''}
+                ${t.tasks_images ? `<img src="${t.tasks_images}" class="task-img">` : ''}
                 <div><strong>${t.title}</strong> (${t.category})<br><small style="color:#aaa;">메모: ${t.memo || '없음'}</small></div>
             </div>
             <div style="display:flex; gap:5px;">
@@ -161,9 +160,8 @@ async function loadList() {
         </div>`;
     });
 }
-// ... 이하 resetForm, editMode, deleteTask 함수 그대로 유지 ...
 function resetForm() { document.getElementById('edit-id').value = ""; document.getElementById('current-image-url').value = ""; document.getElementById('save-btn').innerText = "업무 저장"; document.getElementById('title').value = ""; document.getElementById('memo').value = ""; document.getElementById('task-file').value = ""; document.getElementById('file-preview').style.display = 'none'; }
-function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('cat').value = t.category; document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; }
+function editMode(t) { document.getElementById('edit-id').value = t.id; document.getElementById('req-date').value = t.request_date; document.getElementById('cat').value = t.category; document.getElementById('title').value = t.title; document.getElementById('memo').value = t.memo || ""; document.getElementById('current-image-url').value = t.tasks_images || ""; document.getElementById('save-btn').innerText = "수정하기"; document.getElementById('file-preview').src = t.tasks_images || ""; document.getElementById('file-preview').style.display = t.tasks_images ? 'block' : 'none'; }
 async function deleteTask(id) { await client.from('tasks_new').delete().eq('id', id); loadList(); }
 loadList();
 </script>
