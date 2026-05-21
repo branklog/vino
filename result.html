@@ -309,9 +309,12 @@ const client = supabase.createClient('https://ttunieohxvnhwiikxfzu.supabase.co',
 let allTasks = [];
 
 function getImgUrl(task) {
-    // ⚡ 여기가 'images'가 아니라 'tasks_images'여야 합니다!
-    if (!task.tasks_images) return null;
-    return Array.isArray(task.tasks_images) ? task.tasks_images[0] : task.tasks_images;
+
+    if (!task.images) return null;
+
+    return Array.isArray(task.images)
+        ? task.images[0]
+        : task.images;
 }
 
 async function getAllTasks() {
@@ -404,7 +407,7 @@ list.appendChild(div);
 
 function showDetail(task) {    
     // ⚡ 여기가 task.tasks_images 여야 합니다!
-    const imgUrl = task.tasks_images || ''; 
+    const imgUrl = getImgUrl(task);
     
     document.getElementById('modalData').innerHTML = `
         <div style="font-size:14px; color:#888;">${task.request_date}</div>        
@@ -466,12 +469,65 @@ function searchTasks() {
     renderList(filtered);
 }
 function setFilter(btn, filter) {
-    document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('active'));
+
+    document.querySelectorAll('.btn-menu')
+      .forEach(b => b.classList.remove('active'));
+
     btn.classList.add('active');
-    renderList(filter === '전체' ? allTasks : allTasks.filter(t => t.status === filter));
+
+    let filtered = [...allTasks];
+
+    // 완료
+    if(filter === '완료'){
+
+        filtered = filtered.filter(
+            t => t.complete_date
+        );
+    }
+
+    // 진행중
+    else if(filter === '진행중'){
+
+        filtered = filtered.filter(
+            t => !t.complete_date
+        );
+    }
+
+    // 미완료
+    else if(filter === '미완료'){
+
+        filtered = filtered.filter(
+            t => !t.complete_date
+        );
+    }
+
+    // 검색 유지
+    const keyword =
+        document.getElementById('searchInput')
+        .value
+        .toLowerCase();
+
+    if(keyword){
+
+        filtered = filtered.filter(task => {
+
+            const title =
+                (task.title || '').toLowerCase();
+
+            const memo =
+                (task.memo || '').toLowerCase();
+
+            return title.includes(keyword)
+                || memo.includes(keyword);
+
+        });
+    }
+
+    renderList(filtered);
 }
 
-function downloadExcel() {
+}
+function downloadExcel() 
     const start = document.getElementById('start-date').value;
     const end = document.getElementById('end-date').value;
     const excelTasks = allTasks.filter(t => t.request_date >= start && t.request_date <= end);
