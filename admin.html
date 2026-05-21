@@ -594,7 +594,9 @@ status: status,
 tasks_images:
 imageUrls.length > 0
 ? imageUrls
-: document.getElementById('current-image-url').value || []
+: JSON.parse(
+    document.getElementById('current-image-url').value || '[]'
+)
     };
 
     // 4. 수정(update) 또는 신규 저장(insert) 실행
