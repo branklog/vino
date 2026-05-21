@@ -31,24 +31,53 @@
         .company-logo{height:35px;}
         .logo-text{font-size:22px; font-weight:900; color:var(--brand-color); text-decoration:none;}
         .container { width:100%; max-width:1200px; margin:auto; padding:0 20px 50px 20px; }
-        .control-box { background:#222; padding:25px; border-radius:15px; margin-bottom:20px; border:1px solid #333; }
+
+.control-box {
+    background:#222;
+    padding:16px;
+    border-radius:15px;
+    margin-bottom:20px;
+    border:1px solid #333;
+}
+
+        
         .report-range-bar { display:flex; align-items:center; gap:15px; font-weight:bold; flex-wrap: wrap; }
         .report-range-bar input{
     min-width:140px;
 }
-
 @media(max-width:600px){
 
     .report-range-bar{
-        flex-direction:column;
-        align-items:flex-start;
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        align-items:center;
     }
 
-    .report-range-bar input,
+    .report-range-bar label{
+        width:100%;
+        margin-bottom:5px;
+    }
+
+    .report-range-bar input{
+        width:calc(50% - 20px);
+        min-width:0;
+        padding:8px;
+        font-size:13px;
+    }
+
+    .report-range-bar span{
+        width:20px;
+        text-align:center;
+    }
+
     .btn-excel{
         width:100%;
+        padding:10px;
+        margin-top:5px;
     }
 }
+
         input { padding:12px; border-radius:6px; border:none; background:#333; color:#fff; }
         .btn-excel { background:var(--excel-green); padding:12px 30px; border-radius:8px; border:none; cursor:pointer; font-weight:700; color:#fff; }
        .filter-bar {
@@ -64,16 +93,17 @@
 .filter-bar::-webkit-scrollbar{
     display:none;
 }
-       .btn-menu {
-    padding:10px 18px;
+   .btn-menu {
+    padding:7px 10px;
     border-radius:8px;
     border:none;
     cursor:pointer;
     font-weight:700;
     color:#fff;
     background:#333;
-    white-space: nowrap;
-    font-size:14px;
+    white-space:nowrap;
+    font-size:12px;
+    flex-shrink:0;
 }
         .btn-home { background:var(--btn-red) !important; }
         .btn-menu.active { background:var(--btn-red) !important; }
