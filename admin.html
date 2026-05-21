@@ -221,10 +221,14 @@ let selectedFiles = [];
 document.getElementById('task-file')
 .addEventListener('change', function(){
 
-    selectedFiles =
+    const newFiles =
         Array.from(this.files);
 
+    selectedFiles.push(...newFiles);
+
     renderPreview();
+
+    this.value = '';
 
 });
 
