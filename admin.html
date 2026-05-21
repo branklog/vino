@@ -272,17 +272,35 @@ z-index:9999;
     </button>
 
 </div>
-    <div class="card" style="padding:20px; border:2px dashed var(--brand-color);">
-        
-<div style="
-margin-bottom:15px;
-line-height:1.7;
-font-size:15px;
-color:#ddd;
-">
+<div class="card" style="padding:20px; border:2px dashed var(--brand-color);">
 
-📊 엑셀 서류로 한번에 대량 업로드하기<br>
-A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일
+    <div style="
+    margin-bottom:15px;
+    line-height:1.7;
+    font-size:15px;
+    color:#ddd;
+    ">
+
+    📊 엑셀 서류로 한번에 대량 업로드하기<br>
+    A열: 의뢰일 | B열: 업무구분 | C열: 작업내용 | D열: 완료일
+
+    </div>
+
+    <input
+    type="file"
+    id="excel-file"
+    accept=".xlsx, .xls"
+    style="display:none;"
+    onchange="uploadExcel(event)">
+
+    <button
+    class="main-btn"
+    style="background:var(--brand-color); width:100%;"
+    onclick="document.getElementById('excel-file').click()">
+
+    📊 엑셀 파일 선택하여 목록 자동 만들기
+
+    </button>
 
 </div>
 
