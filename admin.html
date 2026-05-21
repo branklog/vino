@@ -292,21 +292,7 @@ function editMode(t) { document.getElementById('edit-id').value = t.id; document
 async function deleteTask(id) { await client.from('tasks_new').delete().eq('id', id); loadList(); }
 checkSession();
 
-async function checkSession(){
 
-    const { data } =
-        await client.auth.getSession();
-
-    if(data.session){
-
-        document.getElementById('login-box')
-        .style.display = 'none';
-
-    }
-
-    loadList();
-
-}
 async function checkSession(){
 
     const { data } =
