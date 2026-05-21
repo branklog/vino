@@ -315,8 +315,51 @@ function getImgUrl(task) {
 }
 
 async function getAllTasks() {
-    const { data } = await client.from('tasks_new').select('*').order('request_date', {ascending: false});
-    allTasks = data || [];
+
+    const params = new URLSearchParams(location.search);
+
+    const mode = params.get('mode');
+    const value = params.get('value');
+
+    const { data } = await client
+      .from('tasks_new')
+      .select('*')
+      .order('request_date', { ascending:false });
+
+    let tasks = data || [];
+
+    // 일별 조회
+    if(mode === 'day'){
+
+        tasks = tasks.filter(
+            t => t.request_date === value
+        );
+    }
+
+    // 월별 조회
+    else if(mode === 'month'){
+
+        tasks = tasks.filter(t => {
+
+            if(!t.request_date) return false;
+
+            return t.request_date.startsWith(value);
+        });
+    }
+
+    // 연도별 조회
+    else if(mode === 'year'){
+
+        tasks = tasks.filter(t => {
+
+            if(!t.request_date) return false;
+
+            return t.request_date.startsWith(value);
+        });
+    }
+
+    allTasks = tasks;
+
     renderList(allTasks);
 }
 
