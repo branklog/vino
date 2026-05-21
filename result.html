@@ -80,6 +80,24 @@
 
         input { padding:12px; border-radius:6px; border:none; background:#333; color:#fff; }
         .btn-excel { background:var(--excel-green); padding:12px 30px; border-radius:8px; border:none; cursor:pointer; font-weight:700; color:#fff; }
+        .search-box{
+    margin-bottom:15px;
+}
+
+.search-box input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:none;
+    background:#222;
+    color:#fff;
+    font-size:14px;
+    border:1px solid #333;
+}
+
+.search-box input::placeholder{
+    color:#888;
+}
        .filter-bar {
     display:flex;
     gap:10px;
@@ -234,7 +252,16 @@
             <button class="btn-excel" onclick="downloadExcel()">📊 엑셀 다운로드</button>
         </div>
     </div>
-    <div class="filter-bar">
+
+
+<div class="search-box">
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="작업내용 검색..."
+        oninput="searchTasks()">
+</div>
+   <div class="filter-bar">
         <button class="btn-menu btn-home" onclick="location.href='index.html'">홈으로 가기</button>
         <button class="btn-menu active" onclick="setFilter(this, '전체')">전체</button>
         <button class="btn-menu" onclick="setFilter(this, '완료')">완료</button>
@@ -342,7 +369,28 @@ cursor:pointer;
     `;    
     document.getElementById('detailModal').style.display = 'flex';
 }
+function searchTasks() {
 
+    const keyword =
+        document.getElementById('searchInput')
+        .value
+        .toLowerCase();
+
+    const filtered = allTasks.filter(task => {
+
+        const title =
+            (task.title || '').toLowerCase();
+
+        const memo =
+            (task.memo || '').toLowerCase();
+
+        return title.includes(keyword)
+            || memo.includes(keyword);
+
+    });
+
+    renderList(filtered);
+}
 function setFilter(btn, filter) {
     document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
