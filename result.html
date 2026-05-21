@@ -478,28 +478,28 @@ function setFilter(btn, filter) {
     let filtered = [...allTasks];
 
     // 완료
-    if(filter === '완료'){
+  if(filter === '완료'){
 
-        filtered = filtered.filter(
-            t => t.complete_date
-        );
-    }
+    filtered = filtered.filter(
+        t => t.status === 'done'
+    );
+}
 
-    // 진행중
-    else if(filter === '진행중'){
+// 진행중
+else if(filter === '진행중'){
 
-        filtered = filtered.filter(
-            t => !t.complete_date
-        );
-    }
+    filtered = filtered.filter(
+        t => t.status === 'progress'
+    );
+}
 
-    // 미완료
-    else if(filter === '미완료'){
+// 미완료
+else if(filter === '미완료'){
 
-        filtered = filtered.filter(
-            t => !t.complete_date
-        );
-    }
+    filtered = filtered.filter(
+        t => t.status === 'pending'
+    );
+}
 
     // 검색 유지
     const keyword =
