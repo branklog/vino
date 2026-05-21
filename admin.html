@@ -125,9 +125,20 @@ z-index:9999;
         <input type="hidden" id="edit-id">
         <input type="hidden" id="current-image-url">
         <div class="group"><label>의뢰날짜</label><input type="date" id="req-date"></div>
-        <div class="group"><label>업무구분</label><select id="cat"><option>웹</option><option>인쇄</option><option>디자인</option></select></div>
+        <div class="group"><label>업무구분</label><select id="cat"><option>웹</option><option>인쇄</option></select></div>
         <div class="group"><label>작업내용</label><input type="text" id="title"></div>
         <div class="group"><label>메모</label><input type="text" id="memo"></div>
+        <div class="group">
+    <label>진행상태</label>
+
+    <select id="status">
+
+        <option value="progress">진행중</option>
+        <option value="done">완료</option>
+        <option value="pending">미완료</option>
+
+    </select>
+</div>
         <div class="group">
             <label>이미지 업로드</label>
             <input type="file" id="task-file" style="background:transparent;">
@@ -199,7 +210,8 @@ async function saveData() {
     const reqDate = document.getElementById('req-date').value;
     const cat = document.getElementById('cat').value;
     const title = document.getElementById('title').value;
-    const memo = document.getElementById('memo').value;
+const status =
+    document.getElementById('status').value;
     const file = document.getElementById('task-file').files[0];
     let imageUrl = document.getElementById('current-image-url').value;
 
@@ -227,7 +239,7 @@ async function saveData() {
         category: cat,
         title: title,
 memo: memo,
-status: "progress",
+status: status,
 tasks_images: imageUrl
     };
 
