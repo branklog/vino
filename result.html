@@ -284,14 +284,24 @@ body{
         </div>
     </div>
 
-
 <div class="search-box">
+
     <input
         type="text"
         id="searchInput"
         placeholder="작업내용 검색..."
         oninput="searchTasks()">
+
+    <input
+        type="date"
+        id="dateSearch"
+        style="margin-top:10px;"
+        oninput="searchTasks()">
+
 </div>
+
+
+    
    <div class="filter-bar">
         <button class="btn-menu btn-home" onclick="location.href='index.html'">홈으로 가기</button>
         <button class="btn-menu active" onclick="setFilter(this, '전체')">전체</button>
@@ -453,12 +463,17 @@ cursor:pointer;
     `;    
     document.getElementById('detailModal').style.display = 'flex';
 }
+
 function searchTasks() {
 
     const keyword =
         document.getElementById('searchInput')
         .value
         .toLowerCase();
+
+    const searchDate =
+        document.getElementById('dateSearch')
+        .value;
 
     const filtered = allTasks.filter(task => {
 
@@ -468,13 +483,23 @@ function searchTasks() {
         const memo =
             (task.memo || '').toLowerCase();
 
-        return title.includes(keyword)
+        const matchKeyword =
+            title.includes(keyword)
             || memo.includes(keyword);
+
+        const matchDate =
+            !searchDate
+            || task.request_date === searchDate;
+
+        return matchKeyword && matchDate;
 
     });
 
     renderList(filtered);
+
 }
+
+    
 function setFilter(btn, filter) {
 
     document.querySelectorAll('.btn-menu')
