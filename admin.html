@@ -339,6 +339,21 @@ z-index:9999;
 </div>
         <div class="group">
             <label>이미지 업로드</label>
+            <div id="drop-area"
+style="
+margin-bottom:12px;
+padding:25px;
+border:2px dashed #555;
+border-radius:14px;
+text-align:center;
+color:#aaa;
+background:#181513;
+transition:.2s;
+">
+
+📂 이미지를 여기로 드래그해서 추가하세요
+
+</div>
             <input
 type="file"
 id="task-file"
@@ -450,6 +465,40 @@ excelTempData.push({
 
 // 이미지 미리보기
 let selectedFiles = [];
+    const dropArea =
+    document.getElementById('drop-area');
+
+dropArea.addEventListener('dragover', e => {
+
+    e.preventDefault();
+
+    dropArea.style.borderColor =
+        '#9D8A69';
+
+});
+
+dropArea.addEventListener('dragleave', () => {
+
+    dropArea.style.borderColor =
+        '#555';
+
+});
+
+dropArea.addEventListener('drop', e => {
+
+    e.preventDefault();
+
+    dropArea.style.borderColor =
+        '#555';
+
+    const files =
+        Array.from(e.dataTransfer.files);
+
+    selectedFiles.push(...files);
+
+    renderPreview();
+
+});
 
 document.getElementById('task-file')
 .addEventListener('change', function(){
@@ -465,6 +514,7 @@ document.getElementById('task-file')
 
 });
 
+    
 function renderPreview(){
 
     const preview =
