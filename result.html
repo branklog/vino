@@ -615,46 +615,62 @@ if(excelTasks.length === 0){
 }
 
     // 엑셀용 데이터 변환
-    const excelData = excelTasks.map(t => ({
+const excelData = [
 
-        "의뢰일": t.request_date || "",
+    ['의뢰일', '업무구분', '작업내용', '메모', '완료일', '진행상태']
 
-        "업무구분": t.category || "",
+];
 
-        "작업내용": t.title || "",
+excelTasks.forEach(t => {
 
-        "메모": t.memo || "",
+    const statusText =
+        t.status === 'done'
+        ? '완료'
+        : t.status === 'pending'
+        ? '미완료'
+        : '진행중';
 
-        "완료일": t.complete_date || "",
+    excelData.push([
 
-        "진행상태":
-            t.status === "done"
-            ? "완료"
-            : t.status === "pending"
-            ? "미완료"
-            : "진행중"
+        t.request_date || '',
+        t.category || '',
+        t.title || '',
+        t.memo || '',
+        t.complete_date || '',
+        statusText
 
-    }));
+    ]);
 
-    const ws =
-        XLSX.utils.json_to_sheet(excelData);
+});
 
-    const wb =
-        XLSX.utils.book_new();
+const wb =
+    XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(
-        wb,
-        ws,
-        "업무내역"
-    );
+const ws =
+    XLSX.utils.aoa_to_sheet(excelData);
 
+ws['!cols'] = [
+    { wch: 15 },
+    { wch: 18 },
+    { wch: 40 },
+    { wch: 50 },
+    { wch: 15 },
+    { wch: 15 }
+];
+
+XLSX.utils.book_append_sheet(
+    wb,
+    ws,
+    "업무내역"
+);
 try {
 
-    XLSX.writeFile(
-        wb,
-        "업무내역.xlsx"
-    );
+XLSX.writeFile(
+    wb,
+    `업무내역_${start}_${end}.xlsx`
+);
 
+    
 } catch(err){
 
     console.log(err);
