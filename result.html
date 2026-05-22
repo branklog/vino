@@ -630,13 +630,20 @@ const excelTasks =
         "업무내역"
     );
 
+try {
+
     XLSX.writeFile(
         wb,
         "업무내역.xlsx"
     );
 
-}
+} catch(err){
 
+    console.log(err);
+
+    alert("엑셀 다운로드 실패");
+
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detailModal')
