@@ -107,6 +107,11 @@ body{
 .search-box input::placeholder{
     color:#888;
 }
+
+#dateSearch{
+    width:100%;
+}
+        
        .filter-bar {
     display:flex;
     gap:10px;
@@ -292,11 +297,12 @@ body{
         placeholder="작업내용 검색..."
         oninput="searchTasks()">
 
-    <input
-        type="date"
-        id="dateSearch"
-        style="margin-top:10px;"
-        oninput="searchTasks()">
+ <input
+    type="date"
+    id="dateSearch"
+    placeholder="일자별 조회"
+    style="margin-top:10px; width:100%;"
+    oninput="searchTasks()">
 
 </div>
 
