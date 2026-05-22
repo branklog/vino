@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RESULT</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
     :root {
@@ -590,12 +590,30 @@ const excelTasks =
 
         if(!t.request_date) return false;
 
+        const taskDate =
+            new Date(t.request_date);
+
+        const startDate =
+            new Date(start);
+
+        const endDate =
+            new Date(end);
+
         return (
-            t.request_date >= start
-            && t.request_date <= end
+            taskDate >= startDate
+            && taskDate <= endDate
         );
 
     });
+
+if(excelTasks.length === 0){
+
+    alert("다운로드할 데이터가 없습니다.");
+
+    return;
+
+}
+
     // 엑셀용 데이터 변환
     const excelData = excelTasks.map(t => ({
 
