@@ -585,12 +585,17 @@ function downloadExcel() {
     const end =
         document.getElementById('end-date').value;
 
-    const excelTasks =
-        allTasks.filter(t =>
+const excelTasks =
+    allTasks.filter(t => {
+
+        if(!t.request_date) return false;
+
+        return (
             t.request_date >= start
             && t.request_date <= end
         );
 
+    });
     // 엑셀용 데이터 변환
     const excelData = excelTasks.map(t => ({
 
