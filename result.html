@@ -590,20 +590,20 @@ const excelTasks =
 
         if(!t.request_date) return false;
 
-        const taskDate =
-            new Date(t.request_date);
+const taskTime =
+    new Date(t.request_date).getTime();
 
-        const startDate =
-            new Date(start);
+const startTime =
+    new Date(start).getTime();
 
-        const endDate =
-            new Date(end);
+const endTime =
+    new Date(end).getTime();
 
-        return (
-            taskDate >= startDate
-            && taskDate <= endDate
-        );
-
+return (
+    taskTime >= startTime
+    && taskTime <= endTime
+);
+        
     });
 
 if(excelTasks.length === 0){
