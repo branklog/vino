@@ -577,16 +577,61 @@ else if(filter === '미완료'){
     renderList(filtered);
 }
 
-
 function downloadExcel() {
-    const start = document.getElementById('start-date').value;
-    const end = document.getElementById('end-date').value;
-    const excelTasks = allTasks.filter(t => t.request_date >= start && t.request_date <= end);
-    const ws = XLSX.utils.json_to_sheet(excelTasks);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Tasks");
-    XLSX.writeFile(wb, "업무내역.xlsx");
+
+    const start =
+        document.getElementById('start-date').value;
+
+    const end =
+        document.getElementById('end-date').value;
+
+    const excelTasks =
+        allTasks.filter(t =>
+            t.request_date >= start
+            && t.request_date <= end
+        );
+
+    // 엑셀용 데이터 변환
+    const excelData = excelTasks.map(t => ({
+
+        "의뢰일": t.request_date || "",
+
+        "업무구분": t.category || "",
+
+        "작업내용": t.title || "",
+
+        "메모": t.memo || "",
+
+        "완료일": t.complete_date || "",
+
+        "진행상태":
+            t.status === "done"
+            ? "완료"
+            : t.status === "pending"
+            ? "미완료"
+            : "진행중"
+
+    }));
+
+    const ws =
+        XLSX.utils.json_to_sheet(excelData);
+
+    const wb =
+        XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "업무내역"
+    );
+
+    XLSX.writeFile(
+        wb,
+        "업무내역.xlsx"
+    );
+
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detailModal')
